@@ -1,0 +1,6 @@
+autosize_repro
+*.compiled
+*.o
+*.or
+*.res
+lib/

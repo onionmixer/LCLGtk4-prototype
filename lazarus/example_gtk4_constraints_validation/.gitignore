@@ -1,0 +1,6 @@
+constraints_validation
+*.compiled
+*.o
+*.or
+*.res
+lib/

@@ -1,0 +1,5 @@
+dockdrag_validation
+*.compiled
+*.o
+*.or
+*.res

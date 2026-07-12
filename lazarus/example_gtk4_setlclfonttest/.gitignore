@@ -1,0 +1,7 @@
+/gtk4_setlclfonttest
+/*.compiled
+/*.o
+/*.or
+/*.res
+/backup/
+/lib/

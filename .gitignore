@@ -1,0 +1,16 @@
+# Build artifacts
+*.o
+*.or
+*.ppu
+*.res
+*.compiled
+*.bak
+output/
+gtk4test/lib/
+gtk4test/gtk4test
+gtk4test/gtk4test.o
+gtk4test/gtk4test.or
+gtk4test/gtk4test.res
+gtk4test/gtk3_stubs.o
+gtk4test.o
+gtk4test.or

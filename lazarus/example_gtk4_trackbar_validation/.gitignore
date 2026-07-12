@@ -1,0 +1,5 @@
+trackbar_validation
+*.compiled
+*.o
+*.or
+*.res
