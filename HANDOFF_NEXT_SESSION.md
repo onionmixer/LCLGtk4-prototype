@@ -1,4 +1,4 @@
-# GTK4 LCL - 다음 세션 인수인계 (작성 2026-07-02 S75, 갱신 2026-09-02 배포/패키징 세션)
+# GTK4 LCL - 다음 세션 인수인계 (작성 2026-07-02 S75, 갱신 2026-09-02 close-request 세션)
 
 이 문서 하나로 다른 세션에서 작업을 이어갈 수 있도록 정리했습니다.
 상세 이력은 프로젝트 메모리(`MEMORY.md` 및 그 색인이 가리키는 파일들 — 특히
@@ -60,7 +60,8 @@
 ## 1. 현재 브랜치 상태
 
 ```
-(이 문서 커밋) LCL_GTK4_DEV.md / HANDOFF: record the close-request contract fix   <- 현재 HEAD
+cf48e78 HANDOFF: record the 4.4+dfsg-4 deb rebuild (close-request fix)           <- 현재 HEAD
+9a004d9 LCL_GTK4_DEV.md / HANDOFF: record the close-request contract fix (49195ea)
 49195ea GTK4: stop the close-request default handler - LCL owns hide/free after LM_CLOSEQUERY
 4698a83 docs: update paths for the workspace move to /mnt/STORAGE16T
 42b9da8 .gitignore: cover FPC/Lazarus compiler output and session state
@@ -93,7 +94,8 @@ d999333 GTK4: make TGroupBox client rect reflect the frame chrome and caption
 ```
 - 브랜치: `main` (원격 없음 — push 는 `lcl_gtk4/` 클론에서만. 0b 참조)
 - 커밋 메시지 말미 규칙: `Co-Authored-By: <세션의 Claude 모델> <noreply@anthropic.com>`
-  (S82는 Claude Opus 4.8, 2026-09-02 배포/패키징 세션은 Claude Opus 5)
+  (S82는 Claude Opus 4.8, 2026-09-02 배포/패키징 세션은 Claude Opus 5,
+  2026-09-02 close-request 세션은 Claude Fable 5.1 — `Claude-Session:` 줄도 함께)
 - 작업 브랜치 `gtk4-form-designer-undo-redo`는 `45d2bca` 커밋 후 삭제됨.
 - 코드 기준 워킹 트리는 깨끗함. `gtk-4.6.9/`, `lazarus/`의
   다수 벤더 `.md`는 미추적이니 **절대 `git add .` 금지** — 필요한 파일만 명시적 add.
@@ -101,10 +103,21 @@ d999333 GTK4: make TGroupBox client rect reflect the frame chrome and caption
 
 ## 2-pre00. 최근 완료 작업 (2026-09-02 close-request 세션) — 최신
 
-- **`49195ea`**: 폼 close-request 콜백이 항상 FALSE 를 돌려줘 OnClose=caHide/caNone 이어도 GTK 가
-  창을 파괴하던 결함 수정. `TGtk4Window.Gtk4CloseQuery` 가 gtk2/qt5 와 같은 계약으로
-  `DeliverMessage = 0`(TRUE) 반환, LCL 수신자 없을 때만 FALSE. Xvfb 5 시나리오 + 3 빌드 통과.
-  상세: `LCL_GTK4_DEV.md` §7.
+외부 보고("close-request 콜백이 항상 FALSE 라 폼을 숨겨도 GTK4 가 창을 파괴")를 코드 대조 + Xvfb
+재현으로 확인하고 수정했다.
+
+- **`49195ea`**: `TGtk4Window.Gtk4CloseQuery` — `LM_CLOSEQUERY` 전달 후 `Result := DeliverMessage(Msg) = 0`
+  (gtk2 `gtkdeleteCB`, qt5 `QEventClose`+`QEvent_ignore` 와 같은 계약). `TCustomForm.WMCloseQuery` 가
+  스스로 `Close` 를 돌리고 항상 0 을 돌려주므로 위젯셋은 GTK 기본 파괴를 항상 막아야 한다.
+  LCL 수신자가 없을 때(`LCLObject=nil` 또는 핸들 미할당 — 후자는 codex 교차검토 지적을 코드로
+  재검증해 채택)만 FALSE. 커먼 다이얼로그의 두 close-request 콜백은 gtk2 와 같은 의미론이라 대상 아님.
+- 검증: Xvfb 에서 네이티브 `gtk_window_close` 로 caHide 숨김→재표시(같은 X11 창), caFree 해제,
+  caNone 유지, 모달 `ShowModal`=mrCancel, 메인 폼 닫기→종료. GTK CRITICAL 0. 3 빌드 통과.
+  테스트 프로그램은 저장소 밖(세션 스크래치)이라 남아 있지 않음 — 재작성 시 `TGtk4Widget(Handle).Widget`
+  에 `gtk_window_close` 를 직접 호출하면 WM 닫기와 같은 경로(`gtk_window_emit_close_request`)를 탄다.
+- 상세: `LCL_GTK4_DEV.md` §7. 공개 스냅샷 `lcl_gtk4/` 는 `909d9ab` 로 동기화·push 완료(해시 전수 대조).
+- **사용자 실기 확인 대기**: IDE 에서 미저장 상태로 창 닫기 → "취소" 시 IDE 창 유지, OnClose=caHide
+  앱(tomboy-ng 류)의 닫기 후 재표시, 일반 폼/모달 다이얼로그의 WM 닫기 버튼 정상 종료.
 - 저장소 이동(`/mnt/USERS` → `/mnt/STORAGE16T/Workspace_STORAGE16T`) 경로 갱신은 `4698a83`.
 
 ## 2-pre0. 최근 완료 작업 (2026-09-02 배포/패키징 세션)
@@ -343,6 +356,8 @@ WM이 좌우. 코드 완성 팝업이 엉뚱한 위치에 떴다 사라지던 �
    갱신된 `debian/patches/add-gtk4-widgetset.patch`, `debian/changelog` 를
    `/usr/src/lazarus4_build/4.4/` 로 옮기려면 `sudo` 가 필요하다. 명령은
    `deb_build/4.4/REBUILD-2026-09-02.md` 말미에 적어 두었다.
+10. **(2026-09-02 추가) close-request 수정 실기 확인** — 2-pre00 의 "사용자 실기 확인 대기" 항목.
+   deb `4.4+dfsg-4` 설치(`deb_build/4.4/install-4.4-dfsg4.sh`, sudo 필요) 후 확인하면 된다.
 
 ## 4. 반복해서 물리는 GTK4 함정 (작업 전 숙지)
 
@@ -370,3 +385,5 @@ WM이 좌우. 코드 완성 팝업이 엉뚱한 위치에 떴다 사라지던 �
 - **`git add .` 금지** — 벤더 소스가 미추적으로 대량 존재한다. 필요한 파일만 명시적 add.
 - 패키지 빌드는 저장소 안 `deb_build/<버전>/` 에서. 저장소 밖에 만들지 말 것.
 - 공개 저장소 push 는 `lcl_gtk4/` 클론에서만. 작업 저장소에는 원격이 없다.
+- **에이전트 셸 함정**: 작업 디렉터리가 명령 사이에 유지된다. `cd lcl_gtk4` 로 끝난 뒤 상대 경로로
+  편집하면 스냅샷 쪽 파일을 고치게 된다(2026-09-02 실제 발생, 편집 유실). 파일 편집은 절대 경로로.
