@@ -476,7 +476,7 @@ Session 27~30 headless 테스트 (xvfb-run, TTimer 3초 자동종료, exit code 
 
 ## 6. 2026-09-02 세션 — `gtk4-clipboard` 브랜치 (KControls 멀티바이트 클립보드/선택/IM 협업)
 
-KControls(`/mnt/USERS/onion/DATA_ORIGN/Workspace/KControls`, 브랜치 `integration-fixes`)의 GTK4/QT5
+KControls(`/mnt/STORAGE16T/Workspace_STORAGE16T/KControls`, 브랜치 `integration-fixes`)의 GTK4/QT5
 클립보드·선택·IME 검증(하네스 `tests/kmemo_cliptest`, Xvfb + xdotool 실제 키 입력)에서 드러난 GTK4 위젯셋
 결함을 고쳤다. 설계·codex 교차검토·판정표·결과는 KControls의 `PHASE4_LCLGTK4_DESIGN.md`,
 `PHASE6_GTK4_PASTEMSG_DESIGN.md`, `PHASE7_GTK4_SELSTART_DESIGN.md`(§0–22)에 있다.
@@ -496,3 +496,23 @@ KControls(`/mnt/USERS/onion/DATA_ORIGN/Workspace/KControls`, 브랜치 `integrat
   226/4 기준선), `example_gtk4_editmemo_validation`/`example_gtk4_stdctrls_validation` 12초 실행, `make ide` +
   xvfb 15초 실행, 사용자 실 X11+fcitx5 수동 검증(TEdit/콤보/TKMemo/TMemo).
 - 미작업(결정): 일반 문자 키 `OnKeyDown` 미전달(IM 컨텍스트가 press 소비). `TODO.md` 참조.
+
+## 7. 2026-09-02 세션 — 폼 close-request 계약 수정
+
+외부 보고: "LCL GTK4 의 close-request 콜백이 항상 FALSE 를 반환해 폼을 숨겨도 GTK4 기본 동작으로 창이
+파괴된다". 코드 대조와 Xvfb 재현으로 사실 확인 후 수정했다.
+
+| 커밋 | 내용 | 파일 |
+|---|---|---|
+| 49195ea | `TGtk4Window.Gtk4CloseQuery`: `LM_CLOSEQUERY` 전달 후 `Result := DeliverMessage(Msg) = 0`(gtk2 `gtkdeleteCB`, qt5 `QEventClose`+`QEvent_ignore` 와 같은 계약). LCL 수신자가 없으면(`LCLObject=nil` 또는 핸들 미할당) FALSE 로 GTK 기본 파괴 허용 | `gtk4widgets.pas` |
+
+- 원인: `TCustomForm.WMCloseQuery` 는 스스로 `Close` 를 돌리고 항상 0 을 돌려주므로 위젯셋은 네이티브 기본
+  종료를 항상 막아야 한다. GTK 4.6.9 `gtk_window_close`/`GDK_DELETE` 는 close-request 가 FALSE 면 곧바로
+  `gtk_window_destroy` → OnClose 가 caHide/caNone 이어도 창이 파괴되고, 이후 `Show` 는 파괴된 위젯에
+  `gtk_widget_get_allocation` CRITICAL 만 내며 창이 뜨지 않았다.
+- 검증(Xvfb, 네이티브 `gtk_window_close` 호출): caHide 폼 숨김 후 재표시(같은 X11 창 UnMapped→Viewable),
+  caFree 폼 해제, caNone 폼 유지, 모달 폼 `ShowModal`=mrCancel, 메인 폼 닫기 시 `Application.Terminate`.
+  GTK CRITICAL 없음. `make lcl gtk4`/`make bigide gtk4`/`make lcl gtk2` 통과.
+- codex 교차검토 → 재검증: 핸들 미할당 시 `DeliverMessage` 가 전달 없이 0 을 돌려주는 방어 구멍 1건 채택
+  (가드 확장). 커먼 다이얼로그의 두 close-request 콜백은 gtk2 와 같은 의미론(취소 시 파괴)이라 대상 아님.
+  WM 경유 `GDK_DELETE` 는 다른 모달 grab 중이면 GTK 가 무시(`gtkmain.c`)하는데 이는 핸들러 결과와 무관.

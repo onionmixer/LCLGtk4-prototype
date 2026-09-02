@@ -14635,9 +14635,17 @@ begin
 
   Msg.Msg := LM_CLOSEQUERY;
 
-  DeliverMessage(Msg);
+  { No LCL recipient (DeliverMessage would return 0 without delivering):
+    let the GTK default handler destroy the window. }
+  if (LCLObject = nil) or not LCLObject.HandleAllocated then
+    Exit(False);
 
-  Result := False;
+  { TCustomForm.WMCloseQuery runs Close itself (hide/free/minimize per the
+    OnClose action) and always returns 0. Returning TRUE from close-request
+    stops the GTK default handler, which would otherwise gtk_window_destroy
+    the window even when the LCL form chose caHide/caNone. Same contract as
+    gtk2 gtkdeleteCB (delete-event) and qt5 QEventClose (QEvent_ignore). }
+  Result := DeliverMessage(Msg) = 0;
 end;
 
 function TGtk4Window.GetWindow: PGdkWindow;

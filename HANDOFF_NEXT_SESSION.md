@@ -1,12 +1,18 @@
-# GTK4 LCL - 다음 세션 인수인계 (작성 2026-07-02 S75, 갱신 2026-07-12 S82)
+# GTK4 LCL - 다음 세션 인수인계 (작성 2026-07-02 S75, 갱신 2026-09-02 배포/패키징 세션)
 
 이 문서 하나로 다른 세션에서 작업을 이어갈 수 있도록 정리했습니다.
-상세 이력은 프로젝트 메모리(`MEMORY.md`, `session74.md`, `session75.md`)와
-저장소 문서(`ANAYLIZE_gtk4_need_implementation.md`, `LCL_GTK4_DEV.md`)에 있습니다.
+상세 이력은 프로젝트 메모리(`MEMORY.md` 및 그 색인이 가리키는 파일들 — 특히
+`gtk4-key-input-architecture.md`, `gtk4-recurring-pitfalls.md`,
+`gtk4-deb-packaging.md`)와 저장소 문서(`LCL_GTK4_DEV.md`, `TODO.md`,
+`ANAYLIZE_gtk4_need_implementation.md`)에 있습니다.
+(이전 판이 가리키던 `session74.md`/`session75.md` 는 더 이상 존재하지 않습니다.)
 
 ## 0. 저장소 / 빌드 / 테스트
 
-- **Repo root**: `/mnt/USERS/onion/DATA_ORIGN/Workspace/LCL_GTK4`
+- **Repo root**: `/mnt/STORAGE16T/Workspace_STORAGE16T/LCL_GTK4`
+  (2026-09-02 이전 경로 `/mnt/USERS/onion/DATA_ORIGN/Workspace/LCL_GTK4` 와 bind mount
+  `/home/onion/Workspace/LCL_GTK4` 는 더 이상 없다. KControls, tomboy-ng 등 Lazarus 관련
+  작업 트리도 모두 `/mnt/STORAGE16T/Workspace_STORAGE16T/` 아래로 옮겨졌다.)
 - **GTK4 위젯셋**: `lazarus/lcl/interfaces/gtk4/` (핵심 파일 `gtk4widgets.pas`,
   `gtk4wsforms.pp`, `gtk4winapi.inc` 등)
 - **바인딩**: `lazarus/lcl/interfaces/gtk4/gtk4bindings/`
@@ -22,10 +28,55 @@
   링크 에러가 뜰 수 있는데(중간 빌드 상태 아티팩트), **재실행하면 정상**.
   실제 컴파일 에러는 `.pas(line,col) Error:` 형태로 나옴.
 
+### 0b. 공개 저장소 (스냅샷)
+
+- **원격**: `https://github.com/onionmixer/LCLGtk4-prototype` — 작업 저장소에는
+  원격이 **없다**. 공개용 클론은 저장소 안 `lcl_gtk4/` 이며, 여기서만 push 한다.
+- 공개 스냅샷은 작업 저장소 추적 파일 169개의 사본이다. 규칙:
+  - `lazarus/README.md`(초안)는 **제외**, 최상위 `README.md`(확장판)는 **유지**.
+  - 갱신 방법: 작업 저장소의 추적 파일을 `lcl_gtk4/` 로 복사 → 커밋 → push.
+    복사 후 blob 해시 전수 대조로 일치 확인할 것.
+- 무시 규칙 분리: 일반 빌드 산출물 패턴만 `.gitignore`(공개됨), 이 기계에만
+  해당하는 것(`lcl_gtk4/`, `gtk-4.6.9*`, `deb_build/`, 세션 로그·스크린샷)은
+  `.git/info/exclude`(커밋 안 됨).
+
+### 0c. 데비안 패키지(deb) 빌드
+
+- **빌드 위치(사용자 지시)**: 저장소 안 `deb_build/<버전>/`. 현재 `deb_build/4.4/`.
+  저장소 밖에 새 빌드 디렉터리를 만들지 말 것. `.git/info/exclude` 로 무시됨.
+- **현재 리비전**: `4.4+dfsg-4`(2026-09-02, close-request 수정 포함). 설치 스크립트 `deb_build/4.4/install-4.4-dfsg4.sh`.
+- **정본 기록**: `/usr/src/lazarus4_build/4.4/PLAN_GTK4_PACKAGE.md`(2026-07-21, `-2` 리비전).
+  이 경로는 root 소유이고 `sudo` 가 비밀번호를 요구해 **에이전트가 쓸 수 없다**.
+- **재빌드 절차/함정**: `deb_build/4.4/REBUILD-2026-09-02.md`.
+- GTK4 델타는 quilt 패치 `add-gtk4-widgetset.patch`(74파일)로 관리된다. 갱신은
+  orig tarball 2벌 추출 → series 선행 8개 패치를 양쪽 적용 → 기존 패치의 `+++`
+  목록대로 한쪽에 작업본을 덮어쓰기 → `diff -urN` 재생성(헤더 유지).
+- **함정**: `lcl/interfaces/Makefile.fpc` 는 프로토타입에 `carbon` 이 남아 있는데
+  데비안 `drop_carbon_from_Makefiles.patch` 가 이를 제거한다. 그대로 덮으면
+  carbon 이 되살아나 빌드가 깨진다 → 이 파일만 데비안 패치본 유지.
+- **공간**: 전체 빌드는 약 4.3G 가 필요하다. 저장소가 `/mnt/STORAGE16T`(여유 약 2.5T)로
+  옮겨져 옛 `/mnt/USERS` 시절의 사전 정리 요구는 사라졌다.
+
 ## 1. 현재 브랜치 상태
 
 ```
-7c6a8a9 GTK4: repair IM commit ordering in TMemo — Hangul+space transpose    <- 현재 HEAD (S82)
+(이 문서 커밋) LCL_GTK4_DEV.md / HANDOFF: record the close-request contract fix   <- 현재 HEAD
+49195ea GTK4: stop the close-request default handler - LCL owns hide/free after LM_CLOSEQUERY
+4698a83 docs: update paths for the workspace move to /mnt/STORAGE16T
+42b9da8 .gitignore: cover FPC/Lazarus compiler output and session state
+a80f5a0 LCL_GTK4_DEV.md: record the 2026-09-02 gtk4-clipboard session
+e66660e Add TODO.md: upstream LCL Qt5 items (B9 unfocused combo selection, B7/B8), E1
+db38c86 GTK4: send CBN_DROPDOWN for the combo box once, from the popover show notification
+7bde741 GTK4: combo box dropdown as a transaction - hover/arrows preview, click/Return commit
+d646a38 GTK4: IM commit-order deferral for the editable combo box entry
+2e3c84c GTK4: deferred SelStart transaction for the editable combo box entry
+6800df4 GTK4: defer SelStart so SelStart+SelLength is one select_region (X11 PRIMARY race)
+b5ee8e7 GTK4: deliver LM_CUT/LM_COPY/LM_PASTE from the native edit clipboard actions
+f438aa0 GTK4: clipboard ownership loss, UTF-8 text provider, text/plain aliases
+35032e5 Add LCL-GTK4 prototype README
+dafb5f3 docs: mark handoff items 3b and 3c as fixed
+--- (S82 이하) ---
+7c6a8a9 GTK4: repair IM commit ordering in TMemo — Hangul+space transpose
 1e32daa GTK4: enforce TEdit.NumbersOnly for typed and pasted input
 59c8bd1 docs: mark HANDOFF follow-ups 1 and 4 as user-verified complete
 e31efe9 GTK4: repair IM commit ordering — Hangul+space transpose in TEdit
@@ -40,15 +91,64 @@ f9d9ebb docs: mark PROBLEM_LAST.md icon analysis as resolved
 d999333 GTK4: make TGroupBox client rect reflect the frame chrome and caption
 --- (이전: 4e089b0 multi-column TListBox, ... 45d2bca designer undo/redo, S81 이하) ---
 ```
-- 브랜치: `main` (S82 시점 확인 — 이전 기록의 "master"는 stale)
+- 브랜치: `main` (원격 없음 — push 는 `lcl_gtk4/` 클론에서만. 0b 참조)
 - 커밋 메시지 말미 규칙: `Co-Authored-By: <세션의 Claude 모델> <noreply@anthropic.com>`
-  (S82는 Claude Opus 4.8)
+  (S82는 Claude Opus 4.8, 2026-09-02 배포/패키징 세션은 Claude Opus 5)
 - 작업 브랜치 `gtk4-form-designer-undo-redo`는 `45d2bca` 커밋 후 삭제됨.
 - 코드 기준 워킹 트리는 깨끗함. `gtk-4.6.9/`, `lazarus/`의
   다수 벤더 `.md`는 미추적이니 **절대 `git add .` 금지** — 필요한 파일만 명시적 add.
 - 커밋/푸시는 사용자가 요청할 때만.
 
-## 2-pre0. 최근 완료 작업 (S82, 2026-07-11~12) - 최신
+## 2-pre00. 최근 완료 작업 (2026-09-02 close-request 세션) — 최신
+
+- **`49195ea`**: 폼 close-request 콜백이 항상 FALSE 를 돌려줘 OnClose=caHide/caNone 이어도 GTK 가
+  창을 파괴하던 결함 수정. `TGtk4Window.Gtk4CloseQuery` 가 gtk2/qt5 와 같은 계약으로
+  `DeliverMessage = 0`(TRUE) 반환, LCL 수신자 없을 때만 FALSE. Xvfb 5 시나리오 + 3 빌드 통과.
+  상세: `LCL_GTK4_DEV.md` §7.
+- 저장소 이동(`/mnt/USERS` → `/mnt/STORAGE16T/Workspace_STORAGE16T`) 경로 갱신은 `4698a83`.
+
+## 2-pre0. 최근 완료 작업 (2026-09-02 배포/패키징 세션)
+
+코드 변경 없음. 배포와 패키징만 처리했다.
+
+1. **공개 스냅샷 동기화 + push** (`lcl_gtk4/`, `e2b73fe`)
+   2026-07-12 이후 상류 8커밋(아래 2-pre1)을 스냅샷에 반영해 GitHub 에 올렸다.
+   작업 저장소에는 원격이 없어서 push 대상은 `lcl_gtk4/` 뿐이다. 복사 후
+   공통 파일 169개 blob 해시 전수 대조로 일치를 확인했다.
+2. **무시 규칙 정리** (`42b9da8`, 스냅샷 `ea4e102`)
+   `.gitignore` 에 일반 빌드 산출물(`lib/`, `*.rsj`, `*.a`, `*.dbg`, `*.lps`,
+   `*.old`, `*~`) 추가. 이 기계 사정(`lcl_gtk4/`, `gtk-4.6.9*`, `deb_build/`,
+   세션 로그·스크린샷)은 `.git/info/exclude` 로 분리해 공개 저장소를 오염시키지
+   않게 했다. 루트 미추적 91개 → 0개, 미추적 파일 34,863 → 19,300개.
+   추적 파일 170개는 그대로이고 새 패턴에 걸리는 추적 파일은 없음을 확인했다.
+3. **deb 패키지 재빌드 `4.4+dfsg-3`** (`deb_build/4.4/`)
+   GTK4 quilt 패치를 현재 프로토타입 소스로 갱신하고 28개 패키지를 다시 만들었다.
+   `-2` 대비 실제 코드 변경은 `gtk4widgets.pas`, `gtk4winapi.inc`,
+   `gtk4wsstdctrls.pp` 3개뿐이고 패키징 설정은 건드리지 않았다.
+   검증: gtk2/qt5/nogui 패키지 파일 목록이 `-2` 와 동일(회귀 없음),
+   `lazarus-gtk4`(41MB)가 `libgtk-4.so.1` 링크, `lcl-gtk4-4.4` 1569파일,
+   `gtk4widgets.ppu` 571,293 → 579,563 바이트.
+4. **설치** (`deb_build/4.4/install-4.4-dfsg3.sh`, 사용자 실행 완료)
+   구성: **LCL 위젯셋 = gtk4 + qt5**, **IDE = gtk4 하나만**. gtk2 위젯셋,
+   gtk2/qt5 IDE, `lazarus-doc` 은 설치하지 않는다. 17개 패키지가 `4.4+dfsg-3`
+   으로 설치된 것을 확인했다.
+
+## 2-pre1. 최근 완료 작업 (2026-09-02 `gtk4-clipboard` 세션)
+
+KControls(`/mnt/STORAGE16T/Workspace_STORAGE16T/KControls`, 브랜치 `integration-fixes`)의 GTK4/QT5
+클립보드·선택·IME 검증에서 드러난 위젯셋 결함 수정. 커밋별 표와 검증 내역은
+`LCL_GTK4_DEV.md` §6, 설계·판정표는 KControls 의 `PHASE4/6/7_*.md` 가 정본.
+
+- 클립보드 소유권 상실 감지, UTF-8 텍스트 프로바이더, `text/plain` 별칭 (`f438aa0`)
+- 네이티브 에디트 cut/copy/paste → `LM_CUT/LM_COPY/LM_PASTE` (`b5ee8e7`)
+- `SelStart`+`SelLength` 를 한 번의 `select_region` 으로 (X11 PRIMARY race) (`6800df4`)
+- 편집 콤보에 같은 트랜잭션 (`2e3c84c`), IM 커밋 순서 보정 (`d646a38`)
+- 콤보 드롭다운 트랜잭션: hover/화살표=미리보기, 클릭/Return=확정, Esc=취소 (`7bde741`)
+- `CBN_DROPDOWN` 1회 전송 (`db38c86`)
+- **비작업 결정**: 일반 문자 키 `OnKeyDown` 미전달(IM 컨텍스트가 press 소비).
+  사용자 결정으로 작업하지 않음. `TODO.md` 참조.
+
+## 2-pre2. 최근 완료 작업 (S82, 2026-07-11~12)
 
 **정본 disposition 문서**: `lazarus/PLAN_GTK4_IMPLEMENTATION_CANDIDATE_RECHECK.md`
 상단 "RE-AUDIT DISPOSITION" + "KEY-INPUT WORK" 절이 항목별 최종 판정의 정본.
@@ -229,6 +329,20 @@ WM이 좌우. 코드 완성 팝업이 엉뚱한 위치에 떴다 사라지던 �
    로 첫 실행 시 CoolBar/컴포넌트 팔레트 아이콘 클리핑이 해소됨을 실기에서 확인.
 5. `PLAN_fix_InitialSetupDialog.md`, `PROBLEM_LAST.md`(아이콘 미표시),
    `PLAN_GTK4_NO_STUBS.md` — 이번 작업과 무관한 별건 계획서(미추적). 필요 시 참조.
+6. **(2026-09-02 추가) 업스트림 LCL Qt5 결함 3건** — `TODO.md` 정본.
+   B9 비포커스 편집 콤보의 `SelStart`/`SelLength` 미유지(원인·수정 방향까지 분석 완료,
+   업스트림 제안만 남음), B7 `text/rtf` 전용 소유자 미인지, B8 `SelectAll` 마지막
+   문자 누락. **모두 GTK4 위젯셋과 무관**하며 이 저장소에서 고칠 항목이 아니다.
+7. **(2026-09-02 추가) 환경 E1** — GTK4 앱의 PRIMARY 를 gnome-terminal 3.44(VTE)에
+   가운데 클릭 붙여넣기 실패. 순수 GTK4 `GtkEntry` 에서도 재현되어 이 포트와 무관.
+   귀책 확정에는 X 프로토콜 추적이 필요(배포판 GTK4 가 `G_ENABLE_DEBUG` 없이 빌드됨).
+8. ~~**(2026-09-02 추가) 디스크 공간**~~ — **해소**: 저장소가 `/mnt/STORAGE16T`(여유 약 2.5T)로
+   이동해 옛 `/mnt/USERS` 의 1.7G 제약이 없어졌다. `deb_build/4.4/lazarus-4.4/`(1.8G),
+   `build_gtk4_*.log`, `report_*.png`, `gtk-4.6.9/` 는 그대로 두었다(정리는 선택).
+9. **(2026-09-02 추가) 패키징 산출물 원위치 복사** — `deb_build/4.4/` 의 `-4` deb 28개와
+   갱신된 `debian/patches/add-gtk4-widgetset.patch`, `debian/changelog` 를
+   `/usr/src/lazarus4_build/4.4/` 로 옮기려면 `sudo` 가 필요하다. 명령은
+   `deb_build/4.4/REBUILD-2026-09-02.md` 말미에 적어 두었다.
 
 ## 4. 반복해서 물리는 GTK4 함정 (작업 전 숙지)
 
@@ -253,3 +367,6 @@ WM이 좌우. 코드 완성 팝업이 엉뚱한 위치에 떴다 사라지던 �
   사이클을 돌린 뒤 지적사항이 없을 때까지 반복 (지적은 코드 대조로 직접 확인).
 - 상세 정본은 프로젝트 메모리에 두고, 저장소 추적 문서엔 요약만 (중복 최소화).
 - rollback point 커밋을 먼저 확보한 뒤 위험한 변경 진행.
+- **`git add .` 금지** — 벤더 소스가 미추적으로 대량 존재한다. 필요한 파일만 명시적 add.
+- 패키지 빌드는 저장소 안 `deb_build/<버전>/` 에서. 저장소 밖에 만들지 말 것.
+- 공개 저장소 push 는 `lcl_gtk4/` 클론에서만. 작업 저장소에는 원격이 없다.

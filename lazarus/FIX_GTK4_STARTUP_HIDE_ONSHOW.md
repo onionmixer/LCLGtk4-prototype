@@ -11,7 +11,10 @@ Scope: LCL GTK4 form visibility handling only. Do not modify Lazarus IDE code.
 Reviewed document:
 
 ```text
-/mnt/USERS/onion/DATA_ORIGN/Workspace/tomboy-ng/tomboy-ng/doc/lcl-gtk4-startup-hide-issue.md
+/mnt/STORAGE16T/Workspace_STORAGE16T/tomboy-ng/doc/lcl-gtk4-startup-hide-issue.md
+(original location before the 2026-09-02 workspace move:
+ /mnt/USERS/onion/DATA_ORIGN/Workspace/tomboy-ng/tomboy-ng/doc/... — the file was
+ not found under the moved tomboy-ng tree when the paths were updated)
 ```
 
 Conclusion: the report is logically valid. The issue is reproducible outside
@@ -71,11 +74,11 @@ Build command used:
 
 ```sh
 fpc -MObjFPC -Scghi -Cg -O1 -g -gl -l -vewnhibq -dLCL -dLCLgtk4 \
-  -Fu/mnt/USERS/onion/DATA_ORIGN/Workspace/LCL_GTK4/lazarus/lcl/units/x86_64-linux/gtk4 \
-  -Fu/mnt/USERS/onion/DATA_ORIGN/Workspace/LCL_GTK4/lazarus/lcl/units/x86_64-linux \
-  -Fu/mnt/USERS/onion/DATA_ORIGN/Workspace/LCL_GTK4/lazarus/components/lazutils/lib/x86_64-linux \
-  -Fu/mnt/USERS/onion/DATA_ORIGN/Workspace/LCL_GTK4/lazarus/components/freetype/lib/x86_64-linux \
-  -Fu/mnt/USERS/onion/DATA_ORIGN/Workspace/LCL_GTK4/lazarus/packager/units/x86_64-linux \
+  -Fu/mnt/STORAGE16T/Workspace_STORAGE16T/LCL_GTK4/lazarus/lcl/units/x86_64-linux/gtk4 \
+  -Fu/mnt/STORAGE16T/Workspace_STORAGE16T/LCL_GTK4/lazarus/lcl/units/x86_64-linux \
+  -Fu/mnt/STORAGE16T/Workspace_STORAGE16T/LCL_GTK4/lazarus/components/lazutils/lib/x86_64-linux \
+  -Fu/mnt/STORAGE16T/Workspace_STORAGE16T/LCL_GTK4/lazarus/components/freetype/lib/x86_64-linux \
+  -Fu/mnt/STORAGE16T/Workspace_STORAGE16T/LCL_GTK4/lazarus/packager/units/x86_64-linux \
   -FU/tmp/lcl_gtk4_hide_onshow_test/lib/x86_64-linux \
   -FE/tmp/lcl_gtk4_hide_onshow_test \
   -o/tmp/lcl_gtk4_hide_onshow_test/hide_onshow \
