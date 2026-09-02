@@ -160,6 +160,7 @@ type
     Loop: PGMainLoop;
     Text: PgChar;
     Stream: PGInputStream;
+    Mime: PgChar;   { mime type GDK chose for gdk_clipboard_read_async }
     Error: PGError;
     Done: Boolean;
   end;
@@ -187,10 +188,56 @@ var
 begin
   Info := PClipboardReadInfo(user_data);
   Info^.Stream := gdk4_clipboard_read_finish(PGdkClipboard(source_object),
-    res, nil, @Info^.Error);
+    res, @Info^.Mime, @Info^.Error);
   Info^.Done := True;
   if (Info^.Loop <> nil) and g_main_loop_is_running(Info^.Loop) then
     g_main_loop_quit(Info^.Loop);
+end;
+
+{ Reads the raw bytes of one mime type from AClipboard into AStream. }
+function Gtk4ClipboardReadMime(AClipboard: PGdkClipboard; const AMimeType: string;
+  AStream: TStream): Boolean;
+var
+  Info: TClipboardReadInfo;
+  MimeArr: array[0..1] of PgChar;
+  ABuf: array[0..4095] of Byte;
+  ABytesRead: gssize;
+begin
+  Result := False;
+  FillChar(Info, SizeOf(Info), 0);
+  Info.Loop := g_main_loop_new(nil, False);
+  MimeArr[0] := PgChar(AMimeType);
+  MimeArr[1] := nil;
+  gdk4_clipboard_read_async(AClipboard, @MimeArr[0], 0, nil,
+    @Gtk4ClipboardReadCB, @Info);
+  if not Info.Done then
+    g_main_loop_run(Info.Loop);
+  g_main_loop_unref(Info.Loop);
+  if (Info.Error = nil) and (Info.Stream <> nil) then
+  begin
+    { Read all data from the GInputStream }
+    repeat
+      ABytesRead := g_input_stream_read(Info.Stream, @ABuf[0], SizeOf(ABuf),
+        nil, nil);
+      if ABytesRead > 0 then
+        AStream.Write(ABuf[0], ABytesRead);
+    until ABytesRead <= 0;
+    g_input_stream_close(Info.Stream, nil, nil);
+    g_object_unref(Info.Stream);
+    Result := True;
+  end;
+  if Info.Error <> nil then
+    g_error_free(Info.Error);
+end;
+
+{ True if the current clipboard content offers AMimeType. }
+function Gtk4ClipboardOffers(AClipboard: PGdkClipboard; const AMimeType: string): Boolean;
+var
+  AFormats: PGdkContentFormats;
+begin
+  AFormats := gdk4_clipboard_get_formats(AClipboard);
+  Result := (AFormats <> nil) and
+    gdk4_content_formats_contain_mime_type(AFormats, PgChar(AMimeType));
 end;
 
 function TGtk4WidgetSet.ClipboardGetData(ClipboardType: TClipboardType;
@@ -201,9 +248,7 @@ var
   AMimeType: string;
   ALen: Integer;
   AByte: Byte;
-  MimeArr: array[0..1] of PgChar;
-  ABuf: array[0..4095] of Byte;
-  ABytesRead: gssize;
+  RawText: TMemoryStream;
 begin
   Result := False;
   if (FormatID = 0) or (Stream = nil) then exit;
@@ -213,13 +258,36 @@ begin
 
   AMimeType := ClipboardFormatToMimeType(FormatID);
 
-  FillChar(Info, SizeOf(Info), 0);
-  Info.Loop := g_main_loop_new(nil, False);
-
   if (AMimeType = 'text/plain') or (AMimeType = 'UTF8_STRING') or
      (AMimeType = 'STRING') or (AMimeType = 'TEXT') then
   begin
+    { GDK treats a bare text/plain (no charset parameter) as US-ASCII, so an
+      owner that offers only that - older toolkits, or an LCL application built
+      before the text was provided as a string - cannot be read through the text
+      API. Take the raw bytes when they are valid UTF-8. }
+    if Gtk4ClipboardOffers(AClipboard, 'text/plain') and
+       not Gtk4ClipboardOffers(AClipboard, 'text/plain;charset=utf-8') then
+    begin
+      RawText := TMemoryStream.Create;
+      try
+        if Gtk4ClipboardReadMime(AClipboard, 'text/plain', RawText) and
+           ((RawText.Size = 0) or g_utf8_validate(PgChar(RawText.Memory), RawText.Size, nil)) then
+        begin
+          if RawText.Size > 0 then
+            Stream.Write(RawText.Memory^, RawText.Size);
+          AByte := 0;
+          Stream.Write(AByte, 1);
+          Result := True;
+        end;
+      finally
+        RawText.Free;
+      end;
+      if Result then exit;
+    end;
+
     { Text: use the specialized text read which handles encoding }
+    FillChar(Info, SizeOf(Info), 0);
+    Info.Loop := g_main_loop_new(nil, False);
     gdk4_clipboard_read_text_async(AClipboard, nil,
       @Gtk4ClipboardReadTextCB, @Info);
 
@@ -242,33 +310,8 @@ begin
       g_error_free(Info.Error);
   end
   else
-  begin
     { Arbitrary mime type: use generic read }
-    MimeArr[0] := PgChar(AMimeType);
-    MimeArr[1] := nil;
-    gdk4_clipboard_read_async(AClipboard, @MimeArr[0], 0, nil,
-      @Gtk4ClipboardReadCB, @Info);
-
-    if not Info.Done then
-      g_main_loop_run(Info.Loop);
-    g_main_loop_unref(Info.Loop);
-
-    if (Info.Error = nil) and (Info.Stream <> nil) then
-    begin
-      { Read all data from the GInputStream }
-      repeat
-        ABytesRead := g_input_stream_read(Info.Stream, @ABuf[0], SizeOf(ABuf),
-          nil, nil);
-        if ABytesRead > 0 then
-          Stream.Write(ABuf[0], ABytesRead);
-      until ABytesRead <= 0;
-      g_input_stream_close(Info.Stream, nil, nil);
-      g_object_unref(Info.Stream);
-      Result := True;
-    end;
-    if Info.Error <> nil then
-      g_error_free(Info.Error);
-  end;
+    Result := Gtk4ClipboardReadMime(AClipboard, AMimeType, Stream);
 end;
 
 function TGtk4WidgetSet.ClipboardGetFormats(ClipboardType: TClipboardType;
@@ -280,6 +323,8 @@ var
   AMimeCount: gsize;
   i: Integer;
   p: PgChar;
+  S: string;
+  HasPlain, HasTextVariant: Boolean;
 begin
   Result := False;
   Count := 0;
@@ -294,25 +339,95 @@ begin
   AMimeTypes := gdk4_content_formats_get_mime_types(AFormats, @AMimeCount);
   if (AMimeTypes = nil) or (AMimeCount = 0) then exit;
 
+  if AMimeCount > High(Integer) - 1 then exit;
   Count := AMimeCount;
-  GetMem(List, SizeOf(TClipboardFormat) * Count);
-  p := AMimeTypes^;
+  { one extra slot for the text/plain alias added below }
+  GetMem(List, SizeOf(TClipboardFormat) * (Count + 1));
+  HasPlain := False;
+  HasTextVariant := False;
   for i := 0 to Count - 1 do
   begin
     p := PPgChar(PByte(AMimeTypes) + i * SizeOf(PgChar))^;
     if p <> nil then
-      List[i] := TClipboardFormat(PtrUInt(g_quark_from_string(p)))
+    begin
+      List[i] := TClipboardFormat(PtrUInt(g_quark_from_string(p)));
+      S := string(p);
+      if S = 'text/plain' then
+        HasPlain := True
+      else if (Copy(S, 1, 11) = 'text/plain;') or (S = 'UTF8_STRING') or (S = 'STRING') or
+        (S = 'TEXT') or (S = 'COMPOUND_TEXT') then
+        HasTextVariant := True;
+    end
     else
       List[i] := 0;
+  end;
+  { Text owned by another application is reported by GDK as
+    text/plain;charset=utf-8 (X11 maps UTF8_STRING/STRING/TEXT to it), which the
+    LCL does not recognise as its predefined text/plain format. Report the plain
+    format as well, ClipboardGetData reads text through gdk_clipboard_read_text
+    which picks the charset variant itself. }
+  if HasTextVariant and not HasPlain then
+  begin
+    List[Count] := TClipboardFormat(PtrUInt(g_quark_from_string('text/plain')));
+    Inc(Count);
   end;
   Result := True;
   { Note: AMimeTypes is owned by the GdkContentFormats, do NOT free it }
 end;
 
+const
+  { G_TYPE_STRING = G_TYPE_MAKE_FUNDAMENTAL(16), the binding has no named constant }
+  Gtk4GTypeString = TGType(16 shl G_TYPE_FUNDAMENTAL_SHIFT);
+
 var
-  { Store clipboard ownership callback per clipboard type.
-    Currently assigned but not re-read — will be needed for async clipboard requests. }
-  {%H-}Gtk4ClipboardOnRequest: array[TClipboardType] of TClipboardRequestEvent;
+  { The LCL callback that owns the clipboard content, per clipboard type. It is
+    called with FormatID 0 when another application takes the clipboard so that
+    TClipboard stops answering from its cache (see Gtk4ClipboardChangedCB). }
+  Gtk4ClipboardOnRequest: array[TClipboardType] of TClipboardRequestEvent;
+  { The GdkClipboard whose "changed" signal is connected for the type, nil if none
+    (a new display gives a new object, then it has to be connected again). }
+  Gtk4ClipboardChangedOn: array[TClipboardType] of PGdkClipboard;
+
+{ "changed" handler: when the content is no longer local, another application
+  took the clipboard and the LCL must release its cached data. }
+procedure Gtk4ClipboardChangedCB(clipboard: PGdkClipboard; user_data: gpointer); cdecl;
+var
+  CT: TClipboardType;
+  Proc: TClipboardRequestEvent;
+begin
+  CT := TClipboardType(PtrUInt(user_data));
+  if Assigned(Gtk4ClipboardOnRequest[CT]) and not gdk4_clipboard_is_local(clipboard) then
+  begin
+    Proc := Gtk4ClipboardOnRequest[CT];
+    Gtk4ClipboardOnRequest[CT] := nil;
+    Proc(0, nil);
+  end;
+end;
+
+{ Creates a provider for text: a G_TYPE_STRING value lets GDK serialize it as
+  text/plain;charset=utf-8, text/plain in the locale charset and the X11 text
+  targets. A bytes provider under a bare text/plain would be read as US-ASCII
+  by GDK and other applications. Returns nil when the data is not a valid UTF-8
+  string (embedded NUL or invalid bytes), the caller then uses a bytes provider. }
+function Gtk4TextContentProvider(AStream: TMemoryStream): PGdkContentProvider;
+var
+  S: string;
+  V: TGValue;
+begin
+  Result := nil;
+  SetLength(S, AStream.Size);
+  if AStream.Size > 0 then
+    Move(AStream.Memory^, S[1], AStream.Size);
+  while (S <> '') and (S[Length(S)] = #0) do
+    SetLength(S, Length(S) - 1);
+  if (Pos(#0, S) > 0) or not g_utf8_validate(PgChar(S), Length(S), nil) then
+    exit;
+  FillChar(V, SizeOf(V), 0);
+  g_value_init(@V, Gtk4GTypeString);
+  g_value_set_string(@V, PgChar(S));
+  Result := gdk4_content_provider_new_for_value(@V);
+  g_value_unset(@V);
+end;
 
 function TGtk4WidgetSet.ClipboardGetOwnerShip(ClipboardType: TClipboardType;
   OnRequestProc: TClipboardRequestEvent; FormatCount: integer;
@@ -324,7 +439,7 @@ var
   AStream: TMemoryStream;
   ABytes: PGBytes;
   AProviders: array of PGdkContentProvider;
-  AUnion: PGdkContentProvider;
+  AProvider, AUnion: PGdkContentProvider;
   ProvCount: Integer;
 begin
   Result := False;
@@ -333,15 +448,20 @@ begin
 
   if (OnRequestProc = nil) or (FormatCount = 0) then
   begin
-    { Release ownership }
-    {%H-}Gtk4ClipboardOnRequest[ClipboardType] := nil;
+    { Release ownership - clear the callback first, set_content emits "changed" }
+    Gtk4ClipboardOnRequest[ClipboardType] := nil;
     gdk4_clipboard_set_content(AClipboard, nil);
     Result := True;
     exit;
   end;
 
-  { Store the callback }
-  {%H-}Gtk4ClipboardOnRequest[ClipboardType] := OnRequestProc;
+  { Watch for another application taking the clipboard (once per GdkClipboard) }
+  if Gtk4ClipboardChangedOn[ClipboardType] <> AClipboard then
+  begin
+    g_signal_connect_data(PGObject(AClipboard), 'changed',
+      TGCallback(@Gtk4ClipboardChangedCB), Pointer(PtrUInt(Ord(ClipboardType))), nil, G_CONNECT_DEFAULT);
+    Gtk4ClipboardChangedOn[ClipboardType] := AClipboard;
+  end;
 
   { Collect data for each format and create content providers.
     The LCL caches data internally and provides it via the callback.
@@ -360,9 +480,16 @@ begin
       OnRequestProc(Formats[i], AStream);
       if AStream.Size > 0 then
       begin
-        ABytes := glib2_bytes_new(AStream.Memory, AStream.Size);
-        AProviders[ProvCount] := gdk4_content_provider_new_for_bytes(AMimeType, ABytes);
-        g_bytes_unref(ABytes);
+        AProvider := nil;
+        if string(AMimeType) = 'text/plain' then
+          AProvider := Gtk4TextContentProvider(AStream);
+        if AProvider = nil then
+        begin
+          ABytes := glib2_bytes_new(AStream.Memory, AStream.Size);
+          AProvider := gdk4_content_provider_new_for_bytes(AMimeType, ABytes);
+          g_bytes_unref(ABytes);
+        end;
+        AProviders[ProvCount] := AProvider;
         Inc(ProvCount);
       end;
     finally
@@ -378,6 +505,11 @@ begin
     { The union takes ownership of child providers, and clipboard takes
       ownership of the union. We don't need to unref them. }
   end;
+  { Store the callback only when we really own the clipboard now }
+  if Result then
+    Gtk4ClipboardOnRequest[ClipboardType] := OnRequestProc
+  else
+    Gtk4ClipboardOnRequest[ClipboardType] := nil;
 end;
 
 function TGtk4WidgetSet.ClipboardRegisterFormat(const AMimeType: string): TClipboardFormat;

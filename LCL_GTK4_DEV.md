@@ -473,3 +473,26 @@ Session 27~30 headless 테스트 (xvfb-run, TTimer 3초 자동종료, exit code 
 | 22 | TProgressBar | GtkProgressBar | ✅ |
 | 23 | TToolBar (3 buttons + separator) | GtkBox | ✅ |
 | 24 | TSpinEdit | GtkSpinButton (GtkEditable 인터페이스) | ✅ |
+
+## 6. 2026-09-02 세션 — `gtk4-clipboard` 브랜치 (KControls 멀티바이트 클립보드/선택/IM 협업)
+
+KControls(`/mnt/USERS/onion/DATA_ORIGN/Workspace/KControls`, 브랜치 `integration-fixes`)의 GTK4/QT5
+클립보드·선택·IME 검증(하네스 `tests/kmemo_cliptest`, Xvfb + xdotool 실제 키 입력)에서 드러난 GTK4 위젯셋
+결함을 고쳤다. 설계·codex 교차검토·판정표·결과는 KControls의 `PHASE4_LCLGTK4_DESIGN.md`,
+`PHASE6_GTK4_PASTEMSG_DESIGN.md`, `PHASE7_GTK4_SELSTART_DESIGN.md`(§0–22)에 있다.
+
+| 커밋 | 내용 | 파일 |
+|---|---|---|
+| f438aa0 | 클립보드: 소유권 상실 감지(`changed`), UTF-8 텍스트 프로바이더(bare `text/plain`=ASCII 문제), `text/plain` 별칭 | `gtk4winapi.inc` |
+| b5ee8e7 | 네이티브 에디트의 cut/copy/paste 액션 → `LM_CUT/LM_COPY/LM_PASTE`(GTK2 동등) | `gtk4widgets.pas` |
+| 6800df4 | TEdit/TSpinEdit `SelStart`+`SelLength`를 한 번의 `select_region`으로(X11 PRIMARY 해제/재획득 race로 `SelectAll` 소실); 선택 없을 때 `getSelStart`=커서 | `gtk4widgets.pas` |
+| 2e3c84c | 편집 콤보에 같은 트랜잭션 | `gtk4widgets.pas`, `gtk4wsstdctrls.pp` |
+| d646a38 | 편집 콤보 엔트리에 IM 커밋 순서 보정(fcitx5 raw 키 선삽입) — `TGtk4Entry`와 동일 기제 복제 | `gtk4widgets.pas` |
+| 7bde741 | 콤보 드롭다운 트랜잭션: hover/화살표=미리보기, 클릭/Return=확정(`LM_CHANGED`+`LM_SELCHANGE`), Esc/바깥 클릭=취소·복원 | `gtk4widgets.pas` |
+| db38c86 | `CBN_DROPDOWN` 1회 전송(`notify::visible`, GTK2 `popup-shown` 동일) | `gtk4widgets.pas` |
+| e66660e | `TODO.md`(업스트림 Qt5 B9/B7/B8, 환경 E1) | `TODO.md` |
+
+- 검증: 각 커밋마다 `make -C lcl intf LCL_PLATFORM=gtk4`(경고 0 신규), KControls 하네스(최종 GTK4 248/0, QT5
+  226/4 기준선), `example_gtk4_editmemo_validation`/`example_gtk4_stdctrls_validation` 12초 실행, `make ide` +
+  xvfb 15초 실행, 사용자 실 X11+fcitx5 수동 검증(TEdit/콤보/TKMemo/TMemo).
+- 미작업(결정): 일반 문자 키 `OnKeyDown` 미전달(IM 컨텍스트가 press 소비). `TODO.md` 참조.

@@ -902,32 +902,26 @@ class function TGtk4WSCustomComboBox.GetSelStart(const ACustomComboBox: TCustomC
   ): integer;
 var
   AEntry: PGtkWidget;
-  AStart, AEnd: gint;
 begin
   Result := -1;
   if not WSCheckHandleAllocated(ACustomComboBox, 'GetSelStart') then Exit;
   if TGtk4Widget(ACustomComboBox.Handle) is TGtk4DropDown then Exit;
   AEntry := TGtk4ComboBox(ACustomComboBox.Handle).Entry;
   if AEntry = nil then Exit;
-  if PGtkEditable(AEntry)^.get_selection_bounds(@AStart, @AEnd) then
-    Result := AStart
-  else
-    Result := PGtkEditable(AEntry)^.get_position;
+  Result := TGtk4ComboBox(ACustomComboBox.Handle).GetEntrySelStart;
 end;
 
 class function TGtk4WSCustomComboBox.GetSelLength(const ACustomComboBox: TCustomComboBox
   ): integer;
 var
   AEntry: PGtkWidget;
-  AStart, AEnd: gint;
 begin
   Result := 0;
   if not WSCheckHandleAllocated(ACustomComboBox, 'GetSelLength') then Exit;
   if TGtk4Widget(ACustomComboBox.Handle) is TGtk4DropDown then Exit;
   AEntry := TGtk4ComboBox(ACustomComboBox.Handle).Entry;
   if AEntry = nil then Exit;
-  if PGtkEditable(AEntry)^.get_selection_bounds(@AStart, @AEnd) then
-    Result := AEnd - AStart;
+  Result := TGtk4ComboBox(ACustomComboBox.Handle).GetEntrySelLength;
 end;
 
 class function TGtk4WSCustomComboBox.GetItemIndex(const ACustomComboBox: TCustomComboBox
@@ -991,7 +985,13 @@ begin
   if TGtk4Widget(ACustomComboBox.Handle) is TGtk4DropDown then Exit;
   AEntry := TGtk4ComboBox(ACustomComboBox.Handle).Entry;
   if AEntry = nil then Exit;
-  PGtkEntry(AEntry)^.set_max_length(NewLength);
+  TGtk4ComboBox(ACustomComboBox.Handle).ApplyPendingSelStart; { set_max_length may truncate }
+  TGtk4ComboBox(ACustomComboBox.Handle).BeginEntryWrite;
+  try
+    PGtkEntry(AEntry)^.set_max_length(NewLength);
+  finally
+    TGtk4ComboBox(ACustomComboBox.Handle).EndEntryWrite;
+  end;
 end;
 
 class procedure TGtk4WSCustomComboBox.SetSelStart(const ACustomComboBox: TCustomComboBox;
@@ -1003,21 +1003,19 @@ begin
   if TGtk4Widget(ACustomComboBox.Handle) is TGtk4DropDown then Exit;
   AEntry := TGtk4ComboBox(ACustomComboBox.Handle).Entry;
   if AEntry = nil then Exit;
-  PGtkEditable(AEntry)^.set_position(NewStart);
+  TGtk4ComboBox(ACustomComboBox.Handle).SetEntrySelStart(NewStart);
 end;
 
 class procedure TGtk4WSCustomComboBox.SetSelLength(const ACustomComboBox: TCustomComboBox;
   NewLength: integer);
 var
   AEntry: PGtkWidget;
-  AStart: gint;
 begin
   if not WSCheckHandleAllocated(ACustomComboBox, 'SetSelLength') then Exit;
   if TGtk4Widget(ACustomComboBox.Handle) is TGtk4DropDown then Exit;
   AEntry := TGtk4ComboBox(ACustomComboBox.Handle).Entry;
   if AEntry = nil then Exit;
-  AStart := PGtkEditable(AEntry)^.get_position;
-  PGtkEditable(AEntry)^.select_region(AStart, AStart + NewLength);
+  TGtk4ComboBox(ACustomComboBox.Handle).SetEntrySelLength(NewLength);
 end;
 
 class procedure TGtk4WSCustomComboBox.SetItemIndex(const ACustomComboBox: TCustomComboBox;

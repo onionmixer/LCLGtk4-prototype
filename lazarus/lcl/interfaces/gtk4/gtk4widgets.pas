@@ -225,6 +225,9 @@ type
 
   TGtk4Editable = class(TGtk4Widget)
   private
+    FSelStartPending: Boolean;    { setSelStart is deferred, see ApplyPendingSelStart }
+    FPendingSelStart: Integer;    { valid only while FSelStartPending }
+    FPendingSelStartIdle: guint;  { g_idle_add_full id of the deferred apply, 0 = none }
     function GetReadOnly: Boolean;
     procedure SetReadOnly(AValue: Boolean);
   protected
@@ -232,7 +235,11 @@ type
     PrivateSelection: Integer;
     function getCaretPos: TPoint; virtual;
     procedure SetCaretPos(AValue: TPoint); virtual;
+    procedure ApplyPendingSelStart;
+    procedure CancelPendingSelStart;
   public
+    function DeliverMessage(var Msg; const AIsInputEvent: Boolean = False): LRESULT; override;
+    procedure DetachEvents; override;
     function getSelStart: Integer; virtual;
     function getSelLength: Integer; virtual;
     procedure setSelStart(AValue: Integer); virtual;
@@ -816,10 +823,28 @@ type
     FListModel: Pointer;           { PGtkStringList }
     FOwnerDrawn: Boolean;
     FDropDownCount: Integer;       { max visible items in dropdown }
+    FSelStartPending: Boolean;     { entry SelStart is deferred, see ApplyPendingSelStart }
+    FPendingSelStart: Integer;     { valid only while FSelStartPending }
+    FPendingSelStartIdle: guint;   { g_idle_add_full id of the deferred apply, 0 = none }
+    { Mirror of the TGtk4Entry IM commit-order deferral (see Gtk4EntryFlushDeferred);
+      intentionally no LCL key delivery or filtering here. }
+    FImKeyPending: Boolean;        { an unmodified key press is in flight on the delegate }
+    FImPendingKeyText: string;     { that key's own character }
+    FImPreeditText: string;        { observed IM preedit on the delegate }
+    FImDeferredText: string;       { raw key text held until the pending commit lands }
+    FImFlushing: Boolean;          { re-entrancy: flushing FImDeferredText / programmatic write }
+    { Dropdown transaction: while the popover is visible the selection model is
+      only a preview (hover / arrow keys highlight); FCommittedIndex is the LCL
+      ItemIndex, captured when the popover opens, replaced by an activate
+      (click / Return) and restored on cancel (Escape / outside click). }
+    FCommittedIndex: Integer;
+    FActivated: Boolean;           { the popover is closing because of an activate }
+    function PopoverVisible: Boolean;
     function GetItemIndex: Integer;
     procedure SetDroppedDown(AValue: boolean);
     procedure SetItemIndex(AValue: Integer);
     function GetDroppedDown: boolean;
+    function EntryOk: Boolean;
   protected
     function CreateWidget(const {%H-}Params: TCreateParams):PGtkWidget; override;
     function EatArrowKeys(const AKey: Word): Boolean; override;
@@ -828,11 +853,25 @@ type
     procedure DestroyWidget; override;
   public
     procedure DetachEvents; override;
+    function DeliverMessage(var Msg; const AIsInputEvent: Boolean = False): LRESULT; override;
   public
     function CanFocus: Boolean; override;
     procedure SetFocus; override;
     procedure InitializeWidget; override;
     procedure SetDropDownCount(AValue: Integer);
+    { entry selection with the deferred SelStart transaction (same mechanism as
+      TGtk4Editable, see "Deferred SelStart" there) }
+    procedure ApplyPendingSelStart;
+    procedure CancelPendingSelStart;
+    function GetEntrySelStart: Integer;
+    function GetEntrySelLength: Integer;
+    procedure SetEntrySelStart(AValue: Integer);
+    procedure SetEntrySelLength(AValue: Integer);
+    { bracket every programmatic replacement/truncation of the entry text:
+      drops held IM text and keeps the delegate insert-text hooks out }
+    procedure BeginEntryWrite;
+    procedure EndEntryWrite;
+    procedure CommitSelection(APosition: Integer);
     property DroppedDown: boolean read GetDroppedDown write SetDroppedDown;
     property DropDownCount: Integer read FDropDownCount write SetDropDownCount;
     property ItemIndex: Integer read GetItemIndex write SetItemIndex;
@@ -5865,18 +5904,90 @@ begin
     PGtkEditable(Widget)^.set_editable(not AValue);
 end;
 
+{ Deferred SelStart (X11 PRIMARY race).
+  LCL sets a selection as SetSelStart(a) followed by SetSelLength(n)
+  (TCustomEdit.SelectAll does exactly that). Applying SelStart at once with
+  gtk_editable_set_position collapses any existing selection, which makes
+  GtkText release PRIMARY (XSetSelectionOwner None, time T); the following
+  select_region reclaims PRIMARY with the same server time T, and the X server's
+  delayed SelectionClear(T) is then not recognised as stale by GDK
+  (gdkclipboard-x11.c ignores it only when time < claim time) - GDK marks the
+  clipboard remote, GtkText's content provider is detached and the selection is
+  cleared. Symptom: SelectAll on a focused TEdit leaves nothing selected.
+  So setSelStart only records the wanted position; setSelLength consumes it and
+  makes a single select_region call (no collapse in between). A lone SelStart is
+  applied by a one-shot high priority idle (before the next queued event), at
+  the end of the LCL message handler that set it, or right before any native
+  operation that depends on the caret (setText, MaxLength, spin formatting, the
+  deferred IM insert). The LCL getters report the pending value meanwhile. }
+
+function Gtk4EditableSelStartIdleCB(AData: gpointer): gboolean; cdecl;
+begin
+  Result := G_SOURCE_REMOVE_;
+  if (AData = nil) or not Gtk4IsLiveWidgetPointer(AData) then Exit;
+  { the source is removed by our return value - do not g_source_remove it again }
+  TGtk4Editable(AData).FPendingSelStartIdle := 0;
+  TGtk4Editable(AData).ApplyPendingSelStart;
+end;
+
+procedure TGtk4Editable.CancelPendingSelStart;
+begin
+  FSelStartPending := False;
+  if FPendingSelStartIdle <> 0 then
+  begin
+    g_source_remove(FPendingSelStartIdle);
+    FPendingSelStartIdle := 0;
+  end;
+end;
+
+procedure TGtk4Editable.ApplyPendingSelStart;
+var
+  APos: Integer;
+begin
+  if not FSelStartPending then
+    Exit;
+  APos := FPendingSelStart;
+  { clear our state before the native call: set_position notifies
+    cursor-position and may re-enter the LCL }
+  CancelPendingSelStart;
+  if IsValidHandle and IsWidgetOk then
+    PGtkEditable(Widget)^.set_position(APos);
+end;
+
+function TGtk4Editable.DeliverMessage(var Msg; const AIsInputEvent: Boolean
+  ): LRESULT;
+begin
+  Result := inherited DeliverMessage(Msg, AIsInputEvent);
+  { a SelStart set by the LCL handler must be in place before GTK continues
+    with the native action (key insert, paste, ...). The handler may have
+    destroyed this wrapper: touch it only while it is still registered. }
+  if Gtk4IsLiveWidgetPointer(Self) then
+    ApplyPendingSelStart;
+end;
+
+procedure TGtk4Editable.DetachEvents;
+begin
+  CancelPendingSelStart;
+  inherited DetachEvents;
+end;
+
 function TGtk4Editable.getCaretPos: TPoint;
 begin
   Result := Point(0, 0);
   if not IsWidgetOk then
     exit;
-  Result.X := PGtkEditable(Widget)^.get_position;
+  if FSelStartPending then
+    Result.X := FPendingSelStart
+  else
+    Result.X := PGtkEditable(Widget)^.get_position;
 end;
 
 procedure TGtk4Editable.SetCaretPos(AValue: TPoint);
 begin
   if not IsWidgetOk then
     exit;
+  { an explicit caret position supersedes a pending SelStart }
+  CancelPendingSelStart;
   PGtkEditable(Widget)^.set_position(AValue.X);
 end;
 
@@ -5888,10 +5999,14 @@ begin
   Result := 0;
   if not IsWidgetOk then
     exit;
+  if FSelStartPending then
+    Result := FPendingSelStart
+  else
   if PGtkEditable(Widget)^.get_selection_bounds(@AStart, @AStop) then
-  begin
-    Result := AStart;
-  end;
+    Result := AStart
+  else
+    { no selection: the caret, like GTK2 (Min(current_pos, selection_bound)) }
+    Result := PGtkEditable(Widget)^.get_position;
 end;
 
 function TGtk4Editable.getSelLength: Integer;
@@ -5902,6 +6017,8 @@ begin
   Result := 0;
   if not IsWidgetOk then
     exit;
+  if FSelStartPending then
+    exit; { a pending SelStart collapses the selection when applied }
   if PGtkEditable(Widget)^.get_selection_bounds(@AStart, @AStop) then
   begin
     Result := AStop - AStart;
@@ -5909,10 +6026,22 @@ begin
 end;
 
 procedure TGtk4Editable.setSelStart(AValue: Integer);
+var
+  ALen: Integer;
 begin
   if not IsWidgetOk then
     exit;
-  CaretPos := Point(AValue, 0);
+  { clamp like GTK does on apply (characters, negative = end of text) so the
+    getters report the effective position while it is pending }
+  ALen := g_utf8_strlen(gtk4_editable_get_text(Widget), -1);
+  if AValue < 0 then
+    FPendingSelStart := ALen
+  else
+    FPendingSelStart := Min(AValue, ALen);
+  FSelStartPending := True;
+  if FPendingSelStartIdle = 0 then
+    FPendingSelStartIdle := g_idle_add_full(G_PRIORITY_HIGH,
+      @Gtk4EditableSelStartIdleCB, Self, nil);
 end;
 
 procedure TGtk4Editable.setSelLength(AValue: Integer);
@@ -5922,18 +6051,57 @@ var
 begin
   if not IsWidgetOk then
     exit;
-  PGtkEditable(Widget)^.get_selection_bounds(@AStart, @AStop);
-  AStart := CaretPos.X;
+  if FSelStartPending then
+  begin
+    { the SelStart/SelLength transaction: one select_region, no collapse }
+    AStart := FPendingSelStart;
+    CancelPendingSelStart;
+  end else
+  if not PGtkEditable(Widget)^.get_selection_bounds(@AStart, @AStop) then
+    AStart := PGtkEditable(Widget)^.get_position;
+  { else AStart = start of the existing selection (GTK2/Win32 semantics) }
   if InUpdate then
   begin
     PrivateCursorPos := AStart;
     PrivateSelection := AValue;
-    PGtkEditable(Widget)^.select_region(AStart, AStart + AValue)
-  end else
-    PGtkEditable(Widget)^.select_region(AStart, AStart + AValue);
+  end;
+  PGtkEditable(Widget)^.select_region(AStart, AStart + AValue);
 end;
 
 { TGtk4Entry }
+
+{ cut-clipboard / copy-clipboard / paste-clipboard action signals of GtkText and
+  GtkTextView (emitted by the Ctrl+X/C/V key bindings and the context menu
+  actions, not by middle click or gtk_text_buffer_paste_clipboard): tell the
+  LCL control like the GTK2 widgetset does. The handler runs before the GTK
+  class handler, it is a notification and cannot veto the native operation. }
+procedure Gtk4EditableClipboardMsg(AData: GPointer; AMsg: Cardinal);
+var
+  Msg: TLMessage;
+begin
+  if (AData = nil) or not Gtk4IsLiveWidgetPointer(AData) then Exit;
+  if not TGtk4Widget(AData).CanSendLCLMessage then Exit;
+  if csDesigning in TGtk4Widget(AData).LCLObject.ComponentState then Exit;
+  FillChar(Msg{%H-}, SizeOf(Msg), 0);
+  Msg.Msg := AMsg;
+  TGtk4Widget(AData).DeliverMessage(Msg);
+  { the LCL handler may have destroyed the control - do not touch AData afterwards }
+end;
+
+procedure Gtk4EditableCutCB({%H-}AWidget: PGtkWidget; AData: GPointer); cdecl;
+begin
+  Gtk4EditableClipboardMsg(AData, LM_CUT);
+end;
+
+procedure Gtk4EditableCopyCB({%H-}AWidget: PGtkWidget; AData: GPointer); cdecl;
+begin
+  Gtk4EditableClipboardMsg(AData, LM_COPY);
+end;
+
+procedure Gtk4EditablePasteCB({%H-}AWidget: PGtkWidget; AData: GPointer); cdecl;
+begin
+  Gtk4EditableClipboardMsg(AData, LM_PASTE);
+end;
 
 procedure Gtk4EntryChanged({%H-}AEntry: PGtkEntryBuffer; AData: GPointer); cdecl;
 var
@@ -6057,6 +6225,7 @@ begin
   S := Entry.FDeferredText;
   if S = '' then exit;
   Entry.FDeferredText := '';
+  Entry.ApplyPendingSelStart; { a caret move requested by the LCL comes first }
   Entry.FFlushingDeferred := True;
   try
     if position <> nil then
@@ -6293,6 +6462,7 @@ procedure TGtk4Entry.setText(const AValue: String);
 begin
   if IsValidHandle and IsWidgetOK then
   begin
+    ApplyPendingSelStart; { keep the "SelStart := a; Text := s" order }
     { Programmatic text must not fire OnKeyPress via the delegate insert-text
       hook (it is not key input). }
     FSuppressInsertFeedback := True;
@@ -6362,6 +6532,13 @@ begin
       TGCallback(@Gtk4EntryDelegateInsertAfterCB), Self, nil, [G_CONNECT_AFTER]);
     g_signal_connect_data(PGObject(ADelegate), 'preedit-changed',
       TGCallback(@Gtk4EntryDelegatePreeditCB), Self, nil, G_CONNECT_DEFAULT);
+    { clipboard notifications (LM_CUT/LM_COPY/LM_PASTE) come from the inner GtkText }
+    g_signal_connect_data(PGObject(ADelegate), 'cut-clipboard',
+      TGCallback(@Gtk4EditableCutCB), Self, nil, G_CONNECT_DEFAULT);
+    g_signal_connect_data(PGObject(ADelegate), 'copy-clipboard',
+      TGCallback(@Gtk4EditableCopyCB), Self, nil, G_CONNECT_DEFAULT);
+    g_signal_connect_data(PGObject(ADelegate), 'paste-clipboard',
+      TGCallback(@Gtk4EditablePasteCB), Self, nil, G_CONNECT_DEFAULT);
     AKeyRec := gtk4_event_controller_key_new;
     gtk_event_controller_set_propagation_phase(AKeyRec, GTK_PHASE_CAPTURE);
     g_signal_connect_data(AKeyRec, 'key-pressed',
@@ -6448,6 +6625,7 @@ procedure TGtk4Entry.SetMaxLength(AMaxLength: Integer);
 begin
   if IsWidgetOK and Gtk4IsEntry(Widget) then
   begin
+    ApplyPendingSelStart; { set_max_length may truncate the text }
     PGtkEntry(Widget)^.set_max_length(AMaxLength);
     PGtkEntry(Widget)^.set_width_chars(AMaxLength);
   end;
@@ -6507,6 +6685,7 @@ begin
   Result := 0;
   if IsWidgetOk then
   begin
+    ApplyPendingSelStart; { update may reformat the text }
     PGtkSpinButton(Widget)^.update;
     Result := PGtkSpinButton(Widget)^.get_value;
   end;
@@ -6515,7 +6694,10 @@ end;
 procedure TGtk4SpinEdit.SetNumDigits(AValue: Integer);
 begin
   if IsWidgetOk then
+  begin
+    ApplyPendingSelStart; { set_digits reformats the text }
     PGtkSpinButton(Widget)^.set_digits(GUint(AValue));
+  end;
 end;
 
 procedure TGtk4SpinEdit.SetNumeric(AValue: Boolean);
@@ -6540,6 +6722,7 @@ procedure TGtk4SpinEdit.SetValue(AValue: Double);
 begin
   if IsWidgetOk then
   begin
+    ApplyPendingSelStart; { set_value rewrites the text }
     PGtkSpinButton(Widget)^.set_value(AValue);
   end;
 end;
@@ -6570,7 +6753,10 @@ end;
 procedure TGtk4SpinEdit.SetRange(AMin, AMax: Double);
 begin
   if IsWidgetOk then
+  begin
+    ApplyPendingSelStart; { set_range may clamp the value and rewrite the text }
     PGtkSpinButton(Widget)^.set_range(AMin, AMax);
+  end;
 end;
 
 { TGtk4Range }
@@ -8951,6 +9137,13 @@ begin
   end;
   g_signal_connect_data(PGObject(FCentralWidget), 'preedit-changed',
     TGCallback(@Gtk4MemoPreeditCB), Self, nil, G_CONNECT_DEFAULT);
+  { clipboard notifications (LM_CUT/LM_COPY/LM_PASTE) from the GtkTextView }
+  g_signal_connect_data(PGObject(FCentralWidget), 'cut-clipboard',
+    TGCallback(@Gtk4EditableCutCB), Self, nil, G_CONNECT_DEFAULT);
+  g_signal_connect_data(PGObject(FCentralWidget), 'copy-clipboard',
+    TGCallback(@Gtk4EditableCopyCB), Self, nil, G_CONNECT_DEFAULT);
+  g_signal_connect_data(PGObject(FCentralWidget), 'paste-clipboard',
+    TGCallback(@Gtk4EditablePasteCB), Self, nil, G_CONNECT_DEFAULT);
   AKeyRec := gtk4_event_controller_key_new;
   gtk_event_controller_set_propagation_phase(AKeyRec, GTK_PHASE_CAPTURE);
   g_signal_connect_data(AKeyRec, 'key-pressed',
@@ -11542,11 +11735,19 @@ end;
 
 { TGtk4ComboBox }
 
+function TGtk4ComboBox.PopoverVisible: Boolean;
+begin
+  Result := (FPopover <> nil) and Gtk4IsWidget(FPopover) and
+    (not FPopover^.in_destruction) and FPopover^.get_visible;
+end;
+
 function TGtk4ComboBox.GetItemIndex: Integer;
 var
   Sel: guint;
 begin
   Result := -1;
+  if PopoverVisible then
+    Exit(FCommittedIndex); { the model only previews while dropped down }
   if FSelectionModel <> nil then
   begin
     Sel := gtk4_single_selection_get_selected(PGtkSingleSelection(FSelectionModel));
@@ -11571,11 +11772,23 @@ var
 begin
   if FSelectionModel = nil then Exit;
   if AValue < 0 then
+    FCommittedIndex := -1
+  else
+    FCommittedIndex := AValue;
+  if AValue < 0 then
   begin
     gtk4_single_selection_set_selected(PGtkSingleSelection(FSelectionModel),
       GTK_INVALID_LIST_POSITION);
     if FEntry <> nil then
-      gtk4_editable_set_text(FEntry, '');
+    begin
+      ApplyPendingSelStart; { keep the "SelStart := a; ItemIndex := i" order }
+      BeginEntryWrite;
+      try
+        gtk4_editable_set_text(FEntry, '');
+      finally
+        EndEntryWrite;
+      end;
+    end;
   end else
   begin
     gtk4_single_selection_set_selected(PGtkSingleSelection(FSelectionModel), guint(AValue));
@@ -11584,7 +11797,15 @@ begin
     begin
       AText := gtk4_string_list_get_string(PGtkStringList(FListModel), guint(AValue));
       if AText <> nil then
-        gtk4_editable_set_text(FEntry, AText);
+      begin
+        ApplyPendingSelStart;
+        BeginEntryWrite;
+        try
+          gtk4_editable_set_text(FEntry, AText);
+        finally
+          EndEntryWrite;
+        end;
+      end;
     end;
   end;
 end;
@@ -11655,11 +11876,11 @@ begin
     gtk4_popover_popdown(ACombo.FPopover)
   else
   begin
-    { Match popover width to the combo box width }
+    { Match popover width to the combo box width. IntfGetItems and
+      CBN_DROPDOWN are sent once from the notify::visible handler (like the
+      GTK2 popup-shown handler), for this path and SetDroppedDown alike. }
     ACombo.FPopover^.set_size_request(
       ACombo.Widget^.get_allocated_width, -1);
-    TCustomComboBox(ACombo.LCLObject).IntfGetItems;
-    LCLSendDropDownMsg(TCustomComboBox(ACombo.LCLObject));
     gtk4_popover_popup(ACombo.FPopover);
   end;
 end;
@@ -11680,17 +11901,24 @@ begin
     ItemIndex/Text would be corrupted. }
   if Assigned(ACombo.LCLObject) and
      (csDesigning in ACombo.LCLObject.ComponentState) then Exit;
+  { While the dropdown is open the selection only previews (hover, arrow keys);
+    the commit happens in Gtk4ECB_ListActivate (click / Return). }
+  if ACombo.PopoverVisible then Exit;
   Sel := gtk4_single_selection_get_selected(PGtkSingleSelection(ACombo.FSelectionModel));
   if Sel <> GTK_INVALID_LIST_POSITION then
   begin
+    ACombo.FCommittedIndex := Integer(Sel);
     { Update entry text }
     AText := gtk4_string_list_get_string(PGtkStringList(ACombo.FListModel), Sel);
     if (ACombo.FEntry <> nil) and (AText <> nil) then
     begin
+      ACombo.ApplyPendingSelStart;
       ACombo.BeginUpdate;
+      ACombo.BeginEntryWrite;
       try
         gtk4_editable_set_text(ACombo.FEntry, AText);
       finally
+        ACombo.EndEntryWrite;
         ACombo.EndUpdate;
       end;
     end;
@@ -11710,6 +11938,7 @@ procedure Gtk4ECB_PopoverNotifyVisible({%H-}AObject: PGObject;
   {%H-}pspec: PGParamSpec; AData: GPointer); cdecl;
 var
   ACombo: TGtk4ComboBox;
+  Sel: guint;
 begin
   if (AData = nil) or not Gtk4IsLiveWidgetPointer(AData) then Exit;
   ACombo := TGtk4ComboBox(AData);
@@ -11717,9 +11946,69 @@ begin
   if (ACombo.FPopover = nil) or not Gtk4IsWidget(ACombo.FPopover)
     or ACombo.FPopover^.in_destruction then Exit;
   if ACombo.FPopover^.get_visible then
-    LCLSendDropDownMsg(TCustomComboBox(ACombo.LCLObject))
-  else
+  begin
+    { opening: the model holds the committed index - remember it, the model
+      becomes a preview until activate / cancel }
+    ACombo.FActivated := False;
+    ACombo.FCommittedIndex := -1;
+    if ACombo.FSelectionModel <> nil then
+    begin
+      Sel := gtk4_single_selection_get_selected(PGtkSingleSelection(ACombo.FSelectionModel));
+      if Sel <> GTK_INVALID_LIST_POSITION then
+        ACombo.FCommittedIndex := Integer(Sel);
+    end;
+    { GTK2 order: let the LCL fill the items just in time, then CBN_DROPDOWN -
+      exactly once, for the arrow button and SetDroppedDown alike }
+    if Assigned(ACombo.LCLObject) and (ACombo.LCLObject is TCustomComboBox) then
+      TCustomComboBox(ACombo.LCLObject).IntfGetItems;
+    { OnGetItems is user code: re-validate before the notification, and
+      nothing may follow it (OnDropDown may close or destroy the combo) }
+    if not Gtk4IsLiveWidgetPointer(AData) then Exit;
+    if not ACombo.CanSendLCLMessage then Exit;
+    if not ACombo.PopoverVisible then Exit;
+    LCLSendDropDownMsg(TCustomComboBox(ACombo.LCLObject));
+  end else
+  begin
+    if not ACombo.FActivated then
+    begin
+      { cancelled (Escape / outside click / programmatic close): drop the preview }
+      if ACombo.FSelectionModel <> nil then
+      begin
+        if (ACombo.FCommittedIndex >= 0) and
+           (ACombo.FCommittedIndex < Integer(g_list_model_get_n_items(PGListModel(ACombo.FListModel)))) then
+          Sel := guint(ACombo.FCommittedIndex)
+        else
+        begin
+          Sel := GTK_INVALID_LIST_POSITION;
+          ACombo.FCommittedIndex := -1;
+        end;
+        ACombo.BeginUpdate;
+        try
+          gtk4_single_selection_set_selected(PGtkSingleSelection(ACombo.FSelectionModel), Sel);
+        finally
+          ACombo.EndUpdate;
+        end;
+      end;
+    end;
+    ACombo.FActivated := False;
+    { the LCL close-up handler may destroy the combo: nothing after this call }
     LCLSendCloseUpMsg(ACombo.LCLObject);
+  end;
+end;
+
+{ GtkListView::activate - click (single-click-activate) or Return on a row }
+procedure Gtk4ECB_ListActivate({%H-}AList: PGtkWidget; position: guint; AData: gpointer); cdecl;
+var
+  ACombo: TGtk4ComboBox;
+begin
+  if (AData = nil) or not Gtk4IsLiveWidgetPointer(AData) then Exit;
+  ACombo := TGtk4ComboBox(AData);
+  if not ACombo.IsWidgetOK then Exit;
+  if ACombo.InUpdate then Exit;
+  if Assigned(ACombo.LCLObject) and
+     (csDesigning in ACombo.LCLObject.ComponentState) then Exit;
+  if position = GTK_INVALID_LIST_POSITION then Exit;
+  ACombo.CommitSelection(Integer(position));
 end;
 
 function TGtk4ComboBox.CreateWidget(const Params: TCreateParams): PGtkWidget;
@@ -11818,7 +12107,326 @@ end;
 procedure TGtk4ComboBox.setText(const AValue: String);
 begin
   if FEntry <> nil then
-    gtk4_editable_set_text(FEntry, PChar(AValue));
+  begin
+    ApplyPendingSelStart; { keep the "SelStart := a; Text := s" order }
+    BeginEntryWrite;
+    try
+      gtk4_editable_set_text(FEntry, PChar(AValue));
+    finally
+      EndEntryWrite;
+    end;
+  end;
+end;
+
+procedure TGtk4ComboBox.BeginEntryWrite;
+begin
+  FImDeferredText := '';
+  FImFlushing := True;
+end;
+
+procedure TGtk4ComboBox.EndEntryWrite;
+begin
+  FImFlushing := False;
+end;
+
+procedure TGtk4ComboBox.CommitSelection(APosition: Integer);
+var
+  AText: PChar;
+  Old: Integer;
+  Msg: TLMessage;
+  WasVisible: Boolean;
+begin
+  if (FSelectionModel = nil) or (FListModel = nil) then Exit;
+  if (APosition < 0) or
+     (APosition >= Integer(g_list_model_get_n_items(PGListModel(FListModel)))) then Exit;
+  WasVisible := PopoverVisible;
+  if WasVisible then
+    Old := FCommittedIndex
+  else
+    Old := GetItemIndex;
+  { the model: a no-op when hover / arrow keys already previewed this row }
+  BeginUpdate;
+  try
+    gtk4_single_selection_set_selected(PGtkSingleSelection(FSelectionModel), guint(APosition));
+  finally
+    EndUpdate;
+  end;
+  FCommittedIndex := APosition;
+  AText := gtk4_string_list_get_string(PGtkStringList(FListModel), guint(APosition));
+  if (FEntry <> nil) and (AText <> nil) then
+  begin
+    ApplyPendingSelStart;
+    BeginUpdate;
+    BeginEntryWrite;
+    try
+      gtk4_editable_set_text(FEntry, AText);
+    finally
+      EndEntryWrite;
+      EndUpdate;
+    end;
+  end;
+  if WasVisible then
+  begin
+    FActivated := True; { tells the notify::visible handler not to restore }
+    gtk4_popover_popdown(FPopover);
+    { CBN_CLOSEUP was delivered synchronously: the LCL may have destroyed us }
+    if not CanSendLCLMessage then Exit;
+  end;
+  { like the GTK2 'changed' callback: LM_CHANGED, then LM_SELCHANGE (OnSelect)
+    when the index actually changed }
+  FillChar(Msg{%H-}, SizeOf(Msg), #0);
+  Msg.Msg := LM_CHANGED;
+  DeliverMessage(Msg);
+  if not CanSendLCLMessage then Exit;
+  if Old <> APosition then
+    LCLSendSelectionChangedMsg(LCLObject);
+end;
+
+{ ---- combo entry: IM commit-order deferral ---------------------------------
+  Mirror of the TGtk4Entry mechanism (see "IM commit-order repair" above and
+  Gtk4EntryFlushDeferred): with fcitx5-frontend-gtk4 a key outside the
+  composition (space, punctuation) can be inserted BEFORE the pending preedit
+  commit, so "한글이 " becomes "한글 이". When the inserted text is exactly the
+  pending physical key's own character while a preedit is active, that insert
+  is held and re-inserted right after the commit. Invariants kept from the
+  entry version: exact raw-key match, the queue is cleared before the flush
+  inserts, the AFTER handler's position is used. Unlike TGtk4Entry this
+  delivers no OnKeyPress/CN_CHAR and applies no NumbersOnly/CharCase: the
+  combo's LCL key route is unchanged. }
+
+procedure Gtk4ComboFlushDeferred(ACombo: TGtk4ComboBox; editable: PGtkEditable;
+  position: Pgint);
+var
+  S: string;
+  APos: gint;
+begin
+  S := ACombo.FImDeferredText;
+  if S = '' then exit;
+  ACombo.FImDeferredText := '';
+  ACombo.ApplyPendingSelStart; { a caret move requested by the LCL comes first }
+  ACombo.FImFlushing := True;
+  try
+    if position <> nil then
+      { inside the commit's insert-text AFTER handler: position^ is the
+        post-insert offset, so the deferred text lands right after the commit }
+      editable^.insert_text(PgChar(S), Length(S), position)
+    else
+    begin
+      { fallback (preedit cleared / focus leave): insert at the caret }
+      APos := gtk_editable_get_position(editable);
+      editable^.insert_text(PgChar(S), Length(S), @APos);
+      gtk_editable_set_position(editable, APos);
+    end;
+  finally
+    ACombo.FImFlushing := False;
+  end;
+end;
+
+function Gtk4ComboDelegateKeyPressCB({%H-}controller: PGtkEventController;
+  keyval: guint; {%H-}keycode: guint; state: TGdkModifierType;
+  user_data: gpointer): gboolean; cdecl;
+var
+  ACombo: TGtk4ComboBox;
+  UChar: guint32;
+begin
+  Result := False; { record only - never consume, never disturb the IM }
+  if not Gtk4IsLiveWidgetPointer(user_data) then exit;
+  ACombo := TGtk4ComboBox(user_data);
+  ACombo.FImKeyPending := state * [GDK_CONTROL_MASK, GDK_MOD1_MASK] = [];
+  ACombo.FImPendingKeyText := '';
+  if ACombo.FImKeyPending then
+  begin
+    UChar := gdk_keyval_to_unicode(keyval);
+    if (UChar >= 32) and (UChar <> 127) and (UChar < $110000) then
+      ACombo.FImPendingKeyText := UnicodeToUTF8(UChar);
+  end;
+end;
+
+procedure Gtk4ComboDelegateKeyReleaseCB({%H-}controller: PGtkEventController;
+  {%H-}keyval: guint; {%H-}keycode: guint; {%H-}state: TGdkModifierType;
+  user_data: gpointer); cdecl;
+begin
+  if not Gtk4IsLiveWidgetPointer(user_data) then exit;
+  TGtk4ComboBox(user_data).FImKeyPending := False;
+  TGtk4ComboBox(user_data).FImPendingKeyText := '';
+end;
+
+procedure Gtk4ComboDelegatePreeditCB(w: PGtkWidget; preedit: Pgchar;
+  user_data: gpointer); cdecl;
+var
+  ACombo: TGtk4ComboBox;
+begin
+  if not Gtk4IsLiveWidgetPointer(user_data) then exit;
+  ACombo := TGtk4ComboBox(user_data);
+  if preedit = nil then
+    ACombo.FImPreeditText := ''
+  else
+    ACombo.FImPreeditText := string(preedit);
+  { composition ended without a commit-triggered flush - release anything held }
+  if (ACombo.FImPreeditText = '') and (ACombo.FImDeferredText <> '') then
+    Gtk4ComboFlushDeferred(ACombo, PGtkEditable(w), nil);
+end;
+
+procedure Gtk4ComboDelegateInsertTextCB(editable: PGtkEditable; new_text: Pgchar;
+  new_len: gint; {%H-}position: Pgint; user_data: gpointer); cdecl;
+var
+  ACombo: TGtk4ComboBox;
+  InStr: string;
+begin
+  if not Gtk4IsLiveWidgetPointer(user_data) then exit;
+  ACombo := TGtk4ComboBox(user_data);
+  if ACombo.FImFlushing then exit; { our own flush / a programmatic write }
+  if (new_text = nil) or (new_len <= 0) then exit;
+  if Assigned(ACombo.LCLObject) and (csDesigning in ACombo.LCLObject.ComponentState) then exit;
+  { key-origin gate: paste/programmatic inserts fire no key events }
+  if not ACombo.FImKeyPending then exit;
+  SetString(InStr, new_text, new_len);
+  if (ACombo.FImPreeditText <> '') and (InStr = ACombo.FImPendingKeyText)
+     and (InStr <> ACombo.FImPreeditText) then
+  begin
+    ACombo.FImDeferredText := ACombo.FImDeferredText + InStr;
+    g_signal_stop_emission_by_name(PGObject(editable), 'insert-text');
+  end;
+end;
+
+procedure Gtk4ComboDelegateInsertAfterCB(editable: PGtkEditable;
+  {%H-}new_text: Pgchar; {%H-}new_len: gint; position: Pgint;
+  user_data: gpointer); cdecl;
+begin
+  { AFTER handler: runs once the default insert completed (never for stopped
+    emissions). An accepted insert during composition is the IM commit - flush
+    the deferred raw key right after it, at the updated position. }
+  if not Gtk4IsLiveWidgetPointer(user_data) then exit;
+  if TGtk4ComboBox(user_data).FImFlushing then exit;
+  if TGtk4ComboBox(user_data).FImDeferredText = '' then exit;
+  Gtk4ComboFlushDeferred(TGtk4ComboBox(user_data), editable, position);
+end;
+
+procedure Gtk4ComboDelegateFocusLeaveCB(controller: PGtkEventController;
+  user_data: gpointer); cdecl;
+var
+  W: PGtkWidget;
+begin
+  if not Gtk4IsLiveWidgetPointer(user_data) then exit;
+  if TGtk4ComboBox(user_data).FImDeferredText = '' then exit;
+  W := gtk_event_controller_get_widget(controller);
+  if W <> nil then
+    Gtk4ComboFlushDeferred(TGtk4ComboBox(user_data), PGtkEditable(W), nil);
+end;
+
+{ ---- entry selection: deferred SelStart transaction (see TGtk4Editable) ---- }
+
+function TGtk4ComboBox.EntryOk: Boolean;
+begin
+  Result := IsValidHandle and (FEntry <> nil) and Gtk4IsWidget(FEntry) and
+    not FEntry^.in_destruction;
+end;
+
+function Gtk4ComboBoxSelStartIdleCB(AData: gpointer): gboolean; cdecl;
+begin
+  Result := G_SOURCE_REMOVE_;
+  if (AData = nil) or not Gtk4IsLiveWidgetPointer(AData) then Exit;
+  { the source is removed by our return value - do not g_source_remove it again }
+  TGtk4ComboBox(AData).FPendingSelStartIdle := 0;
+  TGtk4ComboBox(AData).ApplyPendingSelStart;
+end;
+
+procedure TGtk4ComboBox.CancelPendingSelStart;
+begin
+  FSelStartPending := False;
+  if FPendingSelStartIdle <> 0 then
+  begin
+    g_source_remove(FPendingSelStartIdle);
+    FPendingSelStartIdle := 0;
+  end;
+end;
+
+procedure TGtk4ComboBox.ApplyPendingSelStart;
+var
+  APos: Integer;
+begin
+  if not FSelStartPending then
+    Exit;
+  APos := FPendingSelStart;
+  { clear our state before the native call: set_position may re-enter the LCL }
+  CancelPendingSelStart;
+  if EntryOk then
+    PGtkEditable(FEntry)^.set_position(APos);
+end;
+
+function TGtk4ComboBox.DeliverMessage(var Msg; const AIsInputEvent: Boolean
+  ): LRESULT;
+begin
+  Result := inherited DeliverMessage(Msg, AIsInputEvent);
+  { a SelStart set by the LCL handler must be in place before GTK continues
+    with the native action. The handler may have destroyed this wrapper. }
+  if Gtk4IsLiveWidgetPointer(Self) then
+    ApplyPendingSelStart;
+end;
+
+function TGtk4ComboBox.GetEntrySelStart: Integer;
+var
+  AStart, AEnd: gint;
+begin
+  Result := 0;
+  if not EntryOk then
+    Exit;
+  if FSelStartPending then
+    Result := FPendingSelStart
+  else
+  if PGtkEditable(FEntry)^.get_selection_bounds(@AStart, @AEnd) then
+    Result := AStart
+  else
+    Result := PGtkEditable(FEntry)^.get_position;
+end;
+
+function TGtk4ComboBox.GetEntrySelLength: Integer;
+var
+  AStart, AEnd: gint;
+begin
+  Result := 0;
+  if not EntryOk then
+    Exit;
+  if FSelStartPending then
+    Exit; { a pending SelStart collapses the selection when applied }
+  if PGtkEditable(FEntry)^.get_selection_bounds(@AStart, @AEnd) then
+    Result := AEnd - AStart;
+end;
+
+procedure TGtk4ComboBox.SetEntrySelStart(AValue: Integer);
+var
+  ALen: Integer;
+begin
+  if not EntryOk then
+    Exit;
+  { clamp like GTK does on apply (characters, negative = end of text) }
+  ALen := g_utf8_strlen(gtk4_editable_get_text(FEntry), -1);
+  if AValue < 0 then
+    FPendingSelStart := ALen
+  else
+    FPendingSelStart := Min(AValue, ALen);
+  FSelStartPending := True;
+  if FPendingSelStartIdle = 0 then
+    FPendingSelStartIdle := g_idle_add_full(G_PRIORITY_HIGH,
+      @Gtk4ComboBoxSelStartIdleCB, Self, nil);
+end;
+
+procedure TGtk4ComboBox.SetEntrySelLength(AValue: Integer);
+var
+  AStart, AEnd: gint;
+begin
+  if not EntryOk then
+    Exit;
+  if FSelStartPending then
+  begin
+    { the SelStart/SelLength transaction: one select_region, no collapse }
+    AStart := FPendingSelStart;
+    CancelPendingSelStart;
+  end else
+  if not PGtkEditable(FEntry)^.get_selection_bounds(@AStart, @AEnd) then
+    AStart := PGtkEditable(FEntry)^.get_position;
+  { else AStart = start of the existing selection (GTK2/Win32 semantics) }
+  PGtkEditable(FEntry)^.select_region(AStart, AStart + AValue);
 end;
 
 function TGtk4ComboBox.CanFocus: Boolean;
@@ -11861,14 +12469,30 @@ begin
 end;
 
 procedure TGtk4ComboBox.DetachEvents;
+var
+  ADelegate: PGtkEditable;
 begin
+  CancelPendingSelStart;
+  FImDeferredText := '';
   { Disconnect signals connected to child GObjects (not FWidget).
-    DestroyWidget only disconnects FWidget signals. }
+    DestroyWidget only disconnects FWidget signals. The IM hooks live on the
+    entry's GtkText delegate; its key/focus controllers are widget-owned (GTK
+    destroys them with the GtkText) and every callback is live-guarded. }
+  if (FEntry <> nil) and Gtk4IsWidget(FEntry) then
+  begin
+    ADelegate := gtk_editable_get_delegate(PGtkEditable(FEntry));
+    if ADelegate <> nil then
+      g_signal_handlers_disconnect_matched(PGObject(ADelegate),
+        [G_SIGNAL_MATCH_DATA], 0, 0, nil, nil, Self);
+  end;
   if FEntry <> nil then
     g_signal_handlers_disconnect_matched(PGObject(FEntry),
       [G_SIGNAL_MATCH_DATA], 0, 0, nil, nil, Self);
   if FButton <> nil then
     g_signal_handlers_disconnect_matched(PGObject(FButton),
+      [G_SIGNAL_MATCH_DATA], 0, 0, nil, nil, Self);
+  if FListView <> nil then
+    g_signal_handlers_disconnect_matched(PGObject(FListView),
       [G_SIGNAL_MATCH_DATA], 0, 0, nil, nil, Self);
   if FSelectionModel <> nil then
     g_signal_handlers_disconnect_matched(PGObject(FSelectionModel),
@@ -11880,12 +12504,40 @@ begin
 end;
 
 procedure TGtk4ComboBox.InitializeWidget;
+var
+  ADelegate: PGtkEditable;
+  AKeyRec, AFocusRec: PGtkEventController;
 begin
   inherited InitializeWidget;
 
   { Entry changed → LM_CHANGED }
   g_signal_connect_data(PGObject(FEntry), 'changed',
     TGCallback(@Gtk4ECB_EntryChanged), Self, nil, G_CONNECT_DEFAULT);
+
+  { IM commit-order deferral on the entry's GtkText delegate (see
+    Gtk4ComboFlushDeferred); record-only capture key controller + preedit +
+    insert-text before/after + focus leave, as TGtk4Entry does. }
+  ADelegate := gtk_editable_get_delegate(PGtkEditable(FEntry));
+  if ADelegate <> nil then
+  begin
+    g_signal_connect_data(PGObject(ADelegate), 'insert-text',
+      TGCallback(@Gtk4ComboDelegateInsertTextCB), Self, nil, G_CONNECT_DEFAULT);
+    g_signal_connect_data(PGObject(ADelegate), 'insert-text',
+      TGCallback(@Gtk4ComboDelegateInsertAfterCB), Self, nil, [G_CONNECT_AFTER]);
+    g_signal_connect_data(PGObject(ADelegate), 'preedit-changed',
+      TGCallback(@Gtk4ComboDelegatePreeditCB), Self, nil, G_CONNECT_DEFAULT);
+    AKeyRec := gtk4_event_controller_key_new;
+    gtk_event_controller_set_propagation_phase(AKeyRec, GTK_PHASE_CAPTURE);
+    g_signal_connect_data(AKeyRec, 'key-pressed',
+      TGCallback(@Gtk4ComboDelegateKeyPressCB), Self, nil, G_CONNECT_DEFAULT);
+    g_signal_connect_data(AKeyRec, 'key-released',
+      TGCallback(@Gtk4ComboDelegateKeyReleaseCB), Self, nil, G_CONNECT_DEFAULT);
+    gtk4_widget_add_controller(PGtkWidget(ADelegate), AKeyRec);
+    AFocusRec := gtk4_event_controller_focus_new;
+    g_signal_connect_data(AFocusRec, 'leave',
+      TGCallback(@Gtk4ComboDelegateFocusLeaveCB), Self, nil, G_CONNECT_DEFAULT);
+    gtk4_widget_add_controller(PGtkWidget(ADelegate), AFocusRec);
+  end;
 
   { Button clicked → toggle popover }
   g_signal_connect_data(PGObject(FButton), 'clicked',
@@ -11894,6 +12546,10 @@ begin
   { Selection changed → update entry, close popover }
   g_signal_connect_data(PGObject(FSelectionModel), 'selection-changed',
     TGCallback(@Gtk4ECB_SelectionChanged), Self, nil, G_CONNECT_DEFAULT);
+
+  { Row activated (click / Return) → commit the dropdown transaction }
+  g_signal_connect_data(PGObject(FListView), 'activate',
+    TGCallback(@Gtk4ECB_ListActivate), Self, nil, G_CONNECT_DEFAULT);
 
   { Popover visibility → dropdown/closeup events }
   g_signal_connect_data(PGObject(FPopover), 'notify::visible',
