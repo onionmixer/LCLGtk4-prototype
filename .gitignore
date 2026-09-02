@@ -14,3 +14,16 @@ gtk4test/gtk4test.res
 gtk4test/gtk3_stubs.o
 gtk4test.o
 gtk4test.or
+
+# FPC / Lazarus compiler output
+lib/
+*.rsj
+*.a
+*.dbg
+
+# Lazarus per-user session state (not project state; *.lpi is tracked)
+*.lps
+
+# Editor and rename leftovers
+*.old
+*~
