@@ -1,0 +1,12 @@
+done gtk4 custom ok=0
+done gtk4 scrollbox ok=0
+done gtk4 memo ok=0
+done gtk4 listbox ok=0
+done gtk4 listview ok=0
+done gtk4 treeviewnohint ok=0
+done gtk4 synedit ok=0
+done gtk4 groupbox ok=0
+done gtk4 pagecontrol ok=0
+done gtk4 formscroll ok=0
+done gtk4 formmenu ok=0
+ALLDONE

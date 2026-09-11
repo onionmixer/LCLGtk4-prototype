@@ -1,0 +1,19 @@
+     1 START control=form range=hv mode=
+
+(process:228978): GLib-CRITICAL **: 15:25:04.301: g_regex_match_full: assertion 'string != NULL' failed
+   810 SNAP show     cls=TGtk4Window widget=GtkWindow alloc=[0,0 800x600] req=-1x-1 central=GtkFixed alloc=[0,0 800x600] req=-1x-1 parent=GtkViewport alloc=[0,0 800x600] hadj=0/800/800 vadj=0/600/600 lcl=800x600 client=800x600 ptr=000000003AC4E240/000000003AC2F650
+  1217 SNAP t-show   cls=TGtk4Window widget=GtkWindow alloc=[0,0 800x600] req=-1x-1 central=GtkFixed alloc=[0,0 800x600] req=-1x-1 parent=GtkViewport alloc=[0,0 800x600] hadj=0/800/800 vadj=0/600/600 lcl=800x600 client=800x600 ptr=000000003AC4E240/000000003AC2F650
+  1620 SNAP scroll   cls=TGtk4Window widget=GtkWindow alloc=[0,0 800x600] req=-1x-1 central=GtkFixed alloc=[0,0 800x600] req=-1x-1 parent=GtkViewport alloc=[0,0 800x600] hadj=0/800/800 vadj=0/600/600 lcl=800x600 client=800x600 ptr=000000003AC4E240/000000003AC2F650
+  2027 SNAP t-scroll cls=TGtk4Window widget=GtkWindow alloc=[0,0 800x600] req=-1x-1 central=GtkFixed alloc=[0,0 800x600] req=-1x-1 parent=GtkViewport alloc=[0,0 800x600] hadj=0/800/800 vadj=0/600/600 lcl=800x600 client=800x600 ptr=000000003AC4E240/000000003AC2F650
+  2436 SNAP shrink   cls=TGtk4Window widget=GtkWindow alloc=[0,0 800x500] req=-1x-1 central=GtkFixed alloc=[0,0 800x500] req=-1x-1 parent=GtkViewport alloc=[0,0 800x500] hadj=0/800/800 vadj=0/500/500 lcl=800x500 client=800x500 ptr=000000003AC4E240/000000003AC2F650
+  2842 SNAP t-shrink cls=TGtk4Window widget=GtkWindow alloc=[0,0 800x500] req=-1x-1 central=GtkFixed alloc=[0,0 800x500] req=-1x-1 parent=GtkViewport alloc=[0,0 800x500] hadj=0/800/800 vadj=0/500/500 lcl=800x500 client=800x500 ptr=000000003AC4E240/000000003AC2F650
+  3245 SNAP same     cls=TGtk4Window widget=GtkWindow alloc=[0,0 800x500] req=-1x-1 central=GtkFixed alloc=[0,0 800x500] req=-1x-1 parent=GtkViewport alloc=[0,0 800x500] hadj=0/800/800 vadj=0/500/500 lcl=800x500 client=800x500 ptr=000000003AC4E240/000000003AC2F650
+  3653 SNAP t-same   cls=TGtk4Window widget=GtkWindow alloc=[0,0 800x500] req=-1x-1 central=GtkFixed alloc=[0,0 800x500] req=-1x-1 parent=GtkViewport alloc=[0,0 800x500] hadj=0/800/800 vadj=0/500/500 lcl=800x500 client=800x500 ptr=000000003AC4E240/000000003AC2F650
+  4062 SNAP grow     cls=TGtk4Window widget=GtkWindow alloc=[0,0 800x600] req=-1x-1 central=GtkFixed alloc=[0,0 800x600] req=-1x-1 parent=GtkViewport alloc=[0,0 800x600] hadj=0/800/800 vadj=0/600/600 lcl=800x600 client=800x600 ptr=000000003AC4E240/000000003AC2F650
+  4469 SNAP t-grow   cls=TGtk4Window widget=GtkWindow alloc=[0,0 800x600] req=-1x-1 central=GtkFixed alloc=[0,0 800x600] req=-1x-1 parent=GtkViewport alloc=[0,0 800x600] hadj=0/800/800 vadj=0/600/600 lcl=800x600 client=800x600 ptr=000000003AC4E240/000000003AC2F650
+  4876 SNAP wider    cls=TGtk4Window widget=GtkWindow alloc=[0,0 850x600] req=-1x-1 central=GtkFixed alloc=[0,0 850x600] req=-1x-1 parent=GtkViewport alloc=[0,0 850x600] hadj=0/850/850 vadj=0/600/600 lcl=850x600 client=850x600 ptr=000000003AC4E240/000000003AC2F650
+  5282 SNAP t-wider  cls=TGtk4Window widget=GtkWindow alloc=[0,0 850x600] req=-1x-1 central=GtkFixed alloc=[0,0 850x600] req=-1x-1 parent=GtkViewport alloc=[0,0 850x600] hadj=0/850/850 vadj=0/600/600 lcl=850x600 client=850x600 ptr=000000003AC4E240/000000003AC2F650
+  5685 SNAP scroll2  cls=TGtk4Window widget=GtkWindow alloc=[0,0 850x600] req=-1x-1 central=GtkFixed alloc=[0,0 850x600] req=-1x-1 parent=GtkViewport alloc=[0,0 850x600] hadj=0/850/850 vadj=0/600/600 lcl=850x600 client=850x600 ptr=000000003AC4E240/000000003AC2F650
+  6091 SNAP t-scroll2 cls=TGtk4Window widget=GtkWindow alloc=[0,0 850x600] req=-1x-1 central=GtkFixed alloc=[0,0 850x600] req=-1x-1 parent=GtkViewport alloc=[0,0 850x600] hadj=0/850/850 vadj=0/600/600 lcl=850x600 client=850x600 ptr=000000003AC4E240/000000003AC2F650
+  6091 DONE
+EXIT=0

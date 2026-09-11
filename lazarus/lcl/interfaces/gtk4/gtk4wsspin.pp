@@ -91,11 +91,27 @@ end;
 
 class function TGtk4WSCustomFloatSpinEdit.GetValue(
   const ACustomFloatSpinEdit: TCustomFloatSpinEdit): Double;
+var
+  StrValue: String;
+  DecSeparator: Char;
 begin
   Result := 0;
   if not WSCheckHandleAllocated(ACustomFloatSpinEdit, 'GetValue') then
     Exit;
-  Result := TGtk4SpinEdit(ACustomFloatSpinEdit.Handle).Value;
+  { Same contract as gtk2 (gtk2wsspin.pp GetValue): the LCL value follows the
+    entry TEXT; this getter must not touch the widget. The previous
+    implementation ran gtk_spin_button_update here, which rewrites the text
+    and emits 'changed' -> CM_TEXTCHANGED -> TextChanged -> Value -> GetValue
+    ... (unbounded recursion when the text is transiently empty, e.g. after
+    Delete/BackSpace). GTK itself runs update on activate, focus-out, the
+    spin buttons and the change-value key bindings. }
+  StrValue := TGtk4SpinEdit(ACustomFloatSpinEdit.Handle).Text;
+  DecSeparator := DefaultFormatSettings.DecimalSeparator;
+  if DecSeparator <> '.' then
+    StrValue := StringReplace(StrValue, '.', DecSeparator, [rfReplaceAll]);
+  if DecSeparator <> ',' then
+    StrValue := StringReplace(StrValue, ',', DecSeparator, [rfReplaceAll]);
+  Result := ACustomFloatSpinEdit.StrToValue(StrValue);
 end;
 
 class procedure TGtk4WSCustomFloatSpinEdit.SetSelStart(
@@ -141,7 +157,8 @@ begin
       ASpin.SetRange(ASpinEdit.Value, ASpinEdit.Value)
     else
     begin
-      if ASpinEdit.MaxValue >= ASpinEdit.MinValue then
+      { LCL (GetLimitedValue) and gtk2: Max = Min means unlimited }
+      if ASpinEdit.MaxValue > ASpinEdit.MinValue then
       begin
         AMin := ASpinEdit.MinValue;
         AMax := ASpinEdit.MaxValue;
@@ -188,12 +205,19 @@ var
   ASpin: TGtk4SpinEdit;
   AMin: Double;
   AMax: Double;
+  AValue: Double;
 begin
   if not WSCheckHandleAllocated(ACustomFloatSpinEdit, 'UpdateControl') then
     Exit;
   ASpin := TGtk4SpinEdit(ACustomFloatSpinEdit.Handle);
+  { Read the LCL value BEFORE touching digits/step/range: changing the digits
+    makes GTK re-emit the formatted text from the (possibly stale) adjustment,
+    and that 'changed' notification would replace the LCL value with the
+    parsed native text before it is assigned below. }
+  AValue := ACustomFloatSpinEdit.Value;
 
-  if ACustomFloatSpinEdit.MaxValue >= ACustomFloatSpinEdit.MinValue then
+  { LCL (GetLimitedValue) and gtk2: Max = Min means unlimited }
+  if ACustomFloatSpinEdit.MaxValue > ACustomFloatSpinEdit.MinValue then
   begin
     AMin := ACustomFloatSpinEdit.MinValue;
     AMax := ACustomFloatSpinEdit.MaxValue;
@@ -209,11 +233,11 @@ begin
     ASpin.Step := ACustomFloatSpinEdit.Increment;
     { Set range before value so value is within bounds }
     ASpin.SetRange(AMin, AMax);
-    ASpin.Value := ACustomFloatSpinEdit.Value;
+    ASpin.Value := AValue;
     ASpin.ReadOnly := ACustomFloatSpinEdit.ReadOnly;
     { When ReadOnly, collapse adjustment range to disable spin buttons }
     if ACustomFloatSpinEdit.ReadOnly then
-      ASpin.SetRange(ACustomFloatSpinEdit.Value, ACustomFloatSpinEdit.Value);
+      ASpin.SetRange(AValue, AValue);
   finally
     ASpin.EndUpdate;
   end;

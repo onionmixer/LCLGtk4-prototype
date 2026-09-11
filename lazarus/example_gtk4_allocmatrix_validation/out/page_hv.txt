@@ -1,0 +1,19 @@
+     0 START control=page range=hv mode=
+
+(process:206981): GLib-CRITICAL **: 15:16:36.492: g_regex_match_full: assertion 'string != NULL' failed
+   820 SNAP show     cls=TGtk4Page widget=GtkBox alloc=[-1,0 600x363] req=600x363 central=GtkFixed alloc=[0,0 600x363] req=-1x-1 parent=GtkBox alloc=[-1,0 600x363] lcl=600x363 client=600x363
+  1228 SNAP t-show   cls=TGtk4Page widget=GtkBox alloc=[-1,0 600x363] req=600x363 central=GtkFixed alloc=[0,0 600x363] req=-1x-1 parent=GtkBox alloc=[-1,0 600x363] lcl=600x363 client=600x363
+  1630 SNAP scroll   cls=TGtk4Page widget=GtkBox alloc=[-1,0 600x363] req=600x363 central=GtkFixed alloc=[0,0 600x363] req=-1x-1 parent=GtkBox alloc=[-1,0 600x363] lcl=600x363 client=600x363
+  2037 SNAP t-scroll cls=TGtk4Page widget=GtkBox alloc=[-1,0 600x363] req=600x363 central=GtkFixed alloc=[0,0 600x363] req=-1x-1 parent=GtkBox alloc=[-1,0 600x363] lcl=600x363 client=600x363
+  2440 SNAP shrink   cls=TGtk4Page widget=GtkBox alloc=[-1,0 600x363] req=600x363 central=GtkFixed alloc=[0,0 600x363] req=-1x-1 parent=GtkBox alloc=[-1,0 600x363] lcl=600x363 client=600x363
+  2846 SNAP t-shrink cls=TGtk4Page widget=GtkBox alloc=[-1,0 600x363] req=600x363 central=GtkFixed alloc=[0,0 600x363] req=-1x-1 parent=GtkBox alloc=[-1,0 600x363] lcl=600x363 client=600x363
+  3252 SNAP same     cls=TGtk4Page widget=GtkBox alloc=[0,0 600x363] req=600x363 central=GtkFixed alloc=[0,0 600x363] req=-1x-1 parent=GtkBox alloc=[0,0 600x363] lcl=600x363 client=600x363
+  3659 SNAP t-same   cls=TGtk4Page widget=GtkBox alloc=[-1,0 600x363] req=600x363 central=GtkFixed alloc=[0,0 600x363] req=-1x-1 parent=GtkBox alloc=[-1,0 600x363] lcl=600x363 client=600x363
+  4061 SNAP grow     cls=TGtk4Page widget=GtkBox alloc=[-1,0 600x363] req=600x363 central=GtkFixed alloc=[0,0 600x363] req=-1x-1 parent=GtkBox alloc=[-1,0 600x363] lcl=600x363 client=600x363
+  4468 SNAP t-grow   cls=TGtk4Page widget=GtkBox alloc=[-1,0 600x363] req=600x363 central=GtkFixed alloc=[0,0 600x363] req=-1x-1 parent=GtkBox alloc=[-1,0 600x363] lcl=600x363 client=600x363
+  4871 SNAP wider    cls=TGtk4Page widget=GtkBox alloc=[-1,0 600x363] req=600x363 central=GtkFixed alloc=[0,0 600x363] req=-1x-1 parent=GtkBox alloc=[-1,0 600x363] lcl=600x363 client=600x363
+  5277 SNAP t-wider  cls=TGtk4Page widget=GtkBox alloc=[-1,0 600x363] req=600x363 central=GtkFixed alloc=[0,0 600x363] req=-1x-1 parent=GtkBox alloc=[-1,0 600x363] lcl=600x363 client=600x363
+  5680 SNAP scroll2  cls=TGtk4Page widget=GtkBox alloc=[-1,0 600x363] req=600x363 central=GtkFixed alloc=[0,0 600x363] req=-1x-1 parent=GtkBox alloc=[-1,0 600x363] lcl=600x363 client=600x363
+  6087 SNAP t-scroll2 cls=TGtk4Page widget=GtkBox alloc=[-1,0 600x363] req=600x363 central=GtkFixed alloc=[0,0 600x363] req=-1x-1 parent=GtkBox alloc=[-1,0 600x363] lcl=600x363 client=600x363
+  6087 DONE
+EXIT=0

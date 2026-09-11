@@ -1,0 +1,9 @@
+**Not acceptable as-is: one lifetime defect.**
+
+- **[P2] `FDelegateKeyCtl` can dangle after native-first destruction.** [gtk4widgets.pas:6863](/mnt/STORAGE16T/Workspace_STORAGE16T/LCL_GTK4/lazarus/lcl/interfaces/gtk4/gtk4widgets.pas:6863) disconnects through a borrowed pointer saved after transferring controller ownership to the delegate. Normal wrapper destruction calls `DetachEvents` early enough, but native-first destruction is explicitly supported by [destroy_event:4559](/mnt/STORAGE16T/Workspace_STORAGE16T/LCL_GTK4/lazarus/lcl/interfaces/gtk4/gtk4widgets.pas:4559), which clears only `FWidget`. GTK disposes the delegate at [gtkentry.c:1515](/mnt/STORAGE16T/Workspace_STORAGE16T/LCL_GTK4/gtk-4.6.9/gtk/gtkentry.c:1515), removes its controllers during finalization at [gtkwidget.c:7617](/mnt/STORAGE16T/Workspace_STORAGE16T/LCL_GTK4/gtk-4.6.9/gtk/gtkwidget.c:7617), and unrefs them at [gtkwidget.c:11496](/mnt/STORAGE16T/Workspace_STORAGE16T/LCL_GTK4/gtk-4.6.9/gtk/gtkwidget.c:11496). Subsequent wrapper destruction therefore passes freed memory to GLib. Retain an owned controller reference until disconnection, or arrange weak-pointer invalidation.
+
+No additional defects found in the requested Pascal constructs, §15.8 ordering, event-pointer deduplication, or event-reference cleanup.
+
+For the requested existing mapping gaps: `Multi_key`, dead-key keysyms, and legacy non-Latin character keysyms return `VK_UNKNOWN` through [gtk4procs.pas:666](/mnt/STORAGE16T/Workspace_STORAGE16T/LCL_GTK4/lazarus/lcl/interfaces/gtk4/gtk4procs.pas:666); GtkText’s IM can consume them. These are existing IM/text-path exclusions. I found no unmapped built-in GtkText nontext shortcut.
+
+Static review only; no files changed or builds run.

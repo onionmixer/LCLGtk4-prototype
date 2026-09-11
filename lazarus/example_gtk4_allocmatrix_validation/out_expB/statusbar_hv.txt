@@ -1,0 +1,19 @@
+     0 START control=statusbar range=hv mode=
+
+(process:236948): GLib-CRITICAL **: 15:28:08.258: g_regex_match_full: assertion 'string != NULL' failed
+   810 SNAP show     cls=TGtk4StatusBar widget=GtkBox alloc=[20,20 600x25] req=600x25 central=GtkBox alloc=[0,0 600x25] req=-1x-1 parent=GtkBox alloc=[20,20 600x25] lcl=600x25 client=600x25 ptr=000000002ECD9950/000000002ECD9AD0
+  1218 SNAP t-show   cls=TGtk4StatusBar widget=GtkBox alloc=[20,20 600x25] req=600x25 central=GtkBox alloc=[0,0 600x0] req=-1x-1 parent=GtkBox alloc=[20,20 600x25] lcl=600x25 client=600x25 ptr=000000002ECD9950/000000002ECD9AD0
+  1621 SNAP scroll   cls=TGtk4StatusBar widget=GtkBox alloc=[20,20 600x25] req=600x25 central=GtkBox alloc=[0,0 600x0] req=-1x-1 parent=GtkBox alloc=[20,20 600x25] lcl=600x25 client=600x25 ptr=000000002ECD9950/000000002ECD9AD0
+  2028 SNAP t-scroll cls=TGtk4StatusBar widget=GtkBox alloc=[20,20 600x25] req=600x25 central=GtkBox alloc=[0,0 600x0] req=-1x-1 parent=GtkBox alloc=[20,20 600x25] lcl=600x25 client=600x25 ptr=000000002ECD9950/000000002ECD9AD0
+  2431 SNAP shrink   cls=TGtk4StatusBar widget=GtkBox alloc=[20,20 600x25] req=600x25 central=GtkBox alloc=[0,0 600x0] req=-1x-1 parent=GtkBox alloc=[20,20 600x25] lcl=600x25 client=600x25 ptr=000000002ECD9950/000000002ECD9AD0
+  2838 SNAP t-shrink cls=TGtk4StatusBar widget=GtkBox alloc=[20,20 600x25] req=600x25 central=GtkBox alloc=[0,0 600x0] req=-1x-1 parent=GtkBox alloc=[20,20 600x25] lcl=600x25 client=600x25 ptr=000000002ECD9950/000000002ECD9AD0
+  3245 SNAP same     cls=TGtk4StatusBar widget=GtkBox alloc=[20,20 600x25] req=600x25 central=GtkBox alloc=[0,0 600x25] req=-1x-1 parent=GtkBox alloc=[20,20 600x25] lcl=600x25 client=600x25 ptr=000000002ECD9950/000000002ECD9AD0
+  3653 SNAP t-same   cls=TGtk4StatusBar widget=GtkBox alloc=[20,20 600x25] req=600x25 central=GtkBox alloc=[0,0 600x0] req=-1x-1 parent=GtkBox alloc=[20,20 600x25] lcl=600x25 client=600x25 ptr=000000002ECD9950/000000002ECD9AD0
+  4056 SNAP grow     cls=TGtk4StatusBar widget=GtkBox alloc=[20,20 600x25] req=600x25 central=GtkBox alloc=[0,0 600x0] req=-1x-1 parent=GtkBox alloc=[20,20 600x25] lcl=600x25 client=600x25 ptr=000000002ECD9950/000000002ECD9AD0
+  4463 SNAP t-grow   cls=TGtk4StatusBar widget=GtkBox alloc=[20,20 600x25] req=600x25 central=GtkBox alloc=[0,0 600x0] req=-1x-1 parent=GtkBox alloc=[20,20 600x25] lcl=600x25 client=600x25 ptr=000000002ECD9950/000000002ECD9AD0
+  4869 SNAP wider    cls=TGtk4StatusBar widget=GtkBox alloc=[20,20 650x25] req=650x25 central=GtkBox alloc=[0,0 650x25] req=-1x-1 parent=GtkBox alloc=[20,20 650x25] lcl=650x25 client=650x25 ptr=000000002ECD9950/000000002ECD9AD0
+  5276 SNAP t-wider  cls=TGtk4StatusBar widget=GtkBox alloc=[20,20 650x25] req=650x25 central=GtkBox alloc=[0,0 650x0] req=-1x-1 parent=GtkBox alloc=[20,20 650x25] lcl=650x25 client=650x25 ptr=000000002ECD9950/000000002ECD9AD0
+  5678 SNAP scroll2  cls=TGtk4StatusBar widget=GtkBox alloc=[20,20 650x25] req=650x25 central=GtkBox alloc=[0,0 650x0] req=-1x-1 parent=GtkBox alloc=[20,20 650x25] lcl=650x25 client=650x25 ptr=000000002ECD9950/000000002ECD9AD0
+  6084 SNAP t-scroll2 cls=TGtk4StatusBar widget=GtkBox alloc=[20,20 650x25] req=650x25 central=GtkBox alloc=[0,0 650x0] req=-1x-1 parent=GtkBox alloc=[20,20 650x25] lcl=650x25 client=650x25 ptr=000000002ECD9950/000000002ECD9AD0
+  6084 DONE
+EXIT=0

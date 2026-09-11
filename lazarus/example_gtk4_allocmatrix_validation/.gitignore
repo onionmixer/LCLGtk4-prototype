@@ -1,0 +1,5 @@
+allocmatrix_gtk4
+allocmatrix_gtk4_*
+lib/
+*.log
+work/

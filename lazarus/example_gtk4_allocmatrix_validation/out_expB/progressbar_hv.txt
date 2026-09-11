@@ -1,0 +1,19 @@
+     1 START control=progressbar range=hv mode=
+
+(process:236090): GLib-CRITICAL **: 15:27:46.077: g_regex_match_full: assertion 'string != NULL' failed
+   811 SNAP show     cls=TGtk4ProgressBar widget=GtkBox alloc=[20,20 600x400] req=600x400 central=GtkProgressBar alloc=[0,0 600x400] req=600x400 parent=GtkBox alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=0000000017872950/0000000017844180
+  1219 SNAP t-show   cls=TGtk4ProgressBar widget=GtkBox alloc=[20,20 600x400] req=600x400 central=GtkProgressBar alloc=[0,0 600x400] req=600x400 parent=GtkBox alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=0000000017872950/0000000017844180
+  1622 SNAP scroll   cls=TGtk4ProgressBar widget=GtkBox alloc=[20,20 600x400] req=600x400 central=GtkProgressBar alloc=[0,0 600x400] req=600x400 parent=GtkBox alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=0000000017872950/0000000017844180
+  2030 SNAP t-scroll cls=TGtk4ProgressBar widget=GtkBox alloc=[20,20 600x400] req=600x400 central=GtkProgressBar alloc=[0,0 600x400] req=600x400 parent=GtkBox alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=0000000017872950/0000000017844180
+  2436 SNAP shrink   cls=TGtk4ProgressBar widget=GtkBox alloc=[20,20 600x300] req=600x300 central=GtkProgressBar alloc=[0,0 600x300] req=600x400 parent=GtkBox alloc=[20,20 600x300] lcl=600x300 client=600x300 ptr=0000000017872950/0000000017844180
+  2844 SNAP t-shrink cls=TGtk4ProgressBar widget=GtkBox alloc=[20,20 600x300] req=600x300 central=GtkProgressBar alloc=[0,0 600x400] req=600x400 parent=GtkBox alloc=[20,20 600x300] lcl=600x300 client=600x300 ptr=0000000017872950/0000000017844180
+  3251 SNAP same     cls=TGtk4ProgressBar widget=GtkBox alloc=[20,20 600x300] req=600x300 central=GtkProgressBar alloc=[0,0 600x300] req=600x400 parent=GtkBox alloc=[20,20 600x300] lcl=600x300 client=600x300 ptr=0000000017872950/0000000017844180
+  3658 SNAP t-same   cls=TGtk4ProgressBar widget=GtkBox alloc=[20,20 600x300] req=600x300 central=GtkProgressBar alloc=[0,0 600x400] req=600x400 parent=GtkBox alloc=[20,20 600x300] lcl=600x300 client=600x300 ptr=0000000017872950/0000000017844180
+  4065 SNAP grow     cls=TGtk4ProgressBar widget=GtkBox alloc=[20,20 600x400] req=600x400 central=GtkProgressBar alloc=[0,0 600x400] req=600x400 parent=GtkBox alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=0000000017872950/0000000017844180
+  4472 SNAP t-grow   cls=TGtk4ProgressBar widget=GtkBox alloc=[20,20 600x400] req=600x400 central=GtkProgressBar alloc=[0,0 600x400] req=600x400 parent=GtkBox alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=0000000017872950/0000000017844180
+  4880 SNAP wider    cls=TGtk4ProgressBar widget=GtkBox alloc=[20,20 650x400] req=650x400 central=GtkProgressBar alloc=[0,0 650x400] req=600x400 parent=GtkBox alloc=[20,20 650x400] lcl=650x400 client=650x400 ptr=0000000017872950/0000000017844180
+  5288 SNAP t-wider  cls=TGtk4ProgressBar widget=GtkBox alloc=[20,20 650x400] req=650x400 central=GtkProgressBar alloc=[0,0 650x400] req=600x400 parent=GtkBox alloc=[20,20 650x400] lcl=650x400 client=650x400 ptr=0000000017872950/0000000017844180
+  5691 SNAP scroll2  cls=TGtk4ProgressBar widget=GtkBox alloc=[20,20 650x400] req=650x400 central=GtkProgressBar alloc=[0,0 650x400] req=600x400 parent=GtkBox alloc=[20,20 650x400] lcl=650x400 client=650x400 ptr=0000000017872950/0000000017844180
+  6098 SNAP t-scroll2 cls=TGtk4ProgressBar widget=GtkBox alloc=[20,20 650x400] req=650x400 central=GtkProgressBar alloc=[0,0 650x400] req=600x400 parent=GtkBox alloc=[20,20 650x400] lcl=650x400 client=650x400 ptr=0000000017872950/0000000017844180
+  6098 DONE
+EXIT=0

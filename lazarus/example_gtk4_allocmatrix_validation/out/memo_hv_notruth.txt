@@ -1,0 +1,19 @@
+     1 START control=memo range=hv mode=notruth
+
+(process:210017): GLib-CRITICAL **: 15:17:50.328: g_regex_match_full: assertion 'string != NULL' failed
+   825 SNAP show     cls=TGtk4Memo widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkTextView alloc=[0,0 600x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/2429/598 vadj=0/6416/398 lcl=600x400 client=600x400
+  1227 SNAP t-show   cls=TGtk4Memo widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkTextView alloc=[0,0 600x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/2429/598 vadj=0/6416/398 lcl=600x400 client=600x400
+  1634 SNAP scroll   cls=TGtk4Memo widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkTextView alloc=[0,0 600x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/2429/598 vadj=0/6416/398 lcl=600x400 client=600x400
+  2041 SNAP t-scroll cls=TGtk4Memo widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkTextView alloc=[0,0 600x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/2429/598 vadj=0/6416/398 lcl=600x400 client=600x400
+  2444 SNAP shrink   cls=TGtk4Memo widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkTextView alloc=[0,0 600x300] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x300] hadj=0/2429/598 vadj=0/6416/298 lcl=600x300 client=600x300
+  2849 SNAP t-shrink cls=TGtk4Memo widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkTextView alloc=[0,0 600x300] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x300] hadj=0/2429/598 vadj=0/6416/298 lcl=600x300 client=600x300
+  3250 SNAP same     cls=TGtk4Memo widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkTextView alloc=[0,0 600x300] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x300] hadj=0/2429/598 vadj=0/6416/298 lcl=600x300 client=600x300
+  3651 SNAP t-same   cls=TGtk4Memo widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkTextView alloc=[0,0 600x300] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x300] hadj=0/2429/598 vadj=0/6416/298 lcl=600x300 client=600x300
+  4057 SNAP grow     cls=TGtk4Memo widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkTextView alloc=[0,0 600x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/2429/598 vadj=0/6416/398 lcl=600x400 client=600x400
+  4464 SNAP t-grow   cls=TGtk4Memo widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkTextView alloc=[0,0 600x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/2429/598 vadj=0/6416/398 lcl=600x400 client=600x400
+  4869 SNAP wider    cls=TGtk4Memo widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkTextView alloc=[0,0 650x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 650x400] hadj=0/2429/648 vadj=0/6416/398 lcl=650x400 client=650x400
+  5276 SNAP t-wider  cls=TGtk4Memo widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkTextView alloc=[0,0 650x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 650x400] hadj=0/2429/648 vadj=0/6416/398 lcl=650x400 client=650x400
+  5685 SNAP scroll2  cls=TGtk4Memo widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkTextView alloc=[0,0 650x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 650x400] hadj=0/2429/648 vadj=0/6416/398 lcl=650x400 client=650x400
+  6090 SNAP t-scroll2 cls=TGtk4Memo widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkTextView alloc=[0,0 650x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 650x400] hadj=0/2429/648 vadj=0/6416/398 lcl=650x400 client=650x400
+  6090 DONE
+EXIT=0

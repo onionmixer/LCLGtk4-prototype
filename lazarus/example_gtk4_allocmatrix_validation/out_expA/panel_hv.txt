@@ -1,0 +1,19 @@
+     1 START control=panel range=hv mode=
+
+(process:224085): GLib-CRITICAL **: 15:23:20.584: g_regex_match_full: assertion 'string != NULL' failed
+   816 SNAP show     cls=TGtk4Panel widget=GtkOverlay alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 600x400] req=-1x-1 parent=GtkOverlay alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=000000001B9DA910/000000001B9DAAA0
+  1224 SNAP t-show   cls=TGtk4Panel widget=GtkOverlay alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 600x400] req=-1x-1 parent=GtkOverlay alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=000000001B9DA910/000000001B9DAAA0
+  1627 SNAP scroll   cls=TGtk4Panel widget=GtkOverlay alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 600x400] req=-1x-1 parent=GtkOverlay alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=000000001B9DA910/000000001B9DAAA0
+  2033 SNAP t-scroll cls=TGtk4Panel widget=GtkOverlay alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 600x400] req=-1x-1 parent=GtkOverlay alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=000000001B9DA910/000000001B9DAAA0
+  2442 SNAP shrink   cls=TGtk4Panel widget=GtkOverlay alloc=[20,20 600x300] req=600x300 central=GtkFixed alloc=[0,0 600x300] req=-1x-1 parent=GtkOverlay alloc=[20,20 600x300] lcl=600x300 client=600x300 ptr=000000001B9DA910/000000001B9DAAA0
+  2849 SNAP t-shrink cls=TGtk4Panel widget=GtkOverlay alloc=[20,20 600x300] req=600x300 central=GtkFixed alloc=[0,0 600x300] req=-1x-1 parent=GtkOverlay alloc=[20,20 600x300] lcl=600x300 client=600x300 ptr=000000001B9DA910/000000001B9DAAA0
+  3256 SNAP same     cls=TGtk4Panel widget=GtkOverlay alloc=[20,20 600x300] req=600x300 central=GtkFixed alloc=[0,0 600x300] req=-1x-1 parent=GtkOverlay alloc=[20,20 600x300] lcl=600x300 client=600x300 ptr=000000001B9DA910/000000001B9DAAA0
+  3663 SNAP t-same   cls=TGtk4Panel widget=GtkOverlay alloc=[20,20 600x300] req=600x300 central=GtkFixed alloc=[0,0 600x300] req=-1x-1 parent=GtkOverlay alloc=[20,20 600x300] lcl=600x300 client=600x300 ptr=000000001B9DA910/000000001B9DAAA0
+  4072 SNAP grow     cls=TGtk4Panel widget=GtkOverlay alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 600x400] req=-1x-1 parent=GtkOverlay alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=000000001B9DA910/000000001B9DAAA0
+  4478 SNAP t-grow   cls=TGtk4Panel widget=GtkOverlay alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 600x400] req=-1x-1 parent=GtkOverlay alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=000000001B9DA910/000000001B9DAAA0
+  4886 SNAP wider    cls=TGtk4Panel widget=GtkOverlay alloc=[20,20 650x400] req=650x400 central=GtkFixed alloc=[0,0 650x400] req=-1x-1 parent=GtkOverlay alloc=[20,20 650x400] lcl=650x400 client=650x400 ptr=000000001B9DA910/000000001B9DAAA0
+  5294 SNAP t-wider  cls=TGtk4Panel widget=GtkOverlay alloc=[20,20 650x400] req=650x400 central=GtkFixed alloc=[0,0 650x400] req=-1x-1 parent=GtkOverlay alloc=[20,20 650x400] lcl=650x400 client=650x400 ptr=000000001B9DA910/000000001B9DAAA0
+  5697 SNAP scroll2  cls=TGtk4Panel widget=GtkOverlay alloc=[20,20 650x400] req=650x400 central=GtkFixed alloc=[0,0 650x400] req=-1x-1 parent=GtkOverlay alloc=[20,20 650x400] lcl=650x400 client=650x400 ptr=000000001B9DA910/000000001B9DAAA0
+  6105 SNAP t-scroll2 cls=TGtk4Panel widget=GtkOverlay alloc=[20,20 650x400] req=650x400 central=GtkFixed alloc=[0,0 650x400] req=-1x-1 parent=GtkOverlay alloc=[20,20 650x400] lcl=650x400 client=650x400 ptr=000000001B9DA910/000000001B9DAAA0
+  6105 DONE
+EXIT=0

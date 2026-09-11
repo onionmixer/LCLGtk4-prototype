@@ -1,0 +1,41 @@
+=== strict (scroll classes) on /mnt/STORAGE16T/Workspace_STORAGE16T/LCL_GTK4/lazarus/example_gtk4_allocmatrix_validation/out_fixed
+SUMMARY (problem steps per log: STALE/FILL/NOSCROLL/NOSNAP/INCOMPLETE):
+  checklist_hv_notruth      0
+  checklist_hv_truth        0
+  custom_hv_hidden          0
+  custom_hv_inactivepage    0
+  custom_hv_late            0
+  custom_hv_notruth         0
+  custom_hv_notruth_gl      0
+  custom_hv_rehide          0
+  custom_hv_truth           0
+  custom_hv_zero            0
+  listbox_hv_notruth        0
+  listbox_hv_truth          0
+  listboxgrid_hv_notruth    0
+  listboxgrid_hv_truth      0
+  listview_hv_notruth       0
+  listview_hv_truth         0
+  listviewicon_hv_notruth   0
+  listviewicon_hv_truth     0
+  memo_hv_notruth           0
+  memo_hv_truth             0
+  memowrap_hv_notruth       0
+  memowrap_hv_truth         0
+  scrollbox_hv_hidden       0
+  scrollbox_hv_inactivepage 0
+  scrollbox_hv_late         0
+  scrollbox_hv_notruth      0
+  scrollbox_hv_rehide       0
+  scrollbox_hv_truth        0
+  scrollbox_hv_zero         0
+  synedit_hv_notruth        0
+  synedit_hv_truth          0
+  treeview_hv_notruth       0
+  treeview_hv_truth         0
+strict exit=0
+=== compare out_v2 -> /mnt/STORAGE16T/Workspace_STORAGE16T/LCL_GTK4/lazarus/example_gtk4_allocmatrix_validation/out_fixed (logs with differing rows)
+custom_hv_hidden custom_hv_inactivepage custom_hv_late custom_hv_notruth custom_hv_notruth_gl custom_hv_rehide custom_hv_truth custom_hv_zero listview_hv_notruth listview_hv_truth listviewicon_hv_notruth listviewicon_hv_truth memowrap_hv_notruth memowrap_hv_truth scrollbox_hv_hidden scrollbox_hv_inactivepage scrollbox_hv_late scrollbox_hv_notruth scrollbox_hv_rehide scrollbox_hv_truth scrollbox_hv_zero synedit_hv_notruth synedit_hv_truth treeview_hv_notruth treeview_hv_truth 
+=== compare out -> /mnt/STORAGE16T/Workspace_STORAGE16T/LCL_GTK4/lazarus/example_gtk4_allocmatrix_validation/out_fixed_all (logs with differing rows)
+(missing) checklist_hv custom_hv custom_hv_notruth custom_v listview_hv listview_hv_notruth memo_hv memo_hv_notruth scrollbox_hv scrollbox_hv_notruth scrollbox_v 
+GATEDONE

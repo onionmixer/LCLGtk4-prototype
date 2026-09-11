@@ -1,0 +1,19 @@
+     0 START control=listview range=hv mode=notruth
+
+(process:210769): GLib-CRITICAL **: 15:18:05.113: g_regex_match_full: assertion 'string != NULL' failed
+   990 SNAP show     cls=TGtk4ListView widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkColumnView alloc=[0,0 585x385] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/1400/585 vadj=0/9600/360 lcl=600x400 client=600x400
+  1393 SNAP t-show   cls=TGtk4ListView widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkColumnView alloc=[0,0 585x385] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/1400/585 vadj=0/9600/360 lcl=600x400 client=600x400
+  1801 SNAP scroll   cls=TGtk4ListView widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkColumnView alloc=[0,0 585x385] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/1400/585 vadj=9240/9600/360 lcl=600x400 client=600x400
+  2203 SNAP t-scroll cls=TGtk4ListView widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkColumnView alloc=[0,0 585x385] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/1400/585 vadj=9240/9600/360 lcl=600x400 client=600x400
+  2604 SNAP shrink   cls=TGtk4ListView widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkColumnView alloc=[0,0 600x300] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x300] hadj=0/1400/600 vadj=9241/9600/275 lcl=600x300 client=600x300
+  3007 SNAP t-shrink cls=TGtk4ListView widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkColumnView alloc=[0,0 600x300] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x300] hadj=0/1400/600 vadj=9241/9600/275 lcl=600x300 client=600x300
+  3407 SNAP same     cls=TGtk4ListView widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkColumnView alloc=[0,0 600x300] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x300] hadj=0/1400/600 vadj=9241/9600/275 lcl=600x300 client=600x300
+  3809 SNAP t-same   cls=TGtk4ListView widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkColumnView alloc=[0,0 600x300] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x300] hadj=0/1400/600 vadj=9241/9600/275 lcl=600x300 client=600x300
+  4219 SNAP grow     cls=TGtk4ListView widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkColumnView alloc=[0,0 600x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/1400/600 vadj=9225/9600/375 lcl=600x400 client=600x400
+  4622 SNAP t-grow   cls=TGtk4ListView widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkColumnView alloc=[0,0 600x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/1400/600 vadj=9225/9600/375 lcl=600x400 client=600x400
+  5031 SNAP wider    cls=TGtk4ListView widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkColumnView alloc=[0,0 650x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 650x400] hadj=0/1400/650 vadj=9225/9600/375 lcl=650x400 client=650x400
+  5434 SNAP t-wider  cls=TGtk4ListView widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkColumnView alloc=[0,0 650x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 650x400] hadj=0/1400/650 vadj=9225/9600/375 lcl=650x400 client=650x400
+  5837 SNAP scroll2  cls=TGtk4ListView widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkColumnView alloc=[0,0 650x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 650x400] hadj=0/1400/650 vadj=9225/9600/375 lcl=650x400 client=650x400
+  6239 SNAP t-scroll2 cls=TGtk4ListView widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkColumnView alloc=[0,0 650x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 650x400] hadj=0/1400/650 vadj=9225/9600/375 lcl=650x400 client=650x400
+  6240 DONE
+EXIT=0

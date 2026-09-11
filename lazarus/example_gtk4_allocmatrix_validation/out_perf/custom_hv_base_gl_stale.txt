@@ -1,0 +1,10 @@
+     0 START control=custom range=hv mode=perfstale
+
+(process:519433): GLib-CRITICAL **: 17:54:16.683: g_regex_match_full: assertion 'string != NULL' failed
+   850 SNAP show     cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 600x400] req=1400x12000 parent=GtkOverlay alloc=[0,0 1400x12000] hadj=0/1400/585 vadj=0/12000/385 lcl=600x400 client=600x400 ptr=00000000345AC7C0/00000000345B5DD0 rss=200148 wsclient=0,0 585x385
+  1253 SNAP t-show   cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 1400x12000] req=1400x12000 parent=GtkOverlay alloc=[0,0 1400x12000] hadj=0/1400/585 vadj=0/12000/385 lcl=600x400 client=600x400 ptr=00000000345AC7C0/00000000345B5DD0 rss=268308 wsclient=0,0 585x385
+  1656 SNAP shrunk   cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkFixed alloc=[0,0 600x300] req=1385x12085 parent=GtkOverlay alloc=[0,0 1385x12085] hadj=0/1385/585 vadj=0/12085/285 lcl=600x300 client=600x300 ptr=00000000345AC7C0/00000000345B5DD0 rss=271804 wsclient=0,0 585x285
+  2320 PERF steps=40 wall_ms=664 cpu_ms=560 rss=211444
+  2320 SNAP perf     cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkFixed alloc=[0,0 600x300] req=1385x12085 parent=GtkOverlay alloc=[0,-8775 1385x12085] hadj=0/1385/585 vadj=8775/12085/285 lcl=600x300 client=600x300 ptr=00000000345AC7C0/00000000345B5DD0 rss=211444 wsclient=0,0 585x285
+  2320 DONE
+EXIT=0

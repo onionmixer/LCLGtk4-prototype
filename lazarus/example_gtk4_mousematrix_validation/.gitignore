@@ -1,0 +1,8 @@
+mousematrix_gtk4
+mousematrix_gtk4sys
+mousematrix_gtk2
+mousematrix_qt5
+lib/
+*.log
+out_run3bad/
+*.pid

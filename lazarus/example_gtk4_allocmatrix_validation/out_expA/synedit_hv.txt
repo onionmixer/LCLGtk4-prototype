@@ -1,0 +1,3 @@
+
+(process:243682): Gtk-WARNING **: 15:30:57.421: cannot open display: :91
+EXIT=1

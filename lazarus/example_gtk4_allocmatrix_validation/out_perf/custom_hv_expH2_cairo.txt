@@ -1,0 +1,9 @@
+     0 START control=custom range=hv mode=perf
+
+(process:538029): GLib-CRITICAL **: 20:34:37.542: g_regex_match_full: assertion 'string != NULL' failed
+   815 SNAP show     cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 1400x12000] req=1400x12000 parent=GtkOverlay alloc=[0,0 1400x12000] hadj=0/1400/585 vadj=0/12000/385 lcl=600x400 client=600x400 ptr=000000000FDD47C0/000000000FCB1D60 rss=129268 wsclient=0,0 585x385
+  1220 SNAP t-show   cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 1400x12000] req=1400x12000 parent=GtkOverlay alloc=[0,0 1400x12000] hadj=0/1400/585 vadj=0/12000/385 lcl=600x400 client=600x400 ptr=000000000FDD47C0/000000000FCB1D60 rss=131960 wsclient=0,0 585x385
+  1883 PERF steps=40 wall_ms=663 cpu_ms=290 rss=132844
+  1883 SNAP perf     cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 1400x12000] req=1400x12000 parent=GtkOverlay alloc=[0,-8700 1400x12000] hadj=0/1400/585 vadj=8700/12000/385 lcl=600x400 client=600x400 ptr=000000000FDD47C0/000000000FCB1D60 rss=132844 wsclient=0,0 585x385
+  1883 DONE
+EXIT=0

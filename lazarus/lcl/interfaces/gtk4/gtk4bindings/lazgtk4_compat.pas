@@ -289,6 +289,14 @@ function gtk4_event_controller_get_current_event_state(controller: PGtkEventCont
 function gtk4_event_controller_get_current_event(controller: PGtkEventController): PGdkEvent; cdecl;
   external LazGtk4C_library name 'gtk_event_controller_get_current_event';
 
+{ ---- GDK4 event reference counting (gdk/gdkevents.c) ---- }
+
+function gdk4_event_ref(event: PGdkEvent): PGdkEvent; cdecl;
+  external LazGtk4C_library name 'gdk_event_ref';
+
+procedure gdk4_event_unref(event: PGdkEvent); cdecl;
+  external LazGtk4C_library name 'gdk_event_unref';
+
 { ---- GDK4 opaque event accessors (new in GTK4) ---- }
 
 function gdk4_event_get_position(event: PGdkEvent; out x: double; out y: double): gboolean; cdecl;

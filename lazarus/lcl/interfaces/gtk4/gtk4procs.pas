@@ -669,7 +669,7 @@ begin
     exit(AValue);
   Result := VK_UNKNOWN;
   case AValue of
-    GDK_KEY_Return, GDK_KEY_KP_Enter, GDK_KEY_3270_Enter: Result := VK_RETURN;
+    GDK_KEY_Return, GDK_KEY_KP_Enter, GDK_KEY_ISO_Enter, GDK_KEY_3270_Enter: Result := VK_RETURN;
     GDK_KEY_Escape: Result := VK_ESCAPE;
     GDK_KEY_BackSpace: Result := VK_BACK;
     GDK_KEY_Home, GDK_KEY_KP_Home: Result := VK_HOME;

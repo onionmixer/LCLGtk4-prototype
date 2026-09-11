@@ -1,0 +1,19 @@
+     0 START control=statictext range=hv mode=
+
+(process:235816): GLib-CRITICAL **: 15:27:38.681: g_regex_match_full: assertion 'string != NULL' failed
+   816 SNAP show     cls=TGtk4StaticText widget=GtkFrame alloc=[20,20 600x400] req=600x400 central=GtkLabel alloc=[0,0 598x398] req=-1x-1 parent=GtkFrame alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=0000000029597620/0000000029592550
+  1223 SNAP t-show   cls=TGtk4StaticText widget=GtkFrame alloc=[20,20 600x400] req=600x400 central=GtkLabel alloc=[0,0 598x398] req=-1x-1 parent=GtkFrame alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=0000000029597620/0000000029592550
+  1626 SNAP scroll   cls=TGtk4StaticText widget=GtkFrame alloc=[20,20 600x400] req=600x400 central=GtkLabel alloc=[0,0 598x398] req=-1x-1 parent=GtkFrame alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=0000000029597620/0000000029592550
+  2033 SNAP t-scroll cls=TGtk4StaticText widget=GtkFrame alloc=[20,20 600x400] req=600x400 central=GtkLabel alloc=[0,0 598x398] req=-1x-1 parent=GtkFrame alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=0000000029597620/0000000029592550
+  2440 SNAP shrink   cls=TGtk4StaticText widget=GtkFrame alloc=[20,20 600x300] req=600x300 central=GtkLabel alloc=[0,0 600x300] req=-1x-1 parent=GtkFrame alloc=[20,20 600x300] lcl=600x300 client=600x300 ptr=0000000029597620/0000000029592550
+  2847 SNAP t-shrink cls=TGtk4StaticText widget=GtkFrame alloc=[20,20 600x300] req=600x300 central=GtkLabel alloc=[0,0 598x298] req=-1x-1 parent=GtkFrame alloc=[20,20 600x300] lcl=600x300 client=600x300 ptr=0000000029597620/0000000029592550
+  3254 SNAP same     cls=TGtk4StaticText widget=GtkFrame alloc=[20,20 600x300] req=600x300 central=GtkLabel alloc=[0,0 600x300] req=-1x-1 parent=GtkFrame alloc=[20,20 600x300] lcl=600x300 client=600x300 ptr=0000000029597620/0000000029592550
+  3663 SNAP t-same   cls=TGtk4StaticText widget=GtkFrame alloc=[20,20 600x300] req=600x300 central=GtkLabel alloc=[0,0 598x298] req=-1x-1 parent=GtkFrame alloc=[20,20 600x300] lcl=600x300 client=600x300 ptr=0000000029597620/0000000029592550
+  4070 SNAP grow     cls=TGtk4StaticText widget=GtkFrame alloc=[20,20 600x400] req=600x400 central=GtkLabel alloc=[0,0 600x400] req=-1x-1 parent=GtkFrame alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=0000000029597620/0000000029592550
+  4477 SNAP t-grow   cls=TGtk4StaticText widget=GtkFrame alloc=[20,20 600x400] req=600x400 central=GtkLabel alloc=[0,0 598x398] req=-1x-1 parent=GtkFrame alloc=[20,20 600x400] lcl=600x400 client=600x400 ptr=0000000029597620/0000000029592550
+  4884 SNAP wider    cls=TGtk4StaticText widget=GtkFrame alloc=[20,20 650x400] req=650x400 central=GtkLabel alloc=[0,0 650x400] req=-1x-1 parent=GtkFrame alloc=[20,20 650x400] lcl=650x400 client=650x400 ptr=0000000029597620/0000000029592550
+  5291 SNAP t-wider  cls=TGtk4StaticText widget=GtkFrame alloc=[20,20 650x400] req=650x400 central=GtkLabel alloc=[0,0 648x398] req=-1x-1 parent=GtkFrame alloc=[20,20 650x400] lcl=650x400 client=650x400 ptr=0000000029597620/0000000029592550
+  5694 SNAP scroll2  cls=TGtk4StaticText widget=GtkFrame alloc=[20,20 650x400] req=650x400 central=GtkLabel alloc=[0,0 648x398] req=-1x-1 parent=GtkFrame alloc=[20,20 650x400] lcl=650x400 client=650x400 ptr=0000000029597620/0000000029592550
+  6101 SNAP t-scroll2 cls=TGtk4StaticText widget=GtkFrame alloc=[20,20 650x400] req=650x400 central=GtkLabel alloc=[0,0 648x398] req=-1x-1 parent=GtkFrame alloc=[20,20 650x400] lcl=650x400 client=650x400 ptr=0000000029597620/0000000029592550
+  6101 DONE
+EXIT=0

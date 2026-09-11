@@ -1,0 +1,19 @@
+     0 START control=checklist range=hv mode=
+
+(process:205189): GLib-CRITICAL **: 15:15:59.252: g_regex_match_full: assertion 'string != NULL' failed
+   873 SNAP show     cls=TGtk4CheckListBox widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkListView alloc=[0,0 600x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/600/600 vadj=0/6000/400 lcl=600x400 client=600x400
+  1274 SNAP t-show   cls=TGtk4CheckListBox widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkListView alloc=[0,0 600x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/600/600 vadj=0/6000/400 lcl=600x400 client=600x400
+  1676 SNAP scroll   cls=TGtk4CheckListBox widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkListView alloc=[0,0 600x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/600/600 vadj=0/6000/400 lcl=600x400 client=600x400
+  2077 SNAP t-scroll cls=TGtk4CheckListBox widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkListView alloc=[0,0 600x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/600/600 vadj=0/6000/400 lcl=600x400 client=600x400
+  2486 SNAP shrink   cls=TGtk4CheckListBox widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkListView alloc=[0,0 600x300] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x300] hadj=0/600/600 vadj=0/6000/300 lcl=600x300 client=600x300
+  2887 SNAP t-shrink cls=TGtk4CheckListBox widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkListView alloc=[0,0 600x300] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x300] hadj=0/600/600 vadj=0/6000/300 lcl=600x300 client=600x300
+  3296 SNAP same     cls=TGtk4CheckListBox widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkListView alloc=[0,0 600x300] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x300] hadj=0/600/600 vadj=0/6000/300 lcl=600x300 client=600x300
+  3704 SNAP t-same   cls=TGtk4CheckListBox widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkListView alloc=[0,0 600x300] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x300] hadj=0/600/600 vadj=0/6000/300 lcl=600x300 client=600x300
+  4114 SNAP grow     cls=TGtk4CheckListBox widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkListView alloc=[0,0 600x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/600/600 vadj=0/6000/400 lcl=600x400 client=600x400
+  4523 SNAP t-grow   cls=TGtk4CheckListBox widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkListView alloc=[0,0 600x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 600x400] hadj=0/600/600 vadj=0/6000/400 lcl=600x400 client=600x400
+  4929 SNAP wider    cls=TGtk4CheckListBox widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkListView alloc=[0,0 650x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 650x400] hadj=0/650/650 vadj=0/6000/400 lcl=650x400 client=650x400
+  5338 SNAP t-wider  cls=TGtk4CheckListBox widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkListView alloc=[0,0 650x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 650x400] hadj=0/650/650 vadj=0/6000/400 lcl=650x400 client=650x400
+  5741 SNAP scroll2  cls=TGtk4CheckListBox widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkListView alloc=[0,0 650x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 650x400] hadj=0/650/650 vadj=0/6000/400 lcl=650x400 client=650x400
+  6149 SNAP t-scroll2 cls=TGtk4CheckListBox widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkListView alloc=[0,0 650x400] req=-1x-1 parent=GtkScrolledWindow alloc=[20,20 650x400] hadj=0/650/650 vadj=0/6000/400 lcl=650x400 client=650x400
+  6149 DONE
+EXIT=0

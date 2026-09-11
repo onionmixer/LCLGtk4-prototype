@@ -1,0 +1,12 @@
+# built harness binaries, compiled units, run outputs and build logs (reproducible: build.sh / runall.sh)
+keymatrix_gtk4
+keymatrix_gtk2
+keymatrix_qt5
+lib/
+out/
+out_*/
+build_*.log
+runall*.out
+# per-phase raw logs are kept locally only; the JSON signatures are tracked
+baseline_*/*.log
+baseline_*/*.log.keys

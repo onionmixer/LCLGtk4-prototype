@@ -1,0 +1,2113 @@
+{
+ "signatures": {
+  "gtk4": {
+   "edit": {
+    "Return": [
+     "fKD:13",
+     "KD:edit:13",
+     "U8:edit:\"",
+     "KP:edit:#13",
+     "fKU:13",
+     "KU:edit:13",
+     "ED:edit",
+     "E:defbtn"
+    ],
+    "KP_Enter": [
+     "fKD:13",
+     "KD:edit:13",
+     "U8:edit:\"",
+     "KP:edit:#13",
+     "fKU:13",
+     "KU:edit:13",
+     "ED:edit",
+     "E:defbtn"
+    ],
+    "Escape": [
+     "fKD:27",
+     "KD:edit:27",
+     "U8:edit:\"\u001b\"",
+     "KP:edit:#27",
+     "fKU:27",
+     "KU:edit:27",
+     "E:cancelbtn"
+    ],
+    "Up": [
+     "fKD:38",
+     "KD:edit:38",
+     "fKU:38",
+     "KU:edit:38"
+    ],
+    "Down": [
+     "fKD:40",
+     "KD:edit:40",
+     "fKU:40",
+     "KU:edit:40"
+    ],
+    "Left": [
+     "fKD:37",
+     "KD:edit:37",
+     "fKU:37",
+     "KU:edit:37"
+    ],
+    "Right": [
+     "fKD:39",
+     "KD:edit:39",
+     "fKU:39",
+     "KU:edit:39"
+    ],
+    "Home": [
+     "fKD:36",
+     "KD:edit:36",
+     "fKU:36",
+     "KU:edit:36"
+    ],
+    "End": [
+     "fKD:35",
+     "KD:edit:35",
+     "fKU:35",
+     "KU:edit:35"
+    ],
+    "Prior": [
+     "fKD:33",
+     "KD:edit:33",
+     "fKU:33",
+     "KU:edit:33"
+    ],
+    "Next": [
+     "fKD:34",
+     "KD:edit:34",
+     "fKU:34",
+     "KU:edit:34"
+    ],
+    "Delete": [
+     "fKD:46",
+     "KD:edit:46",
+     "fKU:46",
+     "KU:edit:46"
+    ],
+    "BackSpace": [
+     "fKD:8",
+     "KD:edit:8",
+     "U8:edit:\"\b\"",
+     "KP:edit:#8",
+     "E:edit",
+     "fKU:8",
+     "KU:edit:8"
+    ],
+    "Insert": [
+     "fKD:45",
+     "KD:edit:45",
+     "fKU:45",
+     "KU:edit:45"
+    ],
+    "F3": [
+     "fKD:114",
+     "KD:edit:114",
+     "fKU:114",
+     "KU:edit:114"
+    ],
+    "space": [
+     "U8:edit:\"",
+     "KP:edit:#32",
+     "E:edit",
+     "fKU:32",
+     "KU:edit:32"
+    ],
+    "a": [
+     "U8:edit:\"a\"",
+     "KP:edit:#97",
+     "E:edit",
+     "fKU:65",
+     "KU:edit:65"
+    ],
+    "ctrl+a": [
+     "fKD:17",
+     "KD:edit:17",
+     "fKD:65",
+     "KD:edit:65[ssCtrl]",
+     "U8:edit:\"a\"",
+     "KP:edit:#97",
+     "fKU:17",
+     "KU:edit:17",
+     "fKU:65",
+     "KU:edit:65"
+    ],
+    "Tab": [
+     "ED:edit",
+     "fKU:9",
+     "KU:cancelbtn:9"
+    ],
+    "shift+Tab": [
+     "fKD:16",
+     "KD:cancelbtn:16",
+     "fKU:16",
+     "KU:edit:16",
+     "fKU:9",
+     "KU:edit:9"
+    ]
+   },
+   "spin": {
+    "Return": [
+     "fKU:13",
+     "KU:spin:13",
+     "ED:spin"
+    ],
+    "KP_Enter": [
+     "fKU:13",
+     "KU:spin:13",
+     "ED:spin"
+    ],
+    "Escape": [
+     "fKD:27",
+     "KD:spin:27",
+     "U8:spin:\"\u001b\"",
+     "KP:spin:#27",
+     "fKU:27",
+     "KU:spin:27",
+     "E:cancelbtn"
+    ],
+    "Up": [
+     "fKD:38",
+     "KD:spin:38",
+     "fKU:38",
+     "KU:spin:38"
+    ],
+    "Down": [
+     "fKD:40",
+     "KD:spin:40",
+     "fKU:40",
+     "KU:spin:40"
+    ],
+    "Left": [
+     "fKU:37",
+     "KU:spin:37"
+    ],
+    "Right": [
+     "fKU:39",
+     "KU:spin:39"
+    ],
+    "Home": [
+     "fKU:36",
+     "KU:spin:36"
+    ],
+    "End": [
+     "fKU:35",
+     "KU:spin:35"
+    ],
+    "Prior": [
+     "fKD:33",
+     "KD:spin:33",
+     "E:spin",
+     "U8:spin:\"1\"",
+     "KP:spin:#49",
+     "U8:spin:\"5\"",
+     "KP:spin:#53",
+     "E:spin",
+     "fKU:33",
+     "KU:spin:33"
+    ],
+    "Next": [
+     "fKD:34",
+     "KD:spin:34",
+     "E:spin",
+     "U8:spin:\"5\"",
+     "KP:spin:#53",
+     "E:spin",
+     "fKU:34",
+     "KU:spin:34"
+    ],
+    "Delete": [
+     "E:spin",
+     "fKU:46",
+     "KU:spin:46"
+    ],
+    "BackSpace": [
+     "fKU:8",
+     "KU:spin:8"
+    ],
+    "Insert": [
+     "fKU:45",
+     "KU:spin:45"
+    ],
+    "F3": [
+     "fKD:114",
+     "KD:spin:114",
+     "fKU:114",
+     "KU:spin:114"
+    ],
+    "space": [
+     "U8:spin:\"",
+     "KP:spin:#32",
+     "fKU:32",
+     "KU:spin:32"
+    ],
+    "a": [
+     "U8:spin:\"a\"",
+     "KP:spin:#97",
+     "fKU:65",
+     "KU:spin:65"
+    ],
+    "ctrl+a": [
+     "fKD:17",
+     "KD:spin:17",
+     "fKD:65",
+     "KD:spin:65[ssCtrl]",
+     "U8:spin:\"a\"",
+     "KP:spin:#97",
+     "fKU:17",
+     "KU:spin:17",
+     "fKU:65",
+     "KU:spin:65"
+    ],
+    "Tab": [
+     "U8:spin:\"0\"",
+     "KP:spin:#48",
+     "E:spin",
+     "ED:spin",
+     "fKU:9",
+     "KU:fspin:9"
+    ],
+    "shift+Tab": [
+     "fKD:16",
+     "KD:fspin:16",
+     "ED:fspin",
+     "fKU:16",
+     "KU:spin:16",
+     "fKU:9",
+     "KU:spin:9"
+    ]
+   },
+   "fspin": {
+    "Return": [
+     "fKU:13",
+     "KU:fspin:13",
+     "ED:fspin"
+    ],
+    "KP_Enter": [
+     "fKU:13",
+     "KU:fspin:13",
+     "ED:fspin"
+    ],
+    "Escape": [
+     "fKD:27",
+     "KD:fspin:27",
+     "U8:fspin:\"\u001b\"",
+     "KP:fspin:#27",
+     "fKU:27",
+     "KU:fspin:27",
+     "E:cancelbtn"
+    ],
+    "Up": [
+     "fKD:38",
+     "KD:fspin:38",
+     "fKU:38",
+     "KU:fspin:38"
+    ],
+    "Down": [
+     "fKD:40",
+     "KD:fspin:40",
+     "fKU:40",
+     "KU:fspin:40"
+    ],
+    "Left": [
+     "fKU:37",
+     "KU:fspin:37"
+    ],
+    "Right": [
+     "fKU:39",
+     "KU:fspin:39"
+    ],
+    "Home": [
+     "fKU:36",
+     "KU:fspin:36"
+    ],
+    "End": [
+     "fKU:35",
+     "KU:fspin:35"
+    ],
+    "Prior": [
+     "fKD:33",
+     "KD:fspin:33",
+     "E:fspin",
+     "U8:fspin:\"7\"",
+     "KP:fspin:#55",
+     "U8:fspin:\".\"",
+     "KP:fspin:#46",
+     "U8:fspin:\"7\"",
+     "KP:fspin:#55",
+     "U8:fspin:\"5\"",
+     "KP:fspin:#53",
+     "E:fspin",
+     "fKU:33",
+     "KU:fspin:33"
+    ],
+    "Next": [
+     "fKD:34",
+     "KD:fspin:34",
+     "E:fspin",
+     "U8:fspin:\"5\"",
+     "KP:fspin:#53",
+     "U8:fspin:\".\"",
+     "KP:fspin:#46",
+     "U8:fspin:\"2\"",
+     "KP:fspin:#50",
+     "U8:fspin:\"5\"",
+     "KP:fspin:#53",
+     "E:fspin",
+     "fKU:34",
+     "KU:fspin:34"
+    ],
+    "Delete": [
+     "E:fspin",
+     "fKU:46",
+     "KU:fspin:46"
+    ],
+    "BackSpace": [
+     "fKU:8",
+     "KU:fspin:8"
+    ],
+    "Insert": [
+     "fKU:45",
+     "KU:fspin:45"
+    ],
+    "F3": [
+     "fKD:114",
+     "KD:fspin:114",
+     "fKU:114",
+     "KU:fspin:114"
+    ],
+    "space": [
+     "E:fspin",
+     "U8:fspin:\"",
+     "KP:fspin:#32",
+     "fKU:32",
+     "KU:fspin:32"
+    ],
+    "a": [
+     "E:fspin",
+     "U8:fspin:\"a\"",
+     "KP:fspin:#97",
+     "fKU:65",
+     "KU:fspin:65"
+    ],
+    "ctrl+a": [
+     "fKD:17",
+     "KD:fspin:17",
+     "fKU:17",
+     "KU:fspin:17",
+     "fKU:65",
+     "KU:fspin:65"
+    ],
+    "Tab": [
+     "E:fspin",
+     "U8:fspin:\"5\"",
+     "KP:fspin:#53",
+     "U8:fspin:\".\"",
+     "KP:fspin:#46",
+     "U8:fspin:\"0\"",
+     "KP:fspin:#48",
+     "U8:fspin:\"0\"",
+     "KP:fspin:#48",
+     "E:fspin",
+     "ED:fspin",
+     "fKU:9",
+     "KU:comboedit:9"
+    ],
+    "shift+Tab": [
+     "fKD:16",
+     "KD:comboedit:16",
+     "ED:comboedit",
+     "fKU:16",
+     "KU:fspin:16",
+     "fKU:9",
+     "KU:fspin:9"
+    ]
+   },
+   "comboedit": {
+    "Return": [
+     "fKU:13",
+     "KU:comboedit:13"
+    ],
+    "KP_Enter": [
+     "fKU:13",
+     "KU:comboedit:13"
+    ],
+    "Escape": [
+     "fKD:27",
+     "KD:comboedit:27",
+     "U8:comboedit:\"\u001b\"",
+     "KP:comboedit:#27",
+     "fKU:27",
+     "KU:comboedit:27",
+     "E:cancelbtn"
+    ],
+    "Up": [
+     "fKD:38",
+     "KD:comboedit:38",
+     "fKU:38",
+     "KU:comboedit:38"
+    ],
+    "Down": [
+     "fKD:40",
+     "KD:comboedit:40",
+     "fKU:40",
+     "KU:comboedit:40"
+    ],
+    "Left": [
+     "fKU:37",
+     "KU:comboedit:37"
+    ],
+    "Right": [
+     "fKU:39",
+     "KU:comboedit:39"
+    ],
+    "Home": [
+     "fKU:36",
+     "KU:comboedit:36"
+    ],
+    "End": [
+     "fKU:35",
+     "KU:comboedit:35"
+    ],
+    "Prior": [
+     "fKD:33",
+     "KD:comboedit:33",
+     "fKU:33",
+     "KU:comboedit:33"
+    ],
+    "Next": [
+     "fKD:34",
+     "KD:comboedit:34",
+     "fKU:34",
+     "KU:comboedit:34"
+    ],
+    "Delete": [
+     "fKU:46",
+     "KU:comboedit:46"
+    ],
+    "BackSpace": [
+     "E:comboedit",
+     "fKU:8",
+     "KU:comboedit:8"
+    ],
+    "Insert": [
+     "fKU:45",
+     "KU:comboedit:45"
+    ],
+    "F3": [
+     "fKD:114",
+     "KD:comboedit:114",
+     "fKU:114",
+     "KU:comboedit:114"
+    ],
+    "space": [
+     "E:comboedit",
+     "fKU:32",
+     "KU:comboedit:32"
+    ],
+    "a": [
+     "E:comboedit",
+     "fKU:65",
+     "KU:comboedit:65"
+    ],
+    "ctrl+a": [
+     "fKD:17",
+     "KD:comboedit:17",
+     "fKU:17",
+     "KU:comboedit:17",
+     "fKU:65",
+     "KU:comboedit:65"
+    ],
+    "Tab": [
+     "ED:comboedit",
+     "fKU:9",
+     "KU:combolist:9"
+    ],
+    "shift+Tab": [
+     "fKD:16",
+     "KD:combolist:16",
+     "ED:combolist",
+     "fKU:16",
+     "KU:comboedit:16",
+     "fKU:9",
+     "KU:comboedit:9"
+    ]
+   },
+   "combolist": {
+    "Return": [
+     "fKU:13",
+     "KU:combolist:13"
+    ],
+    "KP_Enter": [
+     "fKU:13",
+     "KU:combolist:13"
+    ],
+    "Escape": [
+     "fKD:27",
+     "KD:combolist:27",
+     "U8:combolist:\"\u001b\"",
+     "KP:combolist:#27",
+     "fKU:27",
+     "KU:combolist:27",
+     "E:cancelbtn"
+    ],
+    "Up": [
+     "fKD:38",
+     "KD:combolist:38",
+     "fKU:38",
+     "KU:combolist:38"
+    ],
+    "Down": [
+     "fKD:40",
+     "KD:combolist:40",
+     "fKU:40",
+     "KU:combolist:40"
+    ],
+    "Left": [
+     "fKD:37",
+     "KD:combolist:37",
+     "fKU:37",
+     "KU:combolist:37"
+    ],
+    "Right": [
+     "fKD:39",
+     "KD:combolist:39",
+     "fKU:39",
+     "KU:combolist:39"
+    ],
+    "Home": [
+     "fKD:36",
+     "KD:combolist:36",
+     "fKU:36",
+     "KU:combolist:36"
+    ],
+    "End": [
+     "fKD:35",
+     "KD:combolist:35",
+     "fKU:35",
+     "KU:combolist:35"
+    ],
+    "Prior": [
+     "fKD:33",
+     "KD:combolist:33",
+     "fKU:33",
+     "KU:combolist:33"
+    ],
+    "Next": [
+     "fKD:34",
+     "KD:combolist:34",
+     "fKU:34",
+     "KU:combolist:34"
+    ],
+    "Delete": [
+     "fKD:46",
+     "KD:combolist:46",
+     "fKU:46",
+     "KU:combolist:46"
+    ],
+    "BackSpace": [
+     "fKD:8",
+     "KD:combolist:8",
+     "U8:combolist:\"\b\"",
+     "KP:combolist:#8",
+     "fKU:8",
+     "KU:combolist:8"
+    ],
+    "Insert": [
+     "fKD:45",
+     "KD:combolist:45",
+     "fKU:45",
+     "KU:combolist:45"
+    ],
+    "F3": [
+     "fKD:114",
+     "KD:combolist:114",
+     "fKU:114",
+     "KU:combolist:114"
+    ],
+    "space": [
+     "fKU:32",
+     "KU:combolist:32"
+    ],
+    "a": [],
+    "ctrl+a": [],
+    "Tab": [],
+    "shift+Tab": []
+   },
+   "memo": {
+    "Return": [
+     "fKD:13",
+     "KD:memo:13",
+     "U8:memo:\"",
+     "KP:memo:#13",
+     "fKU:13",
+     "KU:memo:13"
+    ],
+    "KP_Enter": [
+     "fKD:13",
+     "KD:memo:13",
+     "U8:memo:\"",
+     "KP:memo:#13",
+     "fKU:13",
+     "KU:memo:13"
+    ],
+    "Escape": [
+     "fKD:27",
+     "KD:memo:27",
+     "U8:memo:\"\u001b\"",
+     "KP:memo:#27",
+     "fKU:27",
+     "KU:memo:27",
+     "E:cancelbtn"
+    ],
+    "Up": [
+     "fKD:38",
+     "KD:memo:38",
+     "fKU:38",
+     "KU:memo:38"
+    ],
+    "Down": [
+     "fKD:40",
+     "KD:memo:40",
+     "fKU:40",
+     "KU:memo:40"
+    ],
+    "Left": [
+     "fKD:37",
+     "KD:memo:37",
+     "fKU:37",
+     "KU:memo:37"
+    ],
+    "Right": [
+     "fKD:39",
+     "KD:memo:39",
+     "fKU:39",
+     "KU:memo:39"
+    ],
+    "Home": [
+     "fKD:36",
+     "KD:memo:36",
+     "fKU:36",
+     "KU:memo:36"
+    ],
+    "End": [
+     "fKD:35",
+     "KD:memo:35",
+     "fKU:35",
+     "KU:memo:35"
+    ],
+    "Prior": [
+     "fKD:33",
+     "KD:memo:33",
+     "fKU:33",
+     "KU:memo:33"
+    ],
+    "Next": [
+     "fKD:34",
+     "KD:memo:34",
+     "fKU:34",
+     "KU:memo:34"
+    ],
+    "Delete": [
+     "fKD:46",
+     "KD:memo:46",
+     "fKU:46",
+     "KU:memo:46"
+    ],
+    "BackSpace": [
+     "fKD:8",
+     "KD:memo:8",
+     "U8:memo:\"\b\"",
+     "KP:memo:#8",
+     "fKU:8",
+     "KU:memo:8"
+    ],
+    "Insert": [
+     "fKD:45",
+     "KD:memo:45",
+     "fKU:45",
+     "KU:memo:45"
+    ],
+    "F3": [
+     "fKD:114",
+     "KD:memo:114",
+     "fKU:114",
+     "KU:memo:114"
+    ],
+    "space": [
+     "fKD:32",
+     "KD:memo:32",
+     "U8:memo:\"",
+     "KP:memo:#32",
+     "fKU:32",
+     "KU:memo:32"
+    ],
+    "a": [
+     "fKD:65",
+     "KD:memo:65",
+     "U8:memo:\"a\"",
+     "KP:memo:#97",
+     "fKU:65",
+     "KU:memo:65"
+    ],
+    "ctrl+a": [
+     "fKD:17",
+     "KD:memo:17",
+     "fKD:65",
+     "KD:memo:65[ssCtrl]",
+     "U8:memo:\"a\"",
+     "KP:memo:#97",
+     "fKU:17",
+     "KU:memo:17",
+     "fKU:65",
+     "KU:memo:65"
+    ],
+    "Tab": [
+     "fKU:9",
+     "KU:memo:9"
+    ],
+    "shift+Tab": [
+     "fKD:16",
+     "KD:memo:16",
+     "fKU:16",
+     "KU:memo:16",
+     "fKU:9",
+     "KU:memo:9"
+    ]
+   },
+   "listbox": {
+    "Return": [
+     "fKD:13",
+     "KD:listbox:13",
+     "U8:listbox:\"",
+     "KP:listbox:#13",
+     "fKU:13",
+     "KU:listbox:13",
+     "E:defbtn"
+    ],
+    "KP_Enter": [
+     "fKD:13",
+     "KD:listbox:13",
+     "U8:listbox:\"",
+     "KP:listbox:#13",
+     "fKU:13",
+     "KU:listbox:13",
+     "E:defbtn"
+    ],
+    "Escape": [
+     "fKD:27",
+     "KD:listbox:27",
+     "U8:listbox:\"\u001b\"",
+     "KP:listbox:#27",
+     "fKU:27",
+     "KU:listbox:27",
+     "E:cancelbtn"
+    ],
+    "Up": [
+     "fKD:38",
+     "KD:listbox:38",
+     "fKU:38",
+     "KU:listbox:38"
+    ],
+    "Down": [
+     "fKD:40",
+     "KD:listbox:40",
+     "fKU:40",
+     "KU:listbox:40"
+    ],
+    "Left": [
+     "fKD:37",
+     "KD:listbox:37",
+     "fKU:37",
+     "KU:listbox:37"
+    ],
+    "Right": [
+     "fKD:39",
+     "KD:listbox:39",
+     "fKU:39",
+     "KU:listbox:39"
+    ],
+    "Home": [
+     "fKD:36",
+     "KD:listbox:36",
+     "E:listbox",
+     "fKU:36",
+     "KU:listbox:36"
+    ],
+    "End": [
+     "fKD:35",
+     "KD:listbox:35",
+     "E:listbox",
+     "fKU:35",
+     "KU:listbox:35"
+    ],
+    "Prior": [
+     "fKD:33",
+     "KD:listbox:33",
+     "E:listbox",
+     "fKU:33",
+     "KU:listbox:33"
+    ],
+    "Next": [
+     "fKD:34",
+     "KD:listbox:34",
+     "E:listbox",
+     "fKU:34",
+     "KU:listbox:34"
+    ],
+    "Delete": [
+     "fKD:46",
+     "KD:listbox:46",
+     "fKU:46",
+     "KU:listbox:46"
+    ],
+    "BackSpace": [
+     "fKD:8",
+     "KD:listbox:8",
+     "U8:listbox:\"\b\"",
+     "KP:listbox:#8",
+     "fKU:8",
+     "KU:listbox:8"
+    ],
+    "Insert": [
+     "fKD:45",
+     "KD:listbox:45",
+     "fKU:45",
+     "KU:listbox:45"
+    ],
+    "F3": [
+     "fKD:114",
+     "KD:listbox:114",
+     "fKU:114",
+     "KU:listbox:114"
+    ],
+    "space": [
+     "fKU:32",
+     "KU:listbox:32"
+    ],
+    "a": [
+     "U8:listbox:\"a\"",
+     "fKU:65",
+     "KU:listbox:65"
+    ],
+    "ctrl+a": [
+     "fKD:17",
+     "KD:listbox:17",
+     "fKD:65",
+     "KD:listbox:65[ssCtrl]",
+     "U8:listbox:\"a\"",
+     "KP:listbox:#97",
+     "fKU:17",
+     "KU:listbox:17",
+     "fKU:65",
+     "KU:listbox:65"
+    ],
+    "Tab": [
+     "fKU:9",
+     "KU:checklist:9"
+    ],
+    "shift+Tab": [
+     "fKD:16",
+     "KD:checklist:16",
+     "fKU:16",
+     "KU:listbox:16",
+     "fKU:9",
+     "KU:listbox:9"
+    ]
+   },
+   "checklist": {
+    "Return": [
+     "fKD:13",
+     "KD:checklist:13",
+     "U8:checklist:\"",
+     "KP:checklist:#13",
+     "fKU:13",
+     "KU:checklist:13",
+     "E:defbtn"
+    ],
+    "KP_Enter": [
+     "fKD:13",
+     "KD:checklist:13",
+     "U8:checklist:\"",
+     "KP:checklist:#13",
+     "fKU:13",
+     "KU:checklist:13",
+     "E:defbtn"
+    ],
+    "Escape": [
+     "fKD:27",
+     "KD:checklist:27",
+     "U8:checklist:\"\u001b\"",
+     "KP:checklist:#27",
+     "fKU:27",
+     "KU:checklist:27",
+     "E:cancelbtn"
+    ],
+    "Up": [
+     "fKD:38",
+     "KD:checklist:38",
+     "fKU:38",
+     "KU:checklist:38"
+    ],
+    "Down": [
+     "fKD:40",
+     "KD:checklist:40",
+     "fKU:40",
+     "KU:checklist:40"
+    ],
+    "Left": [
+     "fKD:37",
+     "KD:checklist:37",
+     "fKU:37",
+     "KU:checklist:37"
+    ],
+    "Right": [
+     "fKD:39",
+     "KD:checklist:39",
+     "fKU:39",
+     "KU:checklist:39"
+    ],
+    "Home": [
+     "fKD:36",
+     "KD:checklist:36",
+     "E:checklist",
+     "fKU:36",
+     "KU:checklist:36"
+    ],
+    "End": [
+     "fKD:35",
+     "KD:checklist:35",
+     "E:checklist",
+     "fKU:35",
+     "KU:checklist:35"
+    ],
+    "Prior": [
+     "fKD:33",
+     "KD:checklist:33",
+     "E:checklist",
+     "fKU:33",
+     "KU:checklist:33"
+    ],
+    "Next": [
+     "fKD:34",
+     "KD:checklist:34",
+     "E:checklist",
+     "fKU:34",
+     "KU:checklist:34"
+    ],
+    "Delete": [
+     "fKD:46",
+     "KD:checklist:46",
+     "fKU:46",
+     "KU:checklist:46"
+    ],
+    "BackSpace": [
+     "fKD:8",
+     "KD:checklist:8",
+     "U8:checklist:\"\b\"",
+     "KP:checklist:#8",
+     "fKU:8",
+     "KU:checklist:8"
+    ],
+    "Insert": [
+     "fKD:45",
+     "KD:checklist:45",
+     "fKU:45",
+     "KU:checklist:45"
+    ],
+    "F3": [
+     "fKD:114",
+     "KD:checklist:114",
+     "fKU:114",
+     "KU:checklist:114"
+    ],
+    "space": [
+     "fKU:32",
+     "KU:checklist:32"
+    ],
+    "a": [
+     "U8:checklist:\"a\"",
+     "fKU:65",
+     "KU:checklist:65"
+    ],
+    "ctrl+a": [
+     "fKD:17",
+     "KD:checklist:17",
+     "fKD:65",
+     "KD:checklist:65[ssCtrl]",
+     "U8:checklist:\"a\"",
+     "KP:checklist:#97",
+     "fKU:17",
+     "KU:checklist:17",
+     "fKU:65",
+     "KU:checklist:65"
+    ],
+    "Tab": [
+     "fKU:9",
+     "KU:checklist:9"
+    ],
+    "shift+Tab": [
+     "fKD:16",
+     "KD:checklist:16",
+     "fKU:16",
+     "KU:checklist:16",
+     "fKU:9",
+     "KU:checklist:9"
+    ]
+   },
+   "listview": {
+    "Return": [
+     "fKD:13",
+     "KD:listview:13",
+     "U8:listview:\"",
+     "KP:listview:#13",
+     "fKU:13",
+     "KU:listview:13",
+     "E:defbtn"
+    ],
+    "KP_Enter": [
+     "fKD:13",
+     "KD:listview:13",
+     "U8:listview:\"",
+     "KP:listview:#13",
+     "fKU:13",
+     "KU:listview:13",
+     "E:defbtn"
+    ],
+    "Escape": [
+     "fKD:27",
+     "KD:listview:27",
+     "U8:listview:\"\u001b\"",
+     "KP:listview:#27",
+     "fKU:27",
+     "KU:listview:27",
+     "E:cancelbtn"
+    ],
+    "Up": [
+     "fKD:38",
+     "KD:listview:38",
+     "fKU:38",
+     "KU:listview:38"
+    ],
+    "Down": [
+     "fKD:40",
+     "KD:listview:40",
+     "fKU:40",
+     "KU:listview:40"
+    ],
+    "Left": [
+     "fKD:37",
+     "KD:listview:37",
+     "fKU:37",
+     "KU:listview:37"
+    ],
+    "Right": [
+     "fKD:39",
+     "KD:listview:39",
+     "fKU:39",
+     "KU:listview:39"
+    ],
+    "Home": [
+     "fKD:36",
+     "KD:listview:36",
+     "fKU:36",
+     "KU:listview:36"
+    ],
+    "End": [
+     "fKD:35",
+     "KD:listview:35",
+     "fKU:35",
+     "KU:listview:35"
+    ],
+    "Prior": [
+     "fKD:33",
+     "KD:listview:33",
+     "fKU:33",
+     "KU:listview:33"
+    ],
+    "Next": [
+     "fKD:34",
+     "KD:listview:34",
+     "fKU:34",
+     "KU:listview:34"
+    ],
+    "Delete": [
+     "fKD:46",
+     "KD:listview:46",
+     "fKU:46",
+     "KU:listview:46"
+    ],
+    "BackSpace": [
+     "fKD:8",
+     "KD:listview:8",
+     "U8:listview:\"\b\"",
+     "KP:listview:#8",
+     "fKU:8",
+     "KU:listview:8"
+    ],
+    "Insert": [
+     "fKD:45",
+     "KD:listview:45",
+     "fKU:45",
+     "KU:listview:45"
+    ],
+    "F3": [
+     "fKD:114",
+     "KD:listview:114",
+     "fKU:114",
+     "KU:listview:114"
+    ],
+    "space": [
+     "U8:listview:\"",
+     "fKU:32",
+     "KU:listview:32"
+    ],
+    "a": [
+     "U8:listview:\"a\"",
+     "fKU:65",
+     "KU:listview:65"
+    ],
+    "ctrl+a": [
+     "fKD:17",
+     "KD:listview:17",
+     "fKD:65",
+     "KD:listview:65[ssCtrl]",
+     "U8:listview:\"a\"",
+     "KP:listview:#97",
+     "fKU:17",
+     "KU:listview:17",
+     "fKU:65",
+     "KU:listview:65"
+    ],
+    "Tab": [
+     "fKU:9",
+     "KU:listview:9"
+    ],
+    "shift+Tab": [
+     "fKD:16",
+     "KD:listview:16",
+     "fKU:16",
+     "KU:listview:16",
+     "fKU:9",
+     "KU:listview:9"
+    ]
+   },
+   "treeview": {
+    "Return": [
+     "fKD:13",
+     "KD:treeview:13",
+     "U8:treeview:\"",
+     "KP:treeview:#13",
+     "fKU:13",
+     "KU:treeview:13",
+     "E:defbtn"
+    ],
+    "KP_Enter": [
+     "fKD:13",
+     "KD:treeview:13",
+     "U8:treeview:\"",
+     "KP:treeview:#13",
+     "fKU:13",
+     "KU:treeview:13",
+     "E:defbtn"
+    ],
+    "Escape": [
+     "fKD:27",
+     "KD:treeview:27",
+     "U8:treeview:\"\u001b\"",
+     "KP:treeview:#27",
+     "fKU:27",
+     "KU:treeview:27",
+     "E:cancelbtn"
+    ],
+    "Up": [
+     "fKD:38",
+     "KD:treeview:38",
+     "fKU:38",
+     "KU:treeview:38"
+    ],
+    "Down": [
+     "fKD:40",
+     "KD:treeview:40",
+     "fKU:40",
+     "KU:treeview:40"
+    ],
+    "Left": [
+     "fKD:37",
+     "KD:treeview:37",
+     "fKU:37",
+     "KU:treeview:37"
+    ],
+    "Right": [
+     "fKD:39",
+     "KD:treeview:39",
+     "fKU:39",
+     "KU:treeview:39"
+    ],
+    "Home": [
+     "fKD:36",
+     "KD:treeview:36",
+     "fKU:36",
+     "KU:treeview:36"
+    ],
+    "End": [
+     "fKD:35",
+     "KD:treeview:35",
+     "fKU:35",
+     "KU:treeview:35"
+    ],
+    "Prior": [
+     "fKD:33",
+     "KD:treeview:33",
+     "fKU:33",
+     "KU:treeview:33"
+    ],
+    "Next": [
+     "fKD:34",
+     "KD:treeview:34",
+     "fKU:34",
+     "KU:treeview:34"
+    ],
+    "Delete": [
+     "fKD:46",
+     "KD:treeview:46",
+     "fKU:46",
+     "KU:treeview:46"
+    ],
+    "BackSpace": [
+     "fKD:8",
+     "KD:treeview:8",
+     "U8:treeview:\"\b\"",
+     "KP:treeview:#8",
+     "fKU:8",
+     "KU:treeview:8"
+    ],
+    "Insert": [
+     "fKD:45",
+     "KD:treeview:45",
+     "fKU:45",
+     "KU:treeview:45"
+    ],
+    "F3": [
+     "fKD:114",
+     "KD:treeview:114",
+     "fKU:114",
+     "KU:treeview:114"
+    ],
+    "space": [
+     "U8:treeview:\"",
+     "fKU:32",
+     "KU:treeview:32"
+    ],
+    "a": [
+     "U8:treeview:\"a\"",
+     "fKU:65",
+     "KU:treeview:65"
+    ],
+    "ctrl+a": [
+     "fKD:17",
+     "KD:treeview:17",
+     "fKD:65",
+     "KD:treeview:65[ssCtrl]",
+     "U8:treeview:\"a\"",
+     "KP:treeview:#97",
+     "fKU:17",
+     "KU:treeview:17",
+     "fKU:65",
+     "KU:treeview:65"
+    ],
+    "Tab": [
+     "fKU:9",
+     "KU:button:9"
+    ],
+    "shift+Tab": [
+     "fKD:16",
+     "KD:button:16",
+     "fKU:16",
+     "KU:treeview:16",
+     "fKU:9",
+     "KU:treeview:9"
+    ]
+   },
+   "button": {
+    "Return": [
+     "fKD:13",
+     "KD:button:13",
+     "U8:button:\"",
+     "KP:button:#13",
+     "fKU:13",
+     "KU:button:13",
+     "E:button"
+    ],
+    "KP_Enter": [
+     "fKD:13",
+     "KD:button:13",
+     "U8:button:\"",
+     "KP:button:#13",
+     "fKU:13",
+     "KU:button:13",
+     "E:button"
+    ],
+    "Escape": [
+     "fKD:27",
+     "KD:button:27",
+     "U8:button:\"\u001b\"",
+     "KP:button:#27",
+     "fKU:27",
+     "KU:button:27",
+     "E:cancelbtn"
+    ],
+    "Up": [
+     "fKD:38",
+     "KD:button:38",
+     "fKU:38",
+     "KU:button:38"
+    ],
+    "Down": [
+     "fKD:40",
+     "KD:button:40",
+     "fKU:40",
+     "KU:button:40"
+    ],
+    "Left": [
+     "fKD:37",
+     "KD:button:37",
+     "fKU:37",
+     "KU:button:37"
+    ],
+    "Right": [
+     "fKD:39",
+     "KD:button:39",
+     "fKU:39",
+     "KU:button:39"
+    ],
+    "Home": [
+     "fKD:36",
+     "KD:button:36",
+     "fKU:36",
+     "KU:button:36"
+    ],
+    "End": [
+     "fKD:35",
+     "KD:button:35",
+     "fKU:35",
+     "KU:button:35"
+    ],
+    "Prior": [
+     "fKD:33",
+     "KD:button:33",
+     "fKU:33",
+     "KU:button:33"
+    ],
+    "Next": [
+     "fKD:34",
+     "KD:button:34",
+     "fKU:34",
+     "KU:button:34"
+    ],
+    "Delete": [
+     "fKD:46",
+     "KD:button:46",
+     "fKU:46",
+     "KU:button:46"
+    ],
+    "BackSpace": [
+     "fKD:8",
+     "KD:button:8",
+     "U8:button:\"\b\"",
+     "KP:button:#8",
+     "fKU:8",
+     "KU:button:8"
+    ],
+    "Insert": [
+     "fKD:45",
+     "KD:button:45",
+     "fKU:45",
+     "KU:button:45"
+    ],
+    "F3": [
+     "fKD:114",
+     "KD:button:114",
+     "fKU:114",
+     "KU:button:114"
+    ],
+    "space": [
+     "U8:button:\"",
+     "fKU:32",
+     "KU:button:32"
+    ],
+    "a": [
+     "U8:button:\"a\"",
+     "fKU:65",
+     "KU:button:65"
+    ],
+    "ctrl+a": [
+     "fKD:17",
+     "KD:button:17",
+     "fKD:65",
+     "KD:button:65[ssCtrl]",
+     "U8:button:\"a\"",
+     "KP:button:#97",
+     "fKU:17",
+     "KU:button:17",
+     "fKU:65",
+     "KU:button:65"
+    ],
+    "Tab": [
+     "fKU:9",
+     "KU:checkbox:9"
+    ],
+    "shift+Tab": [
+     "fKD:16",
+     "KD:checkbox:16",
+     "fKU:16",
+     "KU:button:16",
+     "fKU:9",
+     "KU:button:9"
+    ]
+   },
+   "checkbox": {
+    "Return": [
+     "fKD:13",
+     "KD:checkbox:13",
+     "U8:checkbox:\"",
+     "KP:checkbox:#13",
+     "fKU:13",
+     "KU:checkbox:13",
+     "E:defbtn"
+    ],
+    "KP_Enter": [
+     "fKD:13",
+     "KD:checkbox:13",
+     "U8:checkbox:\"",
+     "KP:checkbox:#13",
+     "fKU:13",
+     "KU:checkbox:13",
+     "E:defbtn"
+    ],
+    "Escape": [
+     "fKD:27",
+     "KD:checkbox:27",
+     "U8:checkbox:\"\u001b\"",
+     "KP:checkbox:#27",
+     "fKU:27",
+     "KU:checkbox:27",
+     "E:cancelbtn"
+    ],
+    "Up": [
+     "fKD:38",
+     "KD:checkbox:38",
+     "fKU:38",
+     "KU:checkbox:38"
+    ],
+    "Down": [
+     "fKD:40",
+     "KD:checkbox:40",
+     "fKU:40",
+     "KU:checkbox:40"
+    ],
+    "Left": [
+     "fKD:37",
+     "KD:checkbox:37",
+     "fKU:37",
+     "KU:checkbox:37"
+    ],
+    "Right": [
+     "fKD:39",
+     "KD:checkbox:39",
+     "fKU:39",
+     "KU:checkbox:39"
+    ],
+    "Home": [
+     "fKD:36",
+     "KD:checkbox:36",
+     "fKU:36",
+     "KU:checkbox:36"
+    ],
+    "End": [
+     "fKD:35",
+     "KD:checkbox:35",
+     "fKU:35",
+     "KU:checkbox:35"
+    ],
+    "Prior": [
+     "fKD:33",
+     "KD:checkbox:33",
+     "fKU:33",
+     "KU:checkbox:33"
+    ],
+    "Next": [
+     "fKD:34",
+     "KD:checkbox:34",
+     "fKU:34",
+     "KU:checkbox:34"
+    ],
+    "Delete": [
+     "fKD:46",
+     "KD:checkbox:46",
+     "fKU:46",
+     "KU:checkbox:46"
+    ],
+    "BackSpace": [
+     "fKD:8",
+     "KD:checkbox:8",
+     "U8:checkbox:\"\b\"",
+     "KP:checkbox:#8",
+     "fKU:8",
+     "KU:checkbox:8"
+    ],
+    "Insert": [
+     "fKD:45",
+     "KD:checkbox:45",
+     "fKU:45",
+     "KU:checkbox:45"
+    ],
+    "F3": [
+     "fKD:114",
+     "KD:checkbox:114",
+     "fKU:114",
+     "KU:checkbox:114"
+    ],
+    "space": [
+     "U8:checkbox:\"",
+     "fKU:32",
+     "KU:checkbox:32"
+    ],
+    "a": [
+     "U8:checkbox:\"a\"",
+     "fKU:65",
+     "KU:checkbox:65"
+    ],
+    "ctrl+a": [
+     "fKD:17",
+     "KD:checkbox:17",
+     "fKD:65",
+     "KD:checkbox:65[ssCtrl]",
+     "U8:checkbox:\"a\"",
+     "KP:checkbox:#97",
+     "fKU:17",
+     "KU:checkbox:17",
+     "fKU:65",
+     "KU:checkbox:65"
+    ],
+    "Tab": [
+     "fKU:9",
+     "KU:radio:9"
+    ],
+    "shift+Tab": [
+     "fKD:16",
+     "KD:radio:16",
+     "fKU:16",
+     "KU:checkbox:16",
+     "fKU:9",
+     "KU:checkbox:9"
+    ]
+   },
+   "radio": {
+    "Return": [
+     "fKD:13",
+     "KD:radio:13",
+     "U8:radio:\"",
+     "KP:radio:#13",
+     "fKU:13",
+     "KU:radio:13",
+     "E:defbtn"
+    ],
+    "KP_Enter": [
+     "fKD:13",
+     "KD:radio:13",
+     "U8:radio:\"",
+     "KP:radio:#13",
+     "fKU:13",
+     "KU:radio:13",
+     "E:defbtn"
+    ],
+    "Escape": [
+     "fKD:27",
+     "KD:radio:27",
+     "U8:radio:\"\u001b\"",
+     "KP:radio:#27",
+     "fKU:27",
+     "KU:radio:27",
+     "E:cancelbtn"
+    ],
+    "Up": [
+     "fKD:38",
+     "KD:radio:38",
+     "fKU:38",
+     "KU:radio:38"
+    ],
+    "Down": [
+     "fKD:40",
+     "KD:radio:40",
+     "fKU:40",
+     "KU:radio:40"
+    ],
+    "Left": [
+     "fKD:37",
+     "KD:radio:37",
+     "fKU:37",
+     "KU:radio:37"
+    ],
+    "Right": [
+     "fKD:39",
+     "KD:radio:39",
+     "fKU:39",
+     "KU:radio:39"
+    ],
+    "Home": [
+     "fKD:36",
+     "KD:radio:36",
+     "fKU:36",
+     "KU:radio:36"
+    ],
+    "End": [
+     "fKD:35",
+     "KD:radio:35",
+     "fKU:35",
+     "KU:radio:35"
+    ],
+    "Prior": [
+     "fKD:33",
+     "KD:radio:33",
+     "fKU:33",
+     "KU:radio:33"
+    ],
+    "Next": [
+     "fKD:34",
+     "KD:radio:34",
+     "fKU:34",
+     "KU:radio:34"
+    ],
+    "Delete": [
+     "fKD:46",
+     "KD:radio:46",
+     "fKU:46",
+     "KU:radio:46"
+    ],
+    "BackSpace": [
+     "fKD:8",
+     "KD:radio:8",
+     "U8:radio:\"\b\"",
+     "KP:radio:#8",
+     "fKU:8",
+     "KU:radio:8"
+    ],
+    "Insert": [
+     "fKD:45",
+     "KD:radio:45",
+     "fKU:45",
+     "KU:radio:45"
+    ],
+    "F3": [
+     "fKD:114",
+     "KD:radio:114",
+     "fKU:114",
+     "KU:radio:114"
+    ],
+    "space": [
+     "U8:radio:\"",
+     "fKU:32",
+     "KU:radio:32"
+    ],
+    "a": [
+     "U8:radio:\"a\"",
+     "fKU:65",
+     "KU:radio:65"
+    ],
+    "ctrl+a": [
+     "fKD:17",
+     "KD:radio:17",
+     "fKD:65",
+     "KD:radio:65[ssCtrl]",
+     "U8:radio:\"a\"",
+     "KP:radio:#97",
+     "fKU:17",
+     "KU:radio:17",
+     "fKU:65",
+     "KU:radio:65"
+    ],
+    "Tab": [
+     "fKU:9",
+     "KU:trackbar:9"
+    ],
+    "shift+Tab": [
+     "fKD:16",
+     "KD:trackbar:16",
+     "fKU:16",
+     "KU:radio:16",
+     "fKU:9",
+     "KU:radio:9"
+    ]
+   },
+   "trackbar": {
+    "Return": [
+     "fKD:13",
+     "KD:trackbar:13",
+     "U8:trackbar:\"",
+     "KP:trackbar:#13",
+     "fKU:13",
+     "KU:trackbar:13",
+     "E:defbtn"
+    ],
+    "KP_Enter": [
+     "fKD:13",
+     "KD:trackbar:13",
+     "U8:trackbar:\"",
+     "KP:trackbar:#13",
+     "fKU:13",
+     "KU:trackbar:13",
+     "E:defbtn"
+    ],
+    "Escape": [
+     "fKD:27",
+     "KD:trackbar:27",
+     "U8:trackbar:\"\u001b\"",
+     "KP:trackbar:#27",
+     "fKU:27",
+     "KU:trackbar:27",
+     "E:cancelbtn"
+    ],
+    "Up": [
+     "fKD:38",
+     "KD:trackbar:38",
+     "fKU:38",
+     "KU:trackbar:38"
+    ],
+    "Down": [
+     "fKD:40",
+     "KD:trackbar:40",
+     "fKU:40",
+     "KU:trackbar:40"
+    ],
+    "Left": [
+     "fKD:37",
+     "KD:trackbar:37",
+     "fKU:37",
+     "KU:trackbar:37"
+    ],
+    "Right": [
+     "fKD:39",
+     "KD:trackbar:39",
+     "fKU:39",
+     "KU:trackbar:39"
+    ],
+    "Home": [
+     "fKD:36",
+     "KD:trackbar:36",
+     "E:trackbar",
+     "fKU:36",
+     "KU:trackbar:36"
+    ],
+    "End": [
+     "fKD:35",
+     "KD:trackbar:35",
+     "E:trackbar",
+     "fKU:35",
+     "KU:trackbar:35"
+    ],
+    "Prior": [
+     "fKD:33",
+     "KD:trackbar:33",
+     "fKU:33",
+     "KU:trackbar:33"
+    ],
+    "Next": [
+     "fKD:34",
+     "KD:trackbar:34",
+     "E:trackbar",
+     "fKU:34",
+     "KU:trackbar:34"
+    ],
+    "Delete": [
+     "fKD:46",
+     "KD:trackbar:46",
+     "fKU:46",
+     "KU:trackbar:46"
+    ],
+    "BackSpace": [
+     "fKD:8",
+     "KD:trackbar:8",
+     "U8:trackbar:\"\b\"",
+     "KP:trackbar:#8",
+     "fKU:8",
+     "KU:trackbar:8"
+    ],
+    "Insert": [
+     "fKD:45",
+     "KD:trackbar:45",
+     "fKU:45",
+     "KU:trackbar:45"
+    ],
+    "F3": [
+     "fKD:114",
+     "KD:trackbar:114",
+     "fKU:114",
+     "KU:trackbar:114"
+    ],
+    "space": [
+     "U8:trackbar:\"",
+     "fKU:32",
+     "KU:trackbar:32"
+    ],
+    "a": [
+     "U8:trackbar:\"a\"",
+     "fKU:65",
+     "KU:trackbar:65"
+    ],
+    "ctrl+a": [
+     "fKD:17",
+     "KD:trackbar:17",
+     "fKD:65",
+     "KD:trackbar:65[ssCtrl]",
+     "U8:trackbar:\"a\"",
+     "KP:trackbar:#97",
+     "fKU:17",
+     "KU:trackbar:17",
+     "fKU:65",
+     "KU:trackbar:65"
+    ],
+    "Tab": [
+     "fKU:9",
+     "KU:grid:9"
+    ],
+    "shift+Tab": [
+     "fKD:16",
+     "KD:grid:16",
+     "fKU:16",
+     "KU:trackbar:16",
+     "fKU:9",
+     "KU:trackbar:9"
+    ]
+   },
+   "grid": {
+    "Return": [
+     "fKD:13",
+     "KD:grid:13",
+     "U8:grid:\"",
+     "KP:grid:#13",
+     "fKU:13",
+     "KU:grid:13",
+     "E:defbtn"
+    ],
+    "KP_Enter": [
+     "fKD:13",
+     "KD:grid:13",
+     "U8:grid:\"",
+     "KP:grid:#13",
+     "fKU:13",
+     "KU:grid:13",
+     "E:defbtn"
+    ],
+    "Escape": [
+     "fKD:27",
+     "KD:grid:27",
+     "U8:grid:\"\u001b\"",
+     "KP:grid:#27",
+     "fKU:27",
+     "KU:grid:27",
+     "E:cancelbtn"
+    ],
+    "Up": [
+     "fKD:38",
+     "KD:grid:38",
+     "fKU:38",
+     "KU:grid:38"
+    ],
+    "Down": [
+     "fKD:40",
+     "KD:grid:40",
+     "E:grid",
+     "fKU:40",
+     "KU:grid:40"
+    ],
+    "Left": [
+     "fKD:37",
+     "KD:grid:37",
+     "fKU:37",
+     "KU:grid:37"
+    ],
+    "Right": [
+     "fKD:39",
+     "KD:grid:39",
+     "E:grid",
+     "fKU:39",
+     "KU:grid:39"
+    ],
+    "Home": [
+     "fKD:36",
+     "KD:grid:36",
+     "E:grid",
+     "fKU:36",
+     "KU:grid:36"
+    ],
+    "End": [
+     "fKD:35",
+     "KD:grid:35",
+     "E:grid",
+     "fKU:35",
+     "KU:grid:35"
+    ],
+    "Prior": [
+     "fKD:33",
+     "KD:grid:33",
+     "fKU:33",
+     "KU:grid:33"
+    ],
+    "Next": [
+     "fKD:34",
+     "KD:grid:34",
+     "fKU:34",
+     "KU:grid:34"
+    ],
+    "Delete": [
+     "fKD:46",
+     "KD:grid:46",
+     "fKU:46",
+     "KU:grid:46"
+    ],
+    "BackSpace": [
+     "fKD:8",
+     "KD:grid:8",
+     "U8:grid:\"\b\"",
+     "KP:grid:#8",
+     "fKU:8",
+     "KU:grid:8"
+    ],
+    "Insert": [
+     "fKD:45",
+     "KD:grid:45",
+     "fKU:45",
+     "KU:grid:45"
+    ],
+    "F3": [
+     "fKD:114",
+     "KD:grid:114",
+     "fKU:114",
+     "KU:grid:114"
+    ],
+    "space": [
+     "U8:grid:\"",
+     "fKU:32",
+     "KU:grid:32"
+    ],
+    "a": [
+     "U8:grid:\"a\"",
+     "fKU:65",
+     "KU:grid:65"
+    ],
+    "ctrl+a": [
+     "fKD:17",
+     "KD:grid:17",
+     "fKD:65",
+     "KD:grid:65[ssCtrl]",
+     "U8:grid:\"a\"",
+     "KP:grid:#97",
+     "fKU:17",
+     "KU:grid:17",
+     "fKU:65",
+     "KU:grid:65"
+    ],
+    "Tab": [
+     "fKU:9",
+     "KU:defbtn:9"
+    ],
+    "shift+Tab": [
+     "fKD:16",
+     "KD:defbtn:16",
+     "fKU:16",
+     "KU:grid:16",
+     "fKU:9",
+     "KU:grid:9"
+    ]
+   }
+  },
+  "qt5": {
+   "edit": {},
+   "spin": {},
+   "fspin": {},
+   "comboedit": {},
+   "combolist": {},
+   "memo": {},
+   "listbox": {},
+   "checklist": {},
+   "listview": {},
+   "treeview": {},
+   "button": {},
+   "checkbox": {},
+   "radio": {},
+   "trackbar": {},
+   "grid": {}
+  },
+  "gtk2": {
+   "edit": {},
+   "spin": {},
+   "fspin": {},
+   "comboedit": {},
+   "combolist": {},
+   "memo": {},
+   "listbox": {},
+   "checklist": {},
+   "listview": {},
+   "treeview": {},
+   "button": {},
+   "checkbox": {},
+   "radio": {},
+   "trackbar": {},
+   "grid": {}
+  }
+ },
+ "run_ok": {
+  "gtk4": {
+   "edit": true,
+   "spin": true,
+   "fspin": true,
+   "comboedit": true,
+   "combolist": true,
+   "memo": true,
+   "listbox": true,
+   "checklist": true,
+   "listview": true,
+   "treeview": true,
+   "button": true,
+   "checkbox": true,
+   "radio": true,
+   "trackbar": true,
+   "grid": true
+  },
+  "qt5": {
+   "edit": null,
+   "spin": null,
+   "fspin": null,
+   "comboedit": null,
+   "combolist": null,
+   "memo": null,
+   "listbox": null,
+   "checklist": null,
+   "listview": null,
+   "treeview": null,
+   "button": null,
+   "checkbox": null,
+   "radio": null,
+   "trackbar": null,
+   "grid": null
+  },
+  "gtk2": {
+   "edit": null,
+   "spin": null,
+   "fspin": null,
+   "comboedit": null,
+   "combolist": null,
+   "memo": null,
+   "listbox": null,
+   "checklist": null,
+   "listview": null,
+   "treeview": null,
+   "button": null,
+   "checkbox": null,
+   "radio": null,
+   "trackbar": null,
+   "grid": null
+  }
+ }
+}

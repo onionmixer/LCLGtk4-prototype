@@ -516,3 +516,107 @@ KControls(`/mnt/STORAGE16T/Workspace_STORAGE16T/KControls`, 브랜치 `integrati
 - codex 교차검토 → 재검증: 핸들 미할당 시 `DeliverMessage` 가 전달 없이 0 을 돌려주는 방어 구멍 1건 채택
   (가드 확장). 커먼 다이얼로그의 두 close-request 콜백은 gtk2 와 같은 의미론(취소 시 파괴)이라 대상 아님.
   WM 경유 `GDK_DELETE` 는 다른 모달 grab 중이면 GTK 가 무시(`gtkmain.c`)하는데 이는 핸들러 결과와 무관.
+
+
+## 8. 2026-09-11 세션 — TEdit Return/OnKeyDown (delegate pre-dispatch), TSpinEdit 결함
+
+요청: `REQUEST_2026-09-11_ENTRY_RETURN_KEYDOWN.md`(tomboy-ng 검색창 Enter). 계획·근거·교차검토 판정표·상세 설계(v1→v4)·
+결과는 `PLAN_GTK4_KEY_PREDISPATCH.md` 가 정본이다. 실측 하네스는 `lazarus/example_gtk4_keymatrix_validation/`
+(같은 소스를 gtk4/gtk2/qt5 로 빌드해 15 컨트롤 × 20 키의 OnKeyDown/Up/Press/UTF8KeyPress/기본 버튼/EditingDone 을 대조).
+
+| 커밋 | 내용 | 파일 |
+|---|---|---|
+| d7b7330 | TSpinEdit: GetValue 가 `gtk_spin_button_update` 를 불러 TextChanged 와 무한 재귀(크래시) → gtk2 처럼 텍스트 파싱; Max=Min 은 무제한(`>=`→`>`); TFloatSpinEdit 생성 시 정수 getter 로 step 0 → NULL 위젯 수정; UpdateControl 이 자릿수 변경 전에 Value 를 읽음 | `gtk4widgets.pas`, `gtk4wsspin.pp` |
+| d37a9b8 | `GtkEventKey` 에 `AParts`(키다운부/문자부 선택) — 동작 불변 | `gtk4widgets.pas` |
+| 5315056 | KP_Enter/ISO_Enter 를 Return 처럼(#13 문자열, ISO_Enter→VK_RETURN) | `gtk4widgets.pas`, `gtk4procs.pas` |
+| 11a7655 | 키 이벤트 합성 헬퍼 `Gtk4BuildKeyEvent` 추출 — 동작 불변 | `gtk4widgets.pas` |
+| 4d2d136 | `GtkEventKey` 에 `AHandled`(LCL 소비 관측) + CN 전달 뒤 수명 검사 — 동작 불변 | `gtk4widgets.pas` |
+| 057dd09 | **TEdit delegate pre-dispatch**: 내부 GtkText 의 CAPTURE 컨트롤러에서 비문자 키를 LCL 에 먼저 전달, LCL 이 지우거나 Return 이면 소비. GTK `pressed_keys` 거울(소비한 press 의 release 는 우리가 KeyUp 전달), 소유 참조 전달 이력(BUBBLE 중복·IM 재전송 방어), 컨트롤러 소유 참조 + `DetachEvents`. 스핀은 옵트아웃 | `gtk4widgets.pas`, `lazgtk4_compat.pas` |
+
+- 원인 요약: LCL 키 컨트롤러(BUBBLE)는 바깥 GtkEntry 에 있고 포커스는 내부 GtkText 에 있다. GtkText 의 클래스 단축키가 자기
+  BUBBLE 단계에서 Return 등을 소비해 부모까지 오지 않는다(`gtktext.c:1341-1544`, `gtkwidget.c:2401`, 전파 `gtkmain.c:1857`).
+  같은 구조의 결함이 TSpinEdit·편집 콤보·드롭다운·리스트(space) 에도 있고, 별개 원인으로 비텍스트 위젯의 IM 컨텍스트가
+  문자/space 를 삼켜 체크박스 space 토글 불능, `IsArrowKey` 정책으로 트랙바 화살표 불능 등이 드러났다(계획서 §3-4).
+- 검증: 세 빌드; 행렬 순차 모드 대조로 각 커밋의 "동작 불변" 또는 "edit 행만 변화" 확인; edit 행이 qt5 와 일치
+  (Return/KP_Enter KD+KP#13+KU+ED+기본 버튼, Up/Down 포커스 유지, 화살표/Home/End/BackSpace/Delete/Insert KD 추가).
+  eatlist(Key:=0) 로 기본 버튼·GtkText activate 억제와 KeyUp 도착, Return 누른 채 F3, 자동 반복 — qt5 와 동일.
+- codex(gpt-6-astra) 교차검토: 계획 1회, Phase 0/1a/1b 각 1회, Phase 2 설계 4회 + 코드 1회. 채택·기각은 계획서 §9 와
+  각 §12–15 에 판정표. 사실로 확인된 지적만 반영(단일 keyval 슬롯의 KeyUp 유실, 이벤트 포인터 재사용, 프리에딧 중 Return,
+  wtEntry 플래그의 마우스 경로 부작용, Tab 이중 이동, 컨트롤러 수명 등).
+- **미검증(사용자 실기)**: fcitx5 한글 조합 중 Return/BackSpace 가 IM 에 가는지, 조합 없이 Return 이 한 번만 KD 인지(재전송);
+  tomboy-ng `test_entry_return/run.sh`. Phase 3(TSpinEdit)·4(편집 콤보)는 이 실기 결과 뒤에 착수.
+- 2차 범위(사용자 결정 대기, `TODO.md` G1–G7): 리스트 space/드롭다운 Return, 비텍스트 위젯 IM 분리(체크박스 space), 화살표·Tab
+  정책(트랙바·버튼 내비게이션), memo OnChange, 콤보 항목 이동, Ctrl+문자 KeyPress #1.
+
+## 9. 2026-09-11 세션 — 스크롤 컨테이너의 강제 FCentralWidget 할당 (리사이즈 뒤 스크롤하면 빈 화면)
+
+요청: `REQUEST_2026-09-11_SCROLLFIXED_ALLOCATION.md`(tomboy-ng KMemo). 계획·근거·실측·codex 판정표(3회)·정확한 변경은
+`PLAN_GTK4_SCROLLFIXED_ALLOCATION.md` 가 정본. 실측 하네스는 `lazarus/example_gtk4_allocmatrix_validation/`(README).
+
+| 커밋 | 내용 | 파일 |
+|---|---|---|
+| 0067452 | 계획서·요청서·할당 행렬 하네스·사용자 재현 키트 (rollback point) | 문서/도구 |
+| 7289a76 | **`TGtk4Widget.SetBounds`: `wtScrollingWin` 위젯은 FCentralWidget 강제 할당을 건너뜀** (조건 한 줄 + 주석) | `gtk4widgets.pas` |
+
+- 원인: `SetBounds` 가 모든 FCentralWidget(그룹박스 제외)을 `(0,0,W,H)` 로 강제 `size_allocate` 한다. GtkScrolledWindow 안의
+  중앙 위젯(스크롤용 GtkFixed = 콘텐츠 크기, GtkTextView/ListView/ColumnView = 콘텐츠−스크롤바)에서는 이것이 뷰포트/오버레이가
+  준 정답을 덮어쓴다. GTK 4.6.9 에서 자식만 직접 재할당하면 부모는 모르고(`gtkwidget.c:4094` 자기 플래그만 소거) 크기가 같은 동안
+  건너뛰며(`:4062`), 스크롤은 오버레이 위치만 바꾼다 → **SetBounds 때마다** stale. 평소 멀쩡한 것은 뒤이은 `SetScrollInfo` 의
+  `set_size_request` 값 변경이 `queue_resize` 를 걸어 주는 우연(리사이즈 경로에서는 `Resize`→SetScrollInfo 가 SetBounds **앞**).
+- 영향 범위(실측): `TGtk4CustomControl`(KMemo, TTreeView, TSynEdit, OI 그리드), `TGtk4ScrollingWinControl`(TScrollBox) — 리사이즈 뒤
+  스크롤하면 빈 화면·자식 클리핑; `TGtk4ListView` — 스크롤바 폭만큼 과대 할당(위젯셋 클라이언트 사각형 15px, qt5 의미와 일치하게 됨);
+  Memo/ListBox/CheckListBox 는 overlay 스크롤바라 무증상. 비스크롤 클래스(StaticText/StatusBar/ProgressBar/PairSplitterSide)의
+  다른 불일치는 범위 밖(`TODO.md` H).
+- 검증: 하네스 `analyze.py --strict` 11 스크롤 컨트롤 × 7 시나리오 exit 0, 비스크롤 클래스 기준선과 동일(`compare.py`); 키 행렬
+  순차 모드 300/300 불변(격리 모드 Tab 목적지 7행은 알려진 타이밍 노이즈, 재실행마다 다름); tomboy-ng 를 이 LCL 로 격리 빌드해
+  `test_entry_return/run_scroll_blank.sh`(PageDown×6/Ctrl+End 내용 표시, 기준선은 빈 화면)와 검색 시나리오(580행 `ubi` 강조) 통과.
+- 비용 주의(codex 지적, 소스·RSS 실측): 콘텐츠 크기 GtkFixed 는 `LCLGtkFixedSnapshot` 의 cairo 노드도 콘텐츠 크기라 GL 렌더러에서
+  1400×12000 콘텐츠에 +63~128MB(cairo 렌더러는 +3MB). 기존 설계의 정상 상태 비용이며 stale 상태에서만 사라졌던 것. 가시 영역으로
+  한정하는 개선은 `TODO.md` H.
+- **미검증(사용자 실기)**: tomboy-ng onion5 로 요청서 §1 표; IDE 편집기/TreeView/OI 스크롤 후 창 리사이즈; TListView 헤더; 그룹박스;
+  디자이너의 TScrollBox/TTreeView.
+
+## 10. 2026-09-11 밤 — 스크롤 GtkFixed 의 cairo 노드를 뷰포트 가시 영역으로 (성능·GL 크래시)
+
+§9 의 성능 검토(계획서 §13.1)에서 드러난 기존 설계 비용의 해결. 정본: `PLAN_GTK4_SCROLLFIXED_ALLOCATION.md` §14–15.
+
+| 커밋 | 내용 | 파일 |
+|---|---|---|
+| 670a720 | `LCLGtkFixedSnapshot`: 태그된 스크롤 GtkFixed 의 cairo 노드 bounds = (스크롤 값(Trunc), 뷰포트 page_size); 새 `Gtk4ScrollFixedRedrawCB`(두 adjustment 의 `changed`+`value-changed`) 가 GtkFixed 를 `queue_draw`, snapshot 중이면 병합 idle(`FRedrawIdleId`, DetachEvents 에서 제거, 깊이 재확인) | `gtk4widgets.pas` |
+
+- 왜: GL 렌더러(GTK 4.6 기본)는 cairo 노드를 노드 크기 이미지 표면으로 매 프레임 래스터라이즈·업로드 → 1400×12000 콘텐츠 스크롤
+  1단계 CPU 132ms/RSS +130MB, 32767px 초과 콘텐츠는 abort. 수정 후 18ms, 213MB, 60000px 정상. cairo 렌더러는 8→5.5ms.
+- 왜 재snapshot 이 필요한가: GTK 는 부모만 움직인/커진 자식의 캐시 노드를 재사용(`gtkwidget.c:11646`, `:4062`) — 전체 노드일 때는
+  무해했지만 가시 영역 노드는 위치·크기가 바뀔 때마다 다시 그려야 한다. `TScrollBox` 의 `Tracking=False` 썸 드래그·`csDesigning` 은
+  스크롤 메시지를 무시하므로 LCL 쪽 Invalidate 에 기댈 수 없다(codex 지적, `controlscrollbar.inc:286/301`).
+- 부수 효과: `GtkEventPaint` 의 `rcPaint` 가 `(0,-ScrollY,콘텐츠)` 에서 클라이언트 영역으로(qt5/gtk2 와 동일). 소수 adjustment 값에서
+  GTK 의 int 절단과 맞추기 위해 translate 도 `Round`→`Trunc`.
+- 검증: 스크린샷 md5 동일(11종, synedit growmid 만 경계 1px), 할당 게이트 불변, 키 행렬 불변, tomboy-ng 사용자 스크립트 digest 동일.
+  codex gpt-6-astra 3회(계획서 §14.6–14.8), 지적은 전건 소스 대조 후 반영(시그널 수명·changed 빈도·중첩 루프 idle·Trunc).
+- **미검증(사용자 실기)**: 디자이너 TScrollBox 안 선택 핸들, KMemo/SynEdit 부분 갱신, TScrollBox 썸 드래그/휠, 긴 노트 GL 크래시 해소.
+
+## 11. 2026-09-12 — 스크롤바 드래그가 KMemo 텍스트를 선택 (chrome·좌표·소유 판정, 3단계)
+
+요청 `REQUEST_2026-09-11_SCROLLBAR_DRAG_SELECTS.md`(tomboy-ng: KMemo 스크롤바 썸 드래그가 텍스트를 선택). 정본: `PLAN_GTK4_SCROLLBAR_DRAG_SELECTS.md`
+(GTK 4.6.9 사실 §1, 위젯셋 §2, 3 위젯셋 실측 행렬 §3, 결함 A–N §4, 설계 §6/§12–14, codex gpt-6-astra 판정표 55행, 결과 §12.5/§13.6/§14.5).
+하네스 `lazarus/example_gtk4_mousematrix_validation/`(README): 18 컨트롤 × 영역(client/스크롤바/헤더/…/contentdrag/multibtn) 의 press/motion/release 배달을
+gtk4/qt5/gtk2 에서 같은 소스로 재고 `analyze.py --gate` 가 exit 코드로 판정(v7).
+
+| 커밋 | 내용 | 파일 |
+|---|---|---|
+| 5636fbf | 계획서·하네스·기준선(rollback point) | 문서, 하네스 |
+| ba78585 | **Phase 1 (A)**: `Gtk4LegacyEventCB` 가 버튼 시퀀스의 첫 press 에서 `gtk_widget_pick` 대상이 GtkScrollbar 안이면(`Gtk4IsChromeTarget`) 시퀀스 전체(`FChromeSeq`/`FHeldButtons`, GDK 마스크는 pre-event 상태)를 GTK 에 맡김: 큐잉·포커스 없음, 더블클릭 이력 무효화. 버튼 없는 motion 은 hover 로 배달(chrome 위 제외) | `gtk4widgets.pas` |
+| ba98e2e | **Phase 2 (C·D·E·G)**: `GetClientOriginWidget`(가상, 기본 = 중앙 위젯 위의 가장 가까운 GtkViewport) 로 `getClientOffset` 이 스크롤량을 섞지 않음 → motion·`ClientToScreen`/`ScreenToClient`·휠이 뷰포트(클라이언트) 좌표; `GtkEventMouse`(press/release) 도 `OffsetMousePos`(그룹박스 24px·메뉴바 폼 24px·memo/listbox 1px 이 motion 과 일치); 휠은 FWidget 기준 translate + 같은 변환, `Round` | `gtk4widgets.pas` |
+| 24d1d09 | **Phase 3 (F·B)**: 시퀀스의 GTK 대상이 다른 LCL 컨트롤(자손) 트리면(`Gtk4TargetOwnedByOther`, `FSeqOtherOwner`) 조상은 press/release 를 큐잉하지 않고 motion 도 배달하지 않음(hover 는 fresh pick); LCL 캡처 컨트롤(`Gtk4CapturedWidget`, 디자이너는 폼을 캡처)은 소유와 무관하게 motion 수신; 디자인 모드는 chrome 판정 제외; GtkColumnView 헤더(첫 자식)도 chrome; 런타임 TButtonControl exit 에서 press 면 더블클릭 이력 무효화 | `gtk4widgets.pas`, 하네스(`button`, 게이트 v7) |
+
+- 왜(A): FWidget 의 단일 CAPTURE 레거시 컨트롤러가 자손(스크롤바 포함)의 이벤트를 모두 보고 대상 검사가 없었다. qt5/gtk2 는 chrome 을 배달하지 않는다.
+- 왜(C·E): 뷰포트가 태그된 GtkFixed 를 `(-hadj, -vadj)` 에 할당(`gtkviewport.c:544`)하므로 fixed 기준 translate 는 콘텐츠 좌표. LCL 계약은 뷰포트 기준
+  (`IsControlMouseMsg` 가 `GetClientScrollOffset` 을 더함; qt5/gtk2 실측 동일). 메모/리스트뷰 류는 GtkScrollable 이라 뷰포트가 없어 불변.
+- 왜(F): 버튼은 dedup 이 "가장 깊은 **큐잉된**" 항목에 배달(런타임 TButton 의 press 가 폼에 갔음), motion 은 dedup 없음(폼이 모든 드래그를 받음).
+- 검증: 마우스 게이트 P0 80 → P3 **0**(같은 v7 규칙), 키 행렬 300/300 ×3, 할당 행렬 strict 0·차이 0 ×3, tomboy-ng 격리 빌드 4 시나리오 digest 불변 + gdb
+  프로브(`KMemo.MouseDown/Move/Up`) 670a720 9회 → 0회. codex 8회(계획서 §9/§12.4/§13.5/§14.4), 지적은 전건 소스·실측 대조(기각 4건: LCL 재귀 hit-test 는
+  qt5/gtk2 와 같은 상태, fixed 의 CSS border 는 기존 1px 문제, 폼 overhead 는 실측 일치 등).
+- 한계/후보(`TODO.md` I): H(힌트 창이 press 를 삼킴), B'/B''(ListView 헤더·노트북 탭 원점), I(TMemo 밖 release 유실), J(폼 AutoScroll 없음), L, M, N,
+  O(TButton motion 좌표 (17,5)), P(런타임 TButtonControl press 미배달), Q(캡처 부모가 자식 release 를 못 받음), 스크롤 계열 CSS border 가 fixed 에 붙음.
+- **미검증(사용자 실기)**: 계획서 §7-4 + §14.3(디자이너: 스크롤바/헤더 클릭 선택, 드래그 이동·러버밴드·그래버, 스플리터; KMemo 클릭/선택/팝업 위치;
+  그룹박스 안 버튼/라벨 클릭·힌트; 메뉴바 폼 클릭 좌표; ListView 정렬 클릭·열 폭; TButton 클릭 뒤 포커스; HiDPI).

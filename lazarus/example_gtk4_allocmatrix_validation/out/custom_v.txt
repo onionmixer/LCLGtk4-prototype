@@ -1,0 +1,19 @@
+     0 START control=custom range=v mode=
+
+(process:209175): GLib-CRITICAL **: 15:17:28.213: g_regex_match_full: assertion 'string != NULL' failed
+   815 SNAP show     cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 600x400] req=-1x12000 parent=GtkOverlay alloc=[0,0 585x12000] hadj=0/585/585 vadj=0/12000/400 lcl=600x400 client=600x400
+  1220 SNAP t-show   cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 585x12000] req=-1x12000 parent=GtkOverlay alloc=[0,0 585x12000] hadj=0/585/585 vadj=0/12000/400 lcl=600x400 client=600x400
+  1622 SNAP scroll   cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 585x11999] req=-1x11999 parent=GtkOverlay alloc=[0,-11599 585x11999] hadj=0/585/585 vadj=11599/11999/400 lcl=600x400 client=600x400
+  2024 SNAP t-scroll cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 585x11999] req=-1x11999 parent=GtkOverlay alloc=[0,-11599 585x11999] hadj=0/585/585 vadj=11599/11999/400 lcl=600x400 client=600x400
+  2425 SNAP shrink   cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkFixed alloc=[0,0 600x300] req=-1x12099 parent=GtkOverlay alloc=[0,-11600 585x12099] hadj=0/585/585 vadj=11600/12099/300 lcl=600x300 client=600x300
+  2828 SNAP t-shrink cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkFixed alloc=[0,0 585x12099] req=-1x12099 parent=GtkOverlay alloc=[0,-11600 585x12099] hadj=0/585/585 vadj=11600/12099/300 lcl=600x300 client=600x300
+  3230 SNAP same     cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkFixed alloc=[0,0 600x300] req=-1x12099 parent=GtkOverlay alloc=[0,-11600 585x12099] hadj=0/585/585 vadj=11600/12099/300 lcl=600x300 client=600x300
+  3631 SNAP t-same   cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkFixed alloc=[0,0 585x12099] req=-1x12099 parent=GtkOverlay alloc=[0,-11600 585x12099] hadj=0/585/585 vadj=11600/12099/300 lcl=600x300 client=600x300
+  4034 SNAP grow     cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 600x400] req=-1x11899 parent=GtkOverlay alloc=[0,-11499 585x11899] hadj=0/585/585 vadj=11499/11899/400 lcl=600x400 client=600x400
+  4443 SNAP t-grow   cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 585x11899] req=-1x11899 parent=GtkOverlay alloc=[0,-11499 585x11899] hadj=0/585/585 vadj=11499/11899/400 lcl=600x400 client=600x400
+  4853 SNAP wider    cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkFixed alloc=[0,0 650x400] req=-1x11999 parent=GtkOverlay alloc=[0,-11599 635x11999] hadj=0/635/635 vadj=11599/11999/400 lcl=650x400 client=650x400
+  5256 SNAP t-wider  cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkFixed alloc=[0,0 635x11999] req=-1x11999 parent=GtkOverlay alloc=[0,-11599 635x11999] hadj=0/635/635 vadj=11599/11999/400 lcl=650x400 client=650x400
+  5659 SNAP scroll2  cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkFixed alloc=[0,0 635x11998] req=-1x11998 parent=GtkOverlay alloc=[0,-11598 635x11998] hadj=0/635/635 vadj=11598/11998/400 lcl=650x400 client=650x400
+  6062 SNAP t-scroll2 cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkFixed alloc=[0,0 635x11998] req=-1x11998 parent=GtkOverlay alloc=[0,-11598 635x11998] hadj=0/635/635 vadj=11598/11998/400 lcl=650x400 client=650x400
+  6062 DONE
+EXIT=0

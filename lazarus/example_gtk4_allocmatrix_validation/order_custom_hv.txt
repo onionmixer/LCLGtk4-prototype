@@ -1,0 +1,368 @@
+Breakpoint 1 at 0x5ef9e4: file gtk4widgets.pas, line 5237.
+Breakpoint 2 at 0x75b114: file gtk4winapi.inc, line 5070.
+Breakpoint 3 at 0x47e2b0
+Breakpoint 4 at 0x48d440
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+[New Thread 0x7fffe87ff640 (LWP 223648)]
+[Thread 0x7fffe87ff640 (LWP 223648) exited]
+[New Thread 0x7fffe87ff640 (LWP 223708)]
+[New Thread 0x7fffe4f12640 (LWP 223709)]
+[New Thread 0x7fffdb9ff640 (LWP 223710)]
+[New Thread 0x7fffdb1fe640 (LWP 223711)]
+[New Thread 0x7fffda9fd640 (LWP 223712)]
+[New Thread 0x7fffda1fc640 (LWP 223713)]
+[New Thread 0x7fffce7ff640 (LWP 223714)]
+[New Thread 0x7fffcdffe640 (LWP 223715)]
+[New Thread 0x7fffcd7fd640 (LWP 223716)]
+[New Thread 0x7fffccffc640 (LWP 223717)]
+[New Thread 0x7fffaffff640 (LWP 223718)]
+[New Thread 0x7fffaf7fe640 (LWP 223719)]
+[New Thread 0x7fffaeffd640 (LWP 223720)]
+[New Thread 0x7fffae7fc640 (LWP 223721)]
+[New Thread 0x7fffadffb640 (LWP 223722)]
+[New Thread 0x7fffad7fa640 (LWP 223723)]
+[New Thread 0x7fffacff9640 (LWP 223724)]
+[New Thread 0x7fff8bfff640 (LWP 223725)]
+[New Thread 0x7fff8b7fe640 (LWP 223726)]
+[New Thread 0x7fff8affd640 (LWP 223727)]
+[New Thread 0x7fff8a7fc640 (LWP 223728)]
+[New Thread 0x7fff89ffb640 (LWP 223729)]
+[New Thread 0x7fff897fa640 (LWP 223730)]
+[New Thread 0x7fff88ff9640 (LWP 223731)]
+[New Thread 0x7fff6bfff640 (LWP 223732)]
+[New Thread 0x7fff6b7fe640 (LWP 223733)]
+[New Thread 0x7fff6affd640 (LWP 223734)]
+[New Thread 0x7fff6a7fc640 (LWP 223735)]
+[New Thread 0x7fff69ffb640 (LWP 223736)]
+[New Thread 0x7fff697fa640 (LWP 223737)]
+[New Thread 0x7fff68ff9640 (LWP 223738)]
+[New Thread 0x7fff4bfff640 (LWP 223739)]
+[New Thread 0x7fff4b7fe640 (LWP 223740)]
+[New Thread 0x7fff4affd640 (LWP 223741)]
+[New Thread 0x7fff4a7fc640 (LWP 223742)]
+[New Thread 0x7fff49ffb640 (LWP 223743)]
+[New Thread 0x7fff497fa640 (LWP 223744)]
+[New Thread 0x7fff48ff9640 (LWP 223745)]
+[New Thread 0x7fff2bfff640 (LWP 223746)]
+[New Thread 0x7fff2b7fe640 (LWP 223747)]
+[New Thread 0x7fff2affd640 (LWP 223748)]
+[New Thread 0x7fff2a7fc640 (LWP 223749)]
+[New Thread 0x7fff29ffb640 (LWP 223750)]
+[New Thread 0x7fff297fa640 (LWP 223751)]
+[New Thread 0x7fff28ff9640 (LWP 223752)]
+[New Thread 0x7fff0bfff640 (LWP 223753)]
+[New Thread 0x7fff0b7fe640 (LWP 223754)]
+[New Thread 0x7fff0affd640 (LWP 223755)]
+[New Thread 0x7fff0a7fc640 (LWP 223756)]
+[New Thread 0x7fff09ffb640 (LWP 223757)]
+[New Thread 0x7fff097fa640 (LWP 223758)]
+[New Thread 0x7fff08ff9640 (LWP 223759)]
+[New Thread 0x7ffee3fff640 (LWP 223760)]
+[New Thread 0x7ffee37fe640 (LWP 223761)]
+[New Thread 0x7ffedadff640 (LWP 223762)]
+[New Thread 0x7ffee2ffd640 (LWP 223763)]
+[New Thread 0x7ffee27fc640 (LWP 223764)]
+[New Thread 0x7ffee1ffb640 (LWP 223765)]
+[New Thread 0x7ffee17fa640 (LWP 223766)]
+[New Thread 0x7ffee0ff9640 (LWP 223767)]
+[New Thread 0x7ffedbfff640 (LWP 223768)]
+[New Thread 0x7ffedb7fe640 (LWP 223769)]
+[New Thread 0x7ffeda5fe640 (LWP 223770)]
+[New Thread 0x7ffed9dfd640 (LWP 223771)]
+[New Thread 0x7ffed95fc640 (LWP 223772)]
+[New Thread 0x7ffed8dfb640 (LWP 223773)]
+[New Thread 0x7ffeabfff640 (LWP 223774)]
+[New Thread 0x7ffeab7fe640 (LWP 223780)]
+     0 START control=custom range=hv mode=notruth
+ORDER queue_resize 0x131c1d0
+ORDER queue_resize 0x131c1d0
+ORDER queue_resize 0x1302590
+ORDER queue_resize 0x1302590
+ORDER queue_resize 0x131c350
+ORDER queue_resize 0x13041f0
+ORDER queue_resize 0x1305210
+ORDER queue_resize 0x13041f0
+ORDER queue_resize 0x131c350
+ORDER queue_resize 0x131c350
+ORDER queue_resize 0x1302590
+ORDER queue_resize 0x1302590
+ORDER queue_resize 0x131c4d0
+ORDER queue_resize 0x13043e0
+ORDER queue_resize 0x1305550
+ORDER queue_resize 0x13043e0
+ORDER queue_resize 0x131c4d0
+ORDER queue_resize 0x131c4d0
+ORDER queue_resize 0x131c4d0
+ORDER queue_resize 0x13043e0
+ORDER queue_resize 0x131c4d0
+ORDER queue_resize 0x1302590
+ORDER queue_resize 0x131c650
+ORDER queue_resize 0x1305890
+ORDER queue_resize 0x1302590
+ORDER queue_resize 0x131c7c0
+ORDER queue_resize 0x131c7c0
+ORDER queue_resize 0x131c7c0
+ORDER queue_resize 0xd54490
+ORDER queue_resize 0xd54490
+ORDER queue_resize 0x131c7c0
+ORDER queue_resize 0x131c650
+ORDER queue_resize 0x131c1d0
+ORDER queue_resize 0x131c1d0
+ORDER queue_resize 0x1302590
+ORDER queue_resize 0x1302590
+ORDER queue_resize 0x131c4d0
+ORDER queue_resize 0x131c350
+ORDER queue_resize 0x1300240
+ORDER queue_resize 0x1300240
+
+(process:223637): GLib-CRITICAL **: 15:23:10.779: g_regex_match_full: assertion 'string != NULL' failed
+ORDER set_size_request 0x1300240 800 600
+ORDER set_size_request 0x1300240 4294967295 4294967295
+ORDER queue_resize 0x1300240
+ORDER queue_resize 0x13028c0
+ORDER queue_resize 0x13028c0
+ORDER queue_resize 0x131c950
+ORDER queue_resize 0x13045d0
+ORDER queue_resize 0x1305a30
+ORDER queue_resize 0x13045d0
+ORDER queue_resize 0x131c950
+ORDER queue_resize 0x131c950
+ORDER queue_resize 0x13028c0
+ORDER queue_resize 0x13028c0
+ORDER queue_resize 0x131cad0
+ORDER queue_resize 0x13047c0
+ORDER queue_resize 0x1305d70
+ORDER queue_resize 0x13047c0
+ORDER queue_resize 0x131cad0
+ORDER queue_resize 0x131cad0
+ORDER queue_resize 0x131cad0
+ORDER queue_resize 0x13047c0
+ORDER queue_resize 0x131cad0
+ORDER queue_resize 0x13028c0
+ORDER queue_resize 0x131cc40
+ORDER queue_resize 0x131cdd0
+ORDER queue_resize 0x131cc40
+ORDER queue_resize 0xd54620
+ORDER queue_resize 0xd54620
+ORDER queue_resize 0x131cc40
+ORDER queue_resize 0x131cc40
+ORDER queue_resize 0x131cdd0
+ORDER queue_resize 0x1314190
+ORDER queue_resize 0x1314190
+ORDER queue_resize 0x13028c0
+ORDER queue_resize 0x13028c0
+ORDER queue_resize 0x13028c0
+ORDER queue_resize 0x131cdd0
+ORDER set_size_request 0x13028c0 600 400
+ORDER queue_resize 0x13028c0
+ORDER set_size_request 0x13028c0 600 400
+ORDER queue_resize 0x131c650
+ORDER queue_resize 0x131c650
+ORDER queue_resize 0x13028c0
+ORDER SetScrollInfo
+ORDER set_size_request 0x131cdd0 1400 4294967295
+ORDER queue_resize 0x131cdd0
+ORDER queue_resize 0x13028c0
+ORDER SetScrollInfo
+ORDER set_size_request 0x131cdd0 1400 12000
+ORDER queue_resize 0x131cdd0
+ORDER SetScrollInfo
+ORDER SetScrollInfo
+ORDER SetScrollInfo
+ORDER SetScrollInfo
+ORDER SetScrollInfo
+ORDER SetScrollInfo
+ORDER SetScrollInfo
+ORDER SetScrollInfo
+ORDER SetBounds
+ORDER set_size_request 0x13028c0 600 400
+ORDER queue_resize 0x131c650
+ORDER queue_resize 0x1300240
+ORDER queue_resize 0x1300240
+ORDER queue_resize 0x131c950
+ORDER queue_resize 0x1305bd0
+ORDER queue_resize 0x131cad0
+ORDER queue_resize 0x1305f10
+ORDER queue_resize 0x131c350
+ORDER queue_resize 0x13053b0
+ORDER queue_resize 0x131c4d0
+ORDER queue_resize 0x13056f0
+ORDER queue_resize 0x131cf50
+ORDER queue_resize 0xd54920
+ORDER queue_resize 0x131cf50
+ORDER queue_resize 0xd4f370
+ORDER queue_resize 0x131cf50
+[New Thread 0x7ffeaaffd640 (LWP 223789)]
+ORDER queue_resize 0xd54ad0
+ORDER queue_resize 0xd54ad0
+[New Thread 0x7ffeaa7fc640 (LWP 223790)]
+[New Thread 0x7ffea9ffb640 (LWP 223791)]
+[Thread 0x7ffeaa7fc640 (LWP 223790) exited]
+[Thread 0x7ffea9ffb640 (LWP 223791) exited]
+[New Thread 0x7ffea9ffb640 (LWP 223792)]
+[New Thread 0x7ffeaa7fc640 (LWP 223793)]
+[Thread 0x7ffea9ffb640 (LWP 223792) exited]
+[New Thread 0x7ffea9ffb640 (LWP 223794)]
+[New Thread 0x7ffea97fa640 (LWP 223795)]
+[Thread 0x7ffeaa7fc640 (LWP 223793) exited]
+[Thread 0x7ffea9ffb640 (LWP 223794) exited]
+[New Thread 0x7ffea9ffb640 (LWP 223796)]
+[New Thread 0x7ffeaa7fc640 (LWP 223797)]
+[Thread 0x7ffea97fa640 (LWP 223795) exited]
+[Thread 0x7ffea9ffb640 (LWP 223796) exited]
+[Thread 0x7ffeaa7fc640 (LWP 223797) exited]
+[Thread 0x7ffeaaffd640 (LWP 223789) exited]
+ORDER queue_resize 0x131cf50
+ORDER queue_resize 0x131cf50
+  1162 SNAP show     cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 600x400] req=1400x12000 parent=GtkOverlay alloc=[0,0 1400x12000] hadj=0/1400/585 vadj=0/12000/385 lcl=600x400 client=600x400 ptr=00000000013028C0/000000000131CDD0
+  1565 SNAP t-show   cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 600x400] req=1400x12000 parent=GtkOverlay alloc=[0,0 1400x12000] hadj=0/1400/585 vadj=0/12000/385 lcl=600x400 client=600x400 ptr=00000000013028C0/000000000131CDD0
+ORDER SetScrollInfo
+ORDER set_size_request 0x131cdd0 1400 12000
+  1972 SNAP scroll   cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 600x400] req=1400x12000 parent=GtkOverlay alloc=[0,-11600 1400x12000] hadj=0/1400/585 vadj=11600/12000/385 lcl=600x400 client=600x400 ptr=00000000013028C0/000000000131CDD0
+  2375 SNAP t-scroll cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 600x400] req=1400x12000 parent=GtkOverlay alloc=[0,-11600 1400x12000] hadj=0/1400/585 vadj=11600/12000/385 lcl=600x400 client=600x400 ptr=00000000013028C0/000000000131CDD0
+ORDER SetScrollInfo
+ORDER set_size_request 0x131cdd0 1385 12000
+ORDER queue_resize 0x131cdd0
+ORDER SetScrollInfo
+ORDER set_size_request 0x131cdd0 1385 12085
+ORDER queue_resize 0x131cdd0
+ORDER SetScrollInfo
+ORDER SetScrollInfo
+ORDER SetBounds
+ORDER set_size_request 0x13028c0 600 300
+ORDER queue_resize 0x13028c0
+ORDER queue_resize 0x131c650
+  2831 SNAP shrink   cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkFixed alloc=[0,0 600x300] req=1385x12085 parent=GtkOverlay alloc=[0,-11600 1385x12085] hadj=0/1385/585 vadj=11600/12085/285 lcl=600x300 client=600x300 ptr=00000000013028C0/000000000131CDD0
+  3233 SNAP t-shrink cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkFixed alloc=[0,0 600x300] req=1385x12085 parent=GtkOverlay alloc=[0,-11600 1385x12085] hadj=0/1385/585 vadj=11600/12085/285 lcl=600x300 client=600x300 ptr=00000000013028C0/000000000131CDD0
+ORDER SetBounds
+ORDER set_size_request 0x13028c0 600 300
+ORDER queue_resize 0x131c650
+  3650 SNAP same     cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkFixed alloc=[0,0 600x300] req=1385x12085 parent=GtkOverlay alloc=[0,-11600 1385x12085] hadj=0/1385/585 vadj=11600/12085/285 lcl=600x300 client=600x300 ptr=00000000013028C0/000000000131CDD0
+  4052 SNAP t-same   cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkFixed alloc=[0,0 600x300] req=1385x12085 parent=GtkOverlay alloc=[0,-11600 1385x12085] hadj=0/1385/585 vadj=11600/12085/285 lcl=600x300 client=600x300 ptr=00000000013028C0/000000000131CDD0
+ORDER SetScrollInfo
+ORDER set_size_request 0x131cdd0 1385 12085
+ORDER SetScrollInfo
+ORDER set_size_request 0x131cdd0 1385 11885
+ORDER queue_resize 0x131cdd0
+ORDER SetScrollInfo
+ORDER SetScrollInfo
+ORDER SetBounds
+ORDER set_size_request 0x13028c0 600 400
+ORDER queue_resize 0x13028c0
+ORDER queue_resize 0x131c650
+  4493 SNAP grow     cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 600x400] req=1385x11885 parent=GtkOverlay alloc=[0,-11500 1385x11885] hadj=0/1385/585 vadj=11500/11885/385 lcl=600x400 client=600x400 ptr=00000000013028C0/000000000131CDD0
+  4896 SNAP t-grow   cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 600x400] req=1385x11885 parent=GtkOverlay alloc=[0,-11500 1385x11885] hadj=0/1385/585 vadj=11500/11885/385 lcl=600x400 client=600x400 ptr=00000000013028C0/000000000131CDD0
+ORDER SetScrollInfo
+ORDER set_size_request 0x131cdd0 1335 11885
+ORDER queue_resize 0x131cdd0
+ORDER SetScrollInfo
+ORDER set_size_request 0x131cdd0 1335 11985
+ORDER queue_resize 0x131cdd0
+ORDER SetScrollInfo
+ORDER SetScrollInfo
+ORDER SetBounds
+ORDER set_size_request 0x13028c0 650 400
+ORDER queue_resize 0x13028c0
+ORDER queue_resize 0x131c650
+  5338 SNAP wider    cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkFixed alloc=[0,0 650x400] req=1335x11985 parent=GtkOverlay alloc=[0,-11600 1335x11985] hadj=0/1335/635 vadj=11600/11985/385 lcl=650x400 client=650x400 ptr=00000000013028C0/000000000131CDD0
+  5741 SNAP t-wider  cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkFixed alloc=[0,0 650x400] req=1335x11985 parent=GtkOverlay alloc=[0,-11600 1335x11985] hadj=0/1335/635 vadj=11600/11985/385 lcl=650x400 client=650x400 ptr=00000000013028C0/000000000131CDD0
+ORDER SetScrollInfo
+ORDER set_size_request 0x131cdd0 1335 11985
+  6150 SNAP scroll2  cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkFixed alloc=[0,0 650x400] req=1335x11985 parent=GtkOverlay alloc=[0,-11600 1335x11985] hadj=0/1335/635 vadj=11600/11985/385 lcl=650x400 client=650x400 ptr=00000000013028C0/000000000131CDD0
+  6553 SNAP t-scroll2 cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 650x400] req=650x400 central=GtkFixed alloc=[0,0 650x400] req=1335x11985 parent=GtkOverlay alloc=[0,-11600 1335x11985] hadj=0/1335/635 vadj=11600/11985/385 lcl=650x400 client=650x400 ptr=00000000013028C0/000000000131CDD0
+  6553 DONE
+ORDER queue_resize 0x131c650
+ORDER queue_resize 0x13028c0
+ORDER queue_resize 0x1314190
+ORDER queue_resize 0x131cc40
+ORDER queue_resize 0x131cc40
+ORDER queue_resize 0x13028c0
+ORDER queue_resize 0x131c950
+ORDER queue_resize 0x1305a30
+ORDER queue_resize 0x13028c0
+ORDER queue_resize 0x131cad0
+ORDER queue_resize 0x1305d70
+ORDER queue_resize 0x131c1d0
+ORDER queue_resize 0x131c7c0
+ORDER queue_resize 0x131c7c0
+ORDER queue_resize 0x1302590
+ORDER queue_resize 0x1305890
+ORDER queue_resize 0x1302590
+ORDER queue_resize 0x131c350
+ORDER queue_resize 0x1305210
+ORDER queue_resize 0x1302590
+ORDER queue_resize 0x131c4d0
+ORDER queue_resize 0x1305550
+ORDER queue_resize 0x131c7c0
+[Thread 0x7ffed95fc640 (LWP 223772) exited]
+[Thread 0x7ffeabfff640 (LWP 223774) exited]
+[Thread 0x7ffeda5fe640 (LWP 223770) exited]
+[Thread 0x7ffed8dfb640 (LWP 223773) exited]
+[Thread 0x7ffeab7fe640 (LWP 223780) exited]
+[Thread 0x7ffed9dfd640 (LWP 223771) exited]
+[Thread 0x7ffedbfff640 (LWP 223768) exited]
+[Thread 0x7ffee0ff9640 (LWP 223767) exited]
+[Thread 0x7ffee17fa640 (LWP 223766) exited]
+[Thread 0x7ffee1ffb640 (LWP 223765) exited]
+[Thread 0x7ffee27fc640 (LWP 223764) exited]
+[Thread 0x7ffee2ffd640 (LWP 223763) exited]
+[Thread 0x7ffedadff640 (LWP 223762) exited]
+[Thread 0x7ffee37fe640 (LWP 223761) exited]
+[Thread 0x7ffee3fff640 (LWP 223760) exited]
+[Thread 0x7fff08ff9640 (LWP 223759) exited]
+[Thread 0x7fff097fa640 (LWP 223758) exited]
+[Thread 0x7fff09ffb640 (LWP 223757) exited]
+[Thread 0x7fff0a7fc640 (LWP 223756) exited]
+[Thread 0x7fff0affd640 (LWP 223755) exited]
+[Thread 0x7fff0b7fe640 (LWP 223754) exited]
+[Thread 0x7fff0bfff640 (LWP 223753) exited]
+[Thread 0x7fff28ff9640 (LWP 223752) exited]
+[Thread 0x7fff297fa640 (LWP 223751) exited]
+[Thread 0x7fff29ffb640 (LWP 223750) exited]
+[Thread 0x7fff2a7fc640 (LWP 223749) exited]
+[Thread 0x7fff2affd640 (LWP 223748) exited]
+[Thread 0x7fff2b7fe640 (LWP 223747) exited]
+[Thread 0x7fff2bfff640 (LWP 223746) exited]
+[Thread 0x7fff48ff9640 (LWP 223745) exited]
+[Thread 0x7fff497fa640 (LWP 223744) exited]
+[Thread 0x7fff49ffb640 (LWP 223743) exited]
+[Thread 0x7fff4a7fc640 (LWP 223742) exited]
+[Thread 0x7fff4affd640 (LWP 223741) exited]
+[Thread 0x7fff4b7fe640 (LWP 223740) exited]
+[Thread 0x7fff4bfff640 (LWP 223739) exited]
+[Thread 0x7fff68ff9640 (LWP 223738) exited]
+[Thread 0x7fff697fa640 (LWP 223737) exited]
+[Thread 0x7fff69ffb640 (LWP 223736) exited]
+[Thread 0x7fff6a7fc640 (LWP 223735) exited]
+[Thread 0x7fff6affd640 (LWP 223734) exited]
+[Thread 0x7fff6b7fe640 (LWP 223733) exited]
+[Thread 0x7fff6bfff640 (LWP 223732) exited]
+[Thread 0x7fff88ff9640 (LWP 223731) exited]
+[Thread 0x7fff897fa640 (LWP 223730) exited]
+[Thread 0x7fff89ffb640 (LWP 223729) exited]
+[Thread 0x7fff8a7fc640 (LWP 223728) exited]
+[Thread 0x7fff8affd640 (LWP 223727) exited]
+[Thread 0x7fff8b7fe640 (LWP 223726) exited]
+[Thread 0x7fff8bfff640 (LWP 223725) exited]
+[Thread 0x7fffacff9640 (LWP 223724) exited]
+[Thread 0x7fffad7fa640 (LWP 223723) exited]
+[Thread 0x7fffadffb640 (LWP 223722) exited]
+[Thread 0x7fffae7fc640 (LWP 223721) exited]
+[Thread 0x7fffaeffd640 (LWP 223720) exited]
+[Thread 0x7fffaf7fe640 (LWP 223719) exited]
+[Thread 0x7fffaffff640 (LWP 223718) exited]
+[Thread 0x7fffccffc640 (LWP 223717) exited]
+[Thread 0x7fffcd7fd640 (LWP 223716) exited]
+[Thread 0x7fffcdffe640 (LWP 223715) exited]
+[Thread 0x7fffce7ff640 (LWP 223714) exited]
+[Thread 0x7fffda1fc640 (LWP 223713) exited]
+[Thread 0x7fffda9fd640 (LWP 223712) exited]
+[Thread 0x7fffdb1fe640 (LWP 223711) exited]
+[Thread 0x7fffdb9ff640 (LWP 223710) exited]
+[Thread 0x7fffe4f12640 (LWP 223709) exited]
+[Thread 0x7fffe87ff640 (LWP 223708) exited]
+[Thread 0x7ffff623be40 (LWP 223637) exited]
+[Thread 0x7ffedb7fe640 (LWP 223769) exited]
+[New process 223637]
+[Inferior 1 (process 223637) exited normally]

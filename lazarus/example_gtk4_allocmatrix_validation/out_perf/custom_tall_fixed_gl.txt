@@ -1,0 +1,16 @@
+     0 START control=custom range=tall mode=perf
+
+(process:518878): GLib-CRITICAL **: 17:53:29.751: g_regex_match_full: assertion 'string != NULL' failed
+
+(process:518878): Gsk-CRITICAL **: 17:53:29.827: gsk_render_node_draw: assertion 'cairo_status (cr) == CAIRO_STATUS_SUCCESS' failed
+
+(process:518878): Gdk-CRITICAL **: 17:53:29.827: gdk_texture_new_for_surface: assertion 'cairo_image_surface_get_width (surface) > 0' failed
+
+(process:518878): Gsk-CRITICAL **: 17:53:29.827: gsk_gl_driver_load_texture: assertion 'GDK_IS_TEXTURE (texture)' failed
+
+(process:518878): GLib-GObject-CRITICAL **: 17:53:29.827: g_object_unref: assertion 'G_IS_OBJECT (object)' failed
+**
+Gsk:ERROR:../../../gsk/gl/gskgldriver.c:713:gsk_gl_driver_cache_texture: assertion failed: (texture_id > 0)
+Bail out! Gsk:ERROR:../../../gsk/gl/gskgldriver.c:713:gsk_gl_driver_cache_texture: assertion failed: (texture_id > 0)
+timeout: 감시 중인 명령에서 코어 덤프
+EXIT=134

@@ -1,4 +1,4 @@
-# GTK4 LCL - 다음 세션 인수인계 (작성 2026-07-02 S75, 갱신 2026-09-02 close-request 세션)
+# GTK4 LCL - 다음 세션 인수인계 (작성 2026-07-02 S75, 갱신 2026-09-11 scroll-fixed allocation 세션)
 
 이 문서 하나로 다른 세션에서 작업을 이어갈 수 있도록 정리했습니다.
 상세 이력은 프로젝트 메모리(`MEMORY.md` 및 그 색인이 가리키는 파일들 — 특히
@@ -44,7 +44,8 @@
 
 - **빌드 위치(사용자 지시)**: 저장소 안 `deb_build/<버전>/`. 현재 `deb_build/4.4/`.
   저장소 밖에 새 빌드 디렉터리를 만들지 말 것. `.git/info/exclude` 로 무시됨.
-- **현재 리비전**: `4.4+dfsg-4`(2026-09-02, close-request 수정 포함). 설치 스크립트 `deb_build/4.4/install-4.4-dfsg4.sh`.
+- **현재 리비전**: `4.4+dfsg-8`(2026-09-12, 스크롤바 드래그/좌표/소유 판정 24d1d09; 빌드 결과는 `REBUILD-2026-09-02.md` "-8" 절).
+  설치 스크립트 `deb_build/4.4/install-4.4-dfsg8.sh`. 이전: `-7`(가시 영역 cairo 노드 670a720), `-6`(강제 할당 7289a76), `-5`(TEdit pre-dispatch·TSpinEdit), `-4`(close-request), `-3`.
 - **정본 기록**: `/usr/src/lazarus4_build/4.4/PLAN_GTK4_PACKAGE.md`(2026-07-21, `-2` 리비전).
   이 경로는 root 소유이고 `sudo` 가 비밀번호를 요구해 **에이전트가 쓸 수 없다**.
 - **재빌드 절차/함정**: `deb_build/4.4/REBUILD-2026-09-02.md`.
@@ -60,7 +61,15 @@
 ## 1. 현재 브랜치 상태
 
 ```
-cf48e78 HANDOFF: record the 4.4+dfsg-4 deb rebuild (close-request fix)           <- 현재 HEAD
+(이 문서 커밋) docs: 2026-09-11 key pre-dispatch session                          <- 현재 HEAD
+057dd09 GTK4: deliver non-text keys of TEdit to the LCL before the inner GtkText (delegate pre-dispatch)
+4d2d136 GTK4: GtkEventKey - report LCL consumption to the caller, liveness checks (no behaviour change)
+11a7655 GTK4: extract Gtk4BuildKeyEvent from the key callbacks (no behaviour change)
+5315056 GTK4: treat KP_Enter/ISO_Enter like Return for the LCL char path
+d37a9b8 GTK4: GtkEventKey - optional key-down / char parts (no behaviour change)
+d7b7330 GTK4: TSpinEdit - pure GetValue (parse text like gtk2), Max=Min means unlimited, float construction
+a90e6d2 HANDOFF: final update for the 2026-09-02 close-request session
+cf48e78 HANDOFF: record the 4.4+dfsg-4 deb rebuild (close-request fix)
 9a004d9 LCL_GTK4_DEV.md / HANDOFF: record the close-request contract fix (49195ea)
 49195ea GTK4: stop the close-request default handler - LCL owns hide/free after LM_CLOSEQUERY
 4698a83 docs: update paths for the workspace move to /mnt/STORAGE16T
@@ -101,7 +110,71 @@ d999333 GTK4: make TGroupBox client rect reflect the frame chrome and caption
   다수 벤더 `.md`는 미추적이니 **절대 `git add .` 금지** — 필요한 파일만 명시적 add.
 - 커밋/푸시는 사용자가 요청할 때만.
 
-## 2-pre00. 최근 완료 작업 (2026-09-02 close-request 세션) — 최신
+## 2-pre00000. 최근 완료 작업 (2026-09-12 스크롤바 드래그 세션) — 최신
+
+요청 `REQUEST_2026-09-11_SCROLLBAR_DRAG_SELECTS.md`(tomboy-ng KMemo: 스크롤바 썸 드래그가 텍스트 선택). **정본: `PLAN_GTK4_SCROLLBAR_DRAG_SELECTS.md`**,
+요약 `LCL_GTK4_DEV.md` §11. 사용자 지시: 한 컴포넌트가 아니라 같은 구조의 모든 케이스를 종합, codex gpt-6-astra 교차검토(불신), 계산은 python.
+
+- 커밋 4개(각각 rollback point): 5636fbf(계획서·하네스) → **ba78585 Phase 1**(스크롤바 chrome 시퀀스 제외) → **ba98e2e Phase 2**(뷰포트 기준 클라이언트
+  좌표: motion/press/휠/ClientToScreen) → **24d1d09 Phase 3**(입력 소유 판정: 조상은 자손의 버튼/motion 을 받지 않음, 캡처 우회, 디자인 모드 chrome 제외,
+  ListView 헤더 chrome). 모두 `gtk4widgets.pas`.
+- 게이트(계획서 §12.5/§13.6/§14.5): 마우스 행렬 gtk4 `analyze.py --gate` v7 P0 80 → P1 52 → P2 28 → **P3 0**; 키 행렬 300/300(단독 실행 — 병렬 실행은 타이밍
+  잡음); 할당 행렬 strict 0·차이 0; tomboy-ng 격리 빌드(스크래치 `tomboy-ng`, `tomboy-buildN`) 4 시나리오 digest 불변, gdb 프로브 0 발화(670a720 은 9).
+- 하네스 `lazarus/example_gtk4_mousematrix_validation/`(README): 18 컨트롤 × 영역, 3 위젯셋 동일 소스, 자체 xdotool 구동, `out_p0..p3/` 기준선(`*.log` 는 미커밋).
+- deb `4.4+dfsg-8` 빌드(§0c, `install-4.4-dfsg8.sh`).
+- **사용자 실기 대기**(계획서 §7-4·§14.3, deb -8 설치 후): ① tomboy-ng KMemo 스크롤바 드래그(선택 없음)·본문 클릭/드래그 선택(스크롤 전후)·더블클릭·휠·
+  우클릭 팝업 위치 ② IDE 소스 편집기/OI/TreeView 스크롤바 드래그 ③ **디자이너**: TScrollBox 스크롤바·TListView 헤더 클릭으로 선택, 컨트롤 드래그 이동·
+  러버밴드·그래버 리사이즈, 스플리터 드래그 ④ 그룹박스 안 TSpeedButton/TLabel 클릭·힌트 ⑤ 메뉴바 폼의 클릭 좌표 ⑥ 런타임 ListView 열 정렬 클릭·열 폭 조절
+  ⑦ TButton 클릭 뒤 포커스·더블클릭 ⑧ 자식 MouseDown 에서 `SetCaptureControl(Parent)` 하는 코드가 있으면 그 드래그 ⑨ HiDPI 가 있으면 클릭 좌표.
+- 범위 밖 기록: `TODO.md` I(H, B'/B'', I, J, L, M, N, O, P, Q, fixed 의 CSS border).
+- 함정(추가): codex MCP 는 이 세션에서 연결 실패 상태였고 CLI(`codex exec -m gpt-6-astra -s read-only`)로 진행(사용자가 세션 중 MCP 복구를 알림 — 다음 세션은 MCP 우선).
+  키 행렬은 다른 하네스와 병렬로 돌리면 타이밍 잡음으로 행이 바뀐다(단독 재실행에서 0).
+
+## 2-pre0000. 최근 완료 작업 (2026-09-11 scroll-fixed allocation 세션)
+
+요청 `REQUEST_2026-09-11_SCROLLFIXED_ALLOCATION.md`(tomboy-ng KMemo: 리사이즈 뒤 스크롤하면 빈 화면). **정본:
+`PLAN_GTK4_SCROLLFIXED_ALLOCATION.md`**(GTK 4.6.9 할당 의미론·위젯셋 조사·실측 행렬 2회·codex 판정표 3회·정확한 변경 §12),
+요약은 `LCL_GTK4_DEV.md` §9.
+
+- 커밋 2개: 0067452(계획서·하네스·재현 키트, rollback point) → **7289a76(`TGtk4Widget.SetBounds` 한 줄: `wtScrollingWin` 위젯은
+  FCentralWidget 강제 할당 건너뜀)**. 게이트: 할당 행렬 strict exit 0, 비스크롤 클래스 불변, 키 행렬 순차 300/300 불변,
+  tomboy-ng 격리 빌드로 사용자 스크립트 통과(스크래치에서 빌드, 사용자 트리 무변경).
+- 하네스 `lazarus/example_gtk4_allocmatrix_validation/`(README): 컨트롤별 FCentralWidget 할당 vs GTK 정답(queue_resize 후) 행렬,
+  `rungate.sh` 가 Phase 1 게이트 전체. 기준선 `out*/`, 고정 후 `out_fixed*/`.
+- deb `4.4+dfsg-6` 빌드 완료(`deb_build/4.4/`, `install-4.4-dfsg6.sh`; 파일 목록 -5 와 동일, `gtk4widgets.o` 만 변경) — §0c 참조.
+- **같은 날 밤, 성능 후속(H2) 완료 — 670a720**: 사용자 성능 검토 요청 → 콘텐츠 크기 cairo 노드가 GL 렌더러에서 스크롤당 132ms/+130MB,
+  32767px 초과 시 abort(기존 설계) → `LCLGtkFixedSnapshot` 노드를 뷰포트 가시 영역으로 + adjustment 변경 시 재snapshot
+  (`Gtk4ScrollFixedRedrawCB`, idle 병합). 계획서 §14–15, `LCL_GTK4_DEV.md` §10. deb `-7`(§0c). 실기 항목은 §14.5-7/§15.
+- **사용자 실기 대기**: ① tomboy-ng `onion5`(사용자 빌드, 설치본 -6 기준) 로 요청서 §1 표 ② IDE 소스 편집기·Project Inspector·
+  Object Inspector 를 스크롤한 채 창 리사이즈(수정 전엔 다음 스크롤 정보 갱신까지 비어 보일 수 있었음) ③ TListView 헤더/컬럼
+  (GTK 정답대로 스크롤바 폭만큼 좁아짐) ④ 그룹박스 안 컨트롤 불변 ⑤ 디자이너의 TScrollBox/TTreeView.
+- 범위 밖 기록: `TODO.md` H1–H4(비스크롤 클래스 강제 할당 불일치, cairo 노드 가시 영역 한정, 늦게 생성된 컨트롤의 첫
+  SetScrollInfo 범위, FPaintArea).
+- 함정(추가): `pgrep -f "codex exec"` 는 자기 셸 명령줄에도 매치돼 자기 셸이 죽는다(2026-09-11 실제 발생, exit 144) — `^node
+  /usr/bin/codex` 처럼 앵커된 패턴을 쓸 것. 하네스 Xvfb 는 `xdpyinfo` 로 준비 확인 + 종료 `wait`(경합 시 NOSNAP).
+
+## 2-pre000. 최근 완료 작업 (2026-09-11 key pre-dispatch 세션)
+
+요청 `REQUEST_2026-09-11_ENTRY_RETURN_KEYDOWN.md`(tomboy-ng 검색창 Enter). **정본: `PLAN_GTK4_KEY_PREDISPATCH.md`**
+(사실·실측 행렬·원인 분류·설계 v1→v4·codex 판정표·단계 결과), 요약은 `LCL_GTK4_DEV.md` §8.
+
+- 커밋 6개(d7b7330 … 057dd09): TSpinEdit 크래시/초기값/float 생성(Phase 0), GtkEventKey 부분 실행·AHandled·헬퍼(1a/2a/2b-1,
+  동작 불변), KP_Enter/ISO_Enter(1b), **TEdit delegate pre-dispatch(2b-2)**. 각 단계 세 빌드 + 행렬 게이트 통과.
+- 하네스 `lazarus/example_gtk4_keymatrix_validation/`(README) — gtk4/gtk2/qt5 3 위젯셋 키 전달 행렬. 기준선 디렉터리별로
+  단계 전후 로그·`signatures_*.json`·codex 회신 보관. **포커스 이동 판정은 순차 모드, 키별 전달 판정은 격리 모드**.
+- deb `4.4+dfsg-5` 빌드(`deb_build/4.4/`, `install-4.4-dfsg5.sh`) — §0c 참조.
+- **사용자 실기 대기(다음 착수 전 필수)**: ① fcitx5 한글 조합 중 Return/BackSpace 가 IM 에 그대로 가는지, 조합 없이 Return
+  이 KD 1회인지(IM 재전송 이중 발화) ② tomboy-ng `test_entry_return/run.sh <gtk4-dbg 바이너리>` 기대 출력 ③ IDE 에서
+  TEdit Enter 로 기본 버튼, Up/Down 포커스 유지.
+- **다음 단계**: Phase 3 TSpinEdit(옵트인 켜기 + Return 후 editable 조건부 `update` + 화살표 FALSE + `IsTextEntryLike`
+  술어), Phase 4 편집 콤보(delegate 기록기에 동일 적용, 팝오버 격리 확인). 2차 범위는 `TODO.md` G1–G7(사용자 결정).
+- codex 교차검토는 이번 세션에 MCP 서버가 연결되지 않아 CLI(`codex exec -m gpt-6-astra -s read-only`)로 수행. 회신은
+  전건 코드 대조 후 채택(계획서 판정표). **codex 를 신뢰하지 말 것**(매 회신에 틀린 주장이 섞여 있었음).
+- **에이전트 셸 함정(추가)**: 백틱이 든 마크다운을 heredoc 으로 쓸 때는 `<<'EOF'` 로 따옴표를 붙일 것(따옴표 없는 heredoc 은
+  백틱을 명령 치환해 문서가 깨지고 엉뚱한 프로세스까지 뜬다 — 2026-09-11 실제 발생). `pkill -f` 패턴이 자기 명령줄에
+  매치되면 자기 셸이 죽으니 PID 로 죽일 것.
+
+## 2-pre00. 최근 완료 작업 (2026-09-02 close-request 세션)
 
 외부 보고("close-request 콜백이 항상 FALSE 라 폼을 숨겨도 GTK4 가 창을 파괴")를 코드 대조 + Xvfb
 재현으로 확인하고 수정했다.
@@ -356,6 +429,9 @@ WM이 좌우. 코드 완성 팝업이 엉뚱한 위치에 떴다 사라지던 �
    갱신된 `debian/patches/add-gtk4-widgetset.patch`, `debian/changelog` 를
    `/usr/src/lazarus4_build/4.4/` 로 옮기려면 `sudo` 가 필요하다. 명령은
    `deb_build/4.4/REBUILD-2026-09-02.md` 말미에 적어 두었다.
+13. **(2026-09-12 추가) 스크롤바 드래그/좌표/소유 판정 실기 확인** — 2-pre00000 의 "사용자 실기 대기" 아홉 항목(deb -8 설치 후). 특히 디자이너 항목은 하네스가 못 본다.
+12. **(2026-09-11 추가) scroll-fixed allocation + H2 실기 확인** — 2-pre0000 의 "사용자 실기 대기" 다섯 항목 + 계획서 §15 의 H2 항목(deb -7 설치 후).
+11. **(2026-09-11 추가) TEdit pre-dispatch 실기 확인** — 2-pre000 의 "사용자 실기 대기" 세 항목. 통과 후 Phase 3/4 착수.
 10. **(2026-09-02 추가) close-request 수정 실기 확인** — 2-pre00 의 "사용자 실기 확인 대기" 항목.
    deb `4.4+dfsg-4` 설치(`deb_build/4.4/install-4.4-dfsg4.sh`, sudo 필요) 후 확인하면 된다.
 
@@ -371,6 +447,12 @@ WM이 좌우. 코드 완성 팝업이 엉뚱한 위치에 떴다 사라지던 �
   컨트롤러보다 먼저 실행. 선점 필요 시 CAPTURE 단계 컨트롤러 사용(위 2c 참고).
 - **콜백 안전성**: Data→TGtk4Widget 캐스트 콜백은 반드시
   `Gtk4IsLiveWidgetPointer`/`CanSendLCLMessage`로 검증(파괴 중 freed 객체 접근 방지).
+- **키 전파 순서**(2026-09-11 확정, GTK 4.6.9 소스): CAPTURE(root→target) → TARGET → BUBBLE(target→root). 같은 위젯·같은
+  단계에선 **나중에 추가한 컨트롤러가 먼저**(`g_list_prepend`). 클래스 키 바인딩은 그 위젯의 BUBBLE. GtkText 의 키/IM 컨트롤러는
+  TARGET. 포커스가 내부 자식(GtkText/행 위젯/토글버튼)에 있으면 부모의 BUBBLE 컨트롤러는 자식이 소비한 키를 못 받는다 →
+  자식 위에 CAPTURE 컨트롤러로 선점(TEdit 는 delegate 기록기 재사용). **press 를 TRUE 로 소비하면 그 keyval 의 release 는
+  같은 컨트롤러에서 GTK 가 자동으로 멈춘다**(`pressed_keys`) — KeyUp 을 직접 전달해야 함. `gdk_keyval_to_unicode` 는
+  KP_Enter/ISO_Enter 에 0. `gtk_event_controller_get_current_event` 는 전달 뒤 재조회 금지(중첩 시 덮어씀).
 - **자식 GObject 시그널**(selection model, adjustment, factory, IMContext 등)은
   base `DestroyWidget`의 `g_signal_handlers_disconnect_matched(FWidget)`가 못
   잡음 → 각 클래스가 `DetachEvents` override로 직접 해제.

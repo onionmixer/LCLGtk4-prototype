@@ -71,3 +71,53 @@ KControls 저장소 `tests/kmemo_cliptest/run_cliptest.sh qt5` → `TestComboSel
 
 - 일반 문자 키에 대한 `OnKeyDown` 미전달(키 컨트롤러의 IM 컨텍스트가 press를 소비 → `key-pressed` 미발생,
   문자는 IM commit으로만 전달): 사용자 결정으로 **작업하지 않음**(2026-09-02). `OnKeyPress`/`OnUTF8KeyPress`는 정상.
+
+
+---
+
+## G. [GTK4] 키 전달 2차 범위 (2026-09-11, 계획서 `PLAN_GTK4_KEY_PREDISPATCH.md` §3-B/§3-C/§4 D3–D4, §10)
+
+TEdit Return 수정(§15) 과정에서 실측된 같은 계열 결함. 근거와 수정 방향은 계획서에 확정돼 있고 착수는 사용자 결정 대기.
+- **G1** 리스트류(TListBox/TCheckListBox/TListView) space, 드롭다운 콤보 Return/space: 행 위젯·토글버튼이 먼저 소비 → 컨테이너에
+  CAPTURE pre-dispatch(§6.1).
+- **G2** 비텍스트 위젯의 IM 컨텍스트가 문자/space press 를 삼킴 → 모든 비텍스트 위젯 문자 OnKeyDown 부재, **TCheckBox/
+  TRadioButton space 토글 불능**, 버튼 space 클릭 불능(§6.3; TCustomControl 한글 회귀 검증 필수).
+- **G3** `IsArrowKey`/Tab 정책: TTrackBar 화살표 불능, 버튼류 화살표 내비게이션 부재, Tab OnKeyDown 부재(§6.4).
+- **G4** TMemo.OnChange 가 키 입력에 발화하지 않음(D3). **G5** 콤보 Up/Down 항목 이동 불능, 드롭다운 space 후 키 갇힘(D4).
+- **G6** Ctrl+문자 KeyPress 가 #1..#26 이 아니라 문자(#97)(C4; gtk2/qt5 는 제어문자).
+- **G7** TSpinEdit: PageUp/PageDown·포커스 아웃 시 GTK 가 텍스트를 다시 쓰면 insert-text 훅이 타이핑으로 오인해 OnKeyPress 발생
+  (§12.4 ②); Phase 3 에서 스핀 pre-dispatch 와 함께 처리.
+
+## H. [GTK4] 강제 FCentralWidget 할당 — 범위 밖 잔여 (2026-09-11, 계획서 `PLAN_GTK4_SCROLLFIXED_ALLOCATION.md` §5-C, §10)
+
+수정(7289a76)은 `wtScrollingWin` 위젯만 다룬다. 하네스로 드러났지만 스크롤과 무관해 남긴 것(사용자 결정):
+- **H1** 비스크롤 클래스의 강제 할당 불일치: `TGtk4StaticText`(GtkLabel 이 프레임 border 만큼 2px 과대), `TGtk4ProgressBar`
+  (`InitializeWidget` 의 `set_size_request` 가 남아 줄일 때 GTK 정답과 어긋남), `TGtk4StatusBar`(GTK 정답 높이 0 — 강제 할당이
+  오히려 표시를 유지하는 듯, 건드리지 말 것), `TGtk4SplitterSide`(위젯셋 SetBounds 직접 호출 시만).
+- **H2 — 해결(670a720, 2026-09-11 밤, 계획서 §14–15)** `LCLGtkFixedSnapshot` 의 cairo 노드를 뷰포트 가시 영역으로 한정 + adjustment 변경 시 재snapshot.
+  (아래는 착수 전 기록) 실측(2026-09-11 저녁,
+  하네스 `perf`/`perfstale` 모드, `out_perf/`): GL 렌더러(GTK 4.6 기본)에서 1400×12000 콘텐츠는 스크롤 1단계당 CPU 14→132ms,
+  wall 17→119ms, RSS +130MB(cairo 렌더러는 5→8ms). **콘텐츠 높이가 cairo 이미지 표면 한계 32767px 를 넘으면(1400×60000)
+  GL 렌더러가 `gsk_gl_driver_cache_texture` 단언으로 프로세스를 abort** — 수정 전(첫 표시 상태)에도 같음, 수정과 무관한 기존 설계
+  결함. 긴 노트(약 2000줄 이상)의 tomboy-ng-gtk4 가 GL 렌더러에서 죽을 수 있다. 계획서 §13 참조.
+- **H3** 폼 표시 후 생성된 스크롤 컨트롤의 첫 `SetScrollInfo` 가 미할당 SW 기준으로 콘텐츠 크기를 변환해 범위가 어긋남
+  (`late` 시나리오 upper 11601 vs 12000; `gtk4winapi.inc:5197-5222`).
+- **H4** `FPaintArea` 강제 할당은 스크롤 컨테이너에서 오버레이 크기와 어긋나지만 `draw_func=nil`·`can_target=False` 라 무증상.
+
+## I. [GTK4] 마우스 배달 — 범위 밖 잔여 (2026-09-12, 계획서 `PLAN_GTK4_SCROLLBAR_DRAG_SELECTS.md` §4, §10-2, §13.5, §14.1-4)
+
+수정(ba78585/ba98e2e/24d1d09)은 chrome·좌표·소유 판정을 다룬다. 하네스로 드러났지만 범위 밖으로 남긴 것:
+
+- **H** `TGtk4HintWindow`(override-redirect GtkWindow)가 포인터 아래에 떠서 press 를 가로챔 — TTreeView 노드 툴팁이 켜져 있으면 스크롤바 클릭이 먹힌다(qt5 툴팁은 입력 투명).
+  후보: `gtk_widget_set_can_target(False)` 또는 press 시 숨김. 하네스 `treeviewnohint` 로 우회.
+- **B'/B''** TListView 의 client 원점이 헤더를 포함(gtk4 y=200 vs qt5 170), 노트북 탭 press 가 notebook-local(y=9 vs qt5 -28).
+- **I** `TMemo`(GtkTextView) 클라이언트 드래그의 release 가 컨트롤 밖에서 놓이면 `OnMouseUp` 없음(qt5/gtk2 는 있음).
+- **J** gtk4 폼 `AutoScroll` 스크롤바가 만들어지지 않음(`TGtk4Window` adjustment pin; 부모 있는 폼만 정책 토글 허용).
+- **L** `TListBox` 가로 정책 NEVER 인데 `GetScrollBarVisible(SB_HORZ)` 가 True. **M** `TMemo`/`TListBox` 의 `GetScrollPos` 가 스크롤을 반영하지 않음.
+- **N** overlay 스크롤바(TMemo/TListBox/TCheckListBox): indicator 가 드러나지 않은 상태의 press 는 GTK 대상이 텍스트/리스트뷰라 chrome 으로 걸러지지 않음(실기 확인 항목).
+- **O** TButton 의 motion 좌표가 qt5/gtk2 보다 (17,5) 작음 — `getClientOffset` 이 버튼 내부 라벨(중앙 위젯)을 원점으로 삼음(하네스 `button`).
+- **P** 런타임 TButtonControl 은 LM_LBUTTONDOWN/UP 을 받지 않음(`gtk4widgets.pas` TButtonControl exit, 'clicked' 로 OnClick); qt5/gtk2 는 받음. 24d1d09 로 조상 누출은 사라짐.
+- **Q** 자식 MouseDown 에서 `SetCaptureControl(부모)` 한 부모는 motion 은 받지만(캡처 우회) release 는 못 받음(dedup 이 자식 항목을 택함; win32 는 캡처 컨트롤이 받음).
+- 스크롤 계열(`TGtk4CustomControl` 파생)의 `SetBorderStyle` CSS border 가 GtkFixed 에 붙어 paint 원점(overlay)과 자식 원점(fixed content)이 1px 어긋남(기존; FWidget 에 붙여야 함).
+  `getClientRect` 도 CSS border·왼쪽/위 스크롤바 placement 를 반영하지 않음.
+- LCL `ControlAtPos` 재귀(`wincontrol.inc` "ClientOrigin contains the scroll offset")는 중첩 스크롤 자식에서 qt5/gtk2 와 같은 가정 불일치(LCL 수준).

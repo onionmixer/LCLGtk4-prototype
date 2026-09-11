@@ -64,6 +64,14 @@ type
 
   { TGtk4Widget }
 
+  { Parts of TGtk4Widget.GtkEventKey to run: the key-down/up delivery
+    (CN_/LM_KEYDOWN, Tab, context menu, FKeysToEat tail) and the character
+    block (UTF8KeyPress / CN_CHAR / LM_CHAR). The default runs both, exactly
+    as before; a pre-dispatch caller can run one part at a time. }
+  TGtk4KeyPart = (kpKeyDown, kpChar);
+  TGtk4KeyParts = set of TGtk4KeyPart;
+
+
   TGtk4Widget = class(TGtk4Object, IUnknown)
   strict private
     FCairoContext: Pcairo_t;
@@ -102,6 +110,9 @@ type
     FLastMotionPos: TPoint;               { Motion dedup: last delivered client pos }
     FLastMotionState: TGdkModifierType;   { Motion dedup: last modifier/button state }
     FLastMotionValid: Boolean;            { False until first motion after enter/leave }
+    FChromeSeq: Boolean;                  { current button sequence began on native chrome (scrollbar): not for the LCL }
+    FHeldButtons: set of 0..31;           { buttons this controller has seen pressed and not yet released }
+    FSeqOtherOwner: Boolean;              { current button sequence targets a descendant LCL control's widget tree: not for this control }
     FIMContext: PGtkIMContext; { GTK4: Input method context for CJK/Hangul etc. }
     FIMPreeditActive: Boolean; { True while in preedit composition (CJK/Hangul) }
     FIMSkipDelete: Boolean;    { First preedit-changed after start: no REPLACE flag }
@@ -161,7 +172,8 @@ type
 
     function DeliverMessage(var Msg; const AIsInputEvent: Boolean = False): LRESULT; virtual;
     function GtkEventMouseEnterLeave(Sender: PGtkWidget; Event: PGdkEvent): Boolean; virtual; cdecl;
-    function GtkEventKey(Sender: PGtkWidget; Event: PGdkEvent; AKeyPress: Boolean): Boolean; virtual; cdecl;
+    function GtkEventKey(Sender: PGtkWidget; Event: PGdkEvent; AKeyPress: Boolean;
+      AParts: TGtk4KeyParts = [kpKeyDown, kpChar]; AHandled: PBoolean = nil): Boolean; virtual; cdecl;
     function GtkEventMouse(Sender: PGtkWidget; Event: PGdkEvent): Boolean; virtual; cdecl;
     function GtkEventMouseMove(Sender: PGtkWidget; Event: PGdkEvent): Boolean; virtual; cdecl;
     function GtkEventPaint(Sender: PGtkWidget; AContext: Pcairo_t): Boolean; virtual; cdecl;
@@ -189,6 +201,7 @@ type
     procedure SetLclFont(const AFont:TFont);virtual;
 
     function GetContainerWidget: PGtkWidget; virtual;
+    function GetClientOriginWidget: PGtkWidget; virtual;   { widget whose (0,0) is the LCL client origin (mouse, ClientToScreen) }
     function GetPosition(out APoint: TPoint): Boolean; virtual;
     procedure Release; override;
     procedure Hide; virtual;
@@ -250,6 +263,15 @@ type
 
   { TGtk4Entry }
 
+  { A key event the delegate pre-dispatch delivered to the LCL from the
+    CAPTURE phase (owned gdk_event_ref). Used to skip the duplicate in the
+    outer BUBBLE controller and to recognize a re-queued (IM replay) event. }
+  TGtk4DeliveredKeyEvent = record
+    Ev: PGdkEvent;
+    Consumed: Boolean;
+    InProgress: Boolean;
+  end;
+
   TGtk4Entry = class(TGtk4Editable)
   private
     FUndoBaseline: String;   { text at the last programmatic setText; used to
@@ -263,6 +285,12 @@ type
     FDeferredText: String;            { raw key text deferred until the pending
                                         IM commit lands (fcitx5-gtk4 ordering) }
     FFlushingDeferred: Boolean;       { re-entrancy: flushing FDeferredText }
+    { Delegate pre-dispatch (PLAN_GTK4_KEY_PREDISPATCH.md §15): }
+    FDelegateKeyCtl: PGtkEventController; { CAPTURE key controller on the GtkText }
+    FGtkPressedShadow: array of guint;     { mirror of that controller's pressed_keys:
+                                             keyvals whose press we consumed - GTK will
+                                             swallow their release at this controller }
+    FDelivered: array of TGtk4DeliveredKeyEvent; { capture-delivered events, FIFO }
     function GetAlignment: TAlignment;
     procedure SetAlignment(AValue: TAlignment);
   protected
@@ -271,7 +299,21 @@ type
     function getText: String; override;
     procedure setText(const AValue: String); override;
     function CreateWidget(const {%H-}Params: TCreateParams):PGtkWidget; override;
+    procedure DetachEvents; override;
+    { pre-dispatch bookkeeping }
+    function ShadowHas(AKeyval: guint): Boolean;
+    procedure ShadowAdd(AKeyval: guint);
+    procedure ShadowRemove(AKeyval: guint);
+    function FindDelivered(AEv: PGdkEvent): Integer;
+    function AddDelivered(AEv: PGdkEvent): Integer;
+    procedure FinalizeConsumedPress(AKeyval: guint);
   public
+    { False = the delegate CAPTURE controller only records (TGtk4SpinEdit until
+      its own pre-dispatch policy exists). }
+    function KeyPreDispatchEnabled: Boolean; virtual;
+    { True if this GdkEvent was already delivered to the LCL from the delegate
+      CAPTURE controller (the outer BUBBLE controller must skip it). }
+    function WasDeliveredAtCapture(AEv: PGdkEvent): Boolean;
     procedure SetBounds(Left,Top,Width,Height:integer);override;
     procedure InitializeWidget; override;
     procedure UpdateWidgetConstraints;override;
@@ -309,6 +351,7 @@ type
     function CreateWidget(const {%H-}Params: TCreateParams):PGtkWidget; override;
     function EatArrowKeys(const {%H-}AKey: Word): Boolean; override;
   public
+    function KeyPreDispatchEnabled: Boolean; override;
     function IsWidgetOk: Boolean; override;
     procedure SetRange(AMin, AMax: Double);
     property Minimum: Double read GetMinimum;
@@ -568,6 +611,7 @@ type
     FBorderStyle: TBorderStyle;
     FScrollX: Integer;
     FScrollY: Integer;
+    FRedrawIdleId: guint;   { pending Gtk4ScrollFixedRedrawIdleCB source (0 = none), see Gtk4ScrollFixedRedrawCB }
     function GetHScrollBarPolicy: TGtkPolicyType;
     function GetVScrollBarPolicy: TGtkPolicyType;
     procedure SetBorderStyle(AValue: TBorderStyle);
@@ -1495,6 +1539,63 @@ end;
   constants from lazgtk4_compat), NOT the GTK3 enum values in lazgdk4.pas.
   Synthetic events must use the lazgdk4.pas constants (GDK_BUTTON_PRESS etc.)
   because GtkEventMouse checks Event^.type_ against those. }
+const
+  GTK4_BUTTON_MASKS: TGdkModifierType = [GDK_BUTTON1_MASK, GDK_BUTTON2_MASK, GDK_BUTTON3_MASK, GDK_BUTTON4_MASK, GDK_BUTTON5_MASK];
+
+{ modifier-state element of a button number (none for buttons GDK does not map: X11 maps 1..5 only) }
+function Gtk4ButtonMaskOf(AButton: guint): TGdkModifierType;
+begin
+  case AButton of
+    1: Result := [GDK_BUTTON1_MASK];
+    2: Result := [GDK_BUTTON2_MASK];
+    3: Result := [GDK_BUTTON3_MASK];
+    4: Result := [GDK_BUTTON4_MASK];
+    5: Result := [GDK_BUTTON5_MASK];
+  else
+    Result := [];
+  end;
+end;
+
+{ True when the GTK event target W (a gtk_widget_pick result) lies inside a GtkScrollbar
+  that is a descendant of AStop (the widget carrying our controller) - i.e. native chrome
+  the LCL control must not see as client mouse input (qt5/gtk2 never deliver it).
+  Walks W -> parents up to AStop; nil (pick found nothing) is not chrome. }
+function Gtk4IsChromeTarget(W, AStop: PGtkWidget): Boolean;
+var
+  P: PGtkWidget;
+begin
+  Result := False;
+  while W <> nil do
+  begin
+    if Gtk4IsVScrollbar(PGObject(W)) then Exit(True);   { GtkScrollbar, any orientation }
+    { GtkColumnView header row (column titles, resize handles, header DnD): the first
+      child of the column view, css name "header" (gtkcolumnview.c gtk_column_view_init).
+      qt5 does not deliver header presses either; column clicks reach the LCL through
+      the sorter signal (LVN_COLUMNCLICK), not through mouse messages. }
+    P := gtk_widget_get_parent(W);
+    if (P <> nil) and (g_type_name_from_instance(PGTypeInstance(P)) = 'GtkColumnView') and
+       (W = gtk4_widget_get_first_child(P)) then Exit(True);
+    if W = AStop then Exit;
+    W := P;
+  end;
+end;
+
+{ True when the GTK target W belongs to an LCL control other than ACtl - a descendant
+  control's widget tree. Gtk4WidgetFromGtkWidget (gtk4int.pas) = direct 'lclwidget' tag
+  or the nearest tagged ancestor (SetProp tags both FWidget and the container widget),
+  validated against the live registry. nil target or no owner found -> False (deliver).
+  An untagged subtree parented under a form (e.g. a popup menu popover) resolves to
+  the form, as before. }
+function Gtk4TargetOwnedByOther(ACtl: TGtk4Widget; W: PGtkWidget): Boolean;
+var
+  Owner: TGtk4Widget;
+begin
+  Result := False;
+  if W = nil then Exit;
+  Owner := Gtk4WidgetFromGtkWidget(W);
+  Result := (Owner <> nil) and (Owner <> ACtl);
+end;
+
 function Gtk4LegacyEventCB(controller: PGtkEventController;
   event: PGdkEvent; Data: gpointer): gboolean; cdecl;
 var
@@ -1510,6 +1611,11 @@ var
   DblClickTime, DblClickDist: gint;
   WidgetX, WidgetY: double;
   DeferInfo: PDeferredMouseEvent;
+  PX, PY: double;
+  HavePos, Latched, Captured, IsDesign: Boolean;
+  BtnState: TGdkModifierType;
+  Btn: guint;
+  PickW: PGtkWidget;
 begin
   Result := False;
   if Data = nil then exit;
@@ -1522,6 +1628,110 @@ begin
 
   AWidget := gtk_event_controller_get_widget(controller);
 
+  { ---- Native chrome (scrollbars) is not client input -------------------------------
+    This CAPTURE controller sits on FWidget and therefore also sees events whose GTK
+    target is a descendant scrollbar (GtkScrolledWindow classes, and every ancestor of
+    one). qt5/gtk2 never deliver those to the LCL control (dragging the thumb of a KMemo
+    selected text). Decide before ANY side effect (TButtonControl exit, grab_focus, click
+    counting, deferred queue). GTK keeps the implicit grab - and thus the event target - for
+    the whole button sequence, so the classification is made once at the first press and
+    kept until the last button is released. See PLAN_GTK4_SCROLLBAR_DRAG_SELECTS.md §6.1/§12. }
+  if (evTypeNative = GDK4_BUTTON_PRESS) or (evTypeNative = GDK4_BUTTON_RELEASE) or
+     (evTypeNative = GDK4_MOTION_NOTIFY) then
+  begin
+    { pointer position in AWidget coordinates: translate succeeded, or AWidget is the native }
+    HavePos := False;
+    PX := 0; PY := 0;
+    IsDesign := (ACtl.LCLObject <> nil) and (csDesigning in ACtl.LCLObject.ComponentState);
+    gdk4_event_get_position(event, x, y);
+    NativeW := gtk4_widget_get_native(AWidget);
+    if NativeW <> nil then
+    begin
+      gtk4_native_get_surface_transform(NativeW, @SurfOffX, @SurfOffY);
+      if NativeW = AWidget then
+      begin
+        PX := x - SurfOffX;
+        PY := y - SurfOffY;
+        HavePos := True;
+      end
+      else
+        HavePos := gtk4_widget_translate_coordinates(NativeW, AWidget,
+          x - SurfOffX, y - SurfOffY, @PX, @PY);
+    end;
+    { GDK button masks are the state BEFORE the event: a press does not include the pressed
+      button, a release still includes the released one (X11 XI2 pre-event state). }
+    BtnState := gdk4_event_get_modifier_state(event) * GTK4_BUTTON_MASKS;
+    case evTypeNative of
+      GDK4_BUTTON_PRESS:
+      begin
+        Btn := gdk4_button_event_get_button(event);
+        if (BtnState = []) or (ACtl.FHeldButtons = []) then
+        begin
+          { first press of a button sequence: classify it once; later presses of other
+            buttons keep this classification (same implicit grab target).
+            - chrome (scrollbar, column header): GTK's, never the LCL's - except in design
+              mode, where the designer selects/moves controls by any press on them.
+            - a descendant LCL control's widget tree: that control's controller delivers
+              it (qt5/gtk2: only the target control receives mouse input); this one
+              neither queues the buttons nor delivers the motion. }
+          ACtl.FHeldButtons := [];
+          PickW := nil;
+          if HavePos then
+            PickW := gtk4_widget_pick(AWidget, PX, PY, GTK_PICK_DEFAULT);
+          ACtl.FChromeSeq := (not IsDesign) and Gtk4IsChromeTarget(PickW, AWidget);
+          ACtl.FSeqOtherOwner := Gtk4TargetOwnedByOther(ACtl, PickW);
+        end;
+        if Btn <= 31 then Include(ACtl.FHeldButtons, Btn);
+        if ACtl.FChromeSeq then
+        begin
+          { GTK handles the scrollbar; nothing queued, no focus. Invalidate the double-click
+            history so the next client press starts a fresh count (a rejected press must not
+            leave an older client press as the "previous click"). }
+          Gtk4LastClickTime := 0;
+          Gtk4ClickCount := 0;
+          exit;
+        end;
+        if ACtl.FSeqOtherOwner then exit;   { the owning control's controller counts and queues it }
+      end;
+      GDK4_BUTTON_RELEASE:
+      begin
+        Btn := gdk4_button_event_get_button(event);
+        Latched := ACtl.FChromeSeq or ACtl.FSeqOtherOwner;
+        if Btn <= 31 then Exclude(ACtl.FHeldButtons, Btn);
+        if BtnState - Gtk4ButtonMaskOf(Btn) = [] then
+        begin
+          ACtl.FChromeSeq := False;      { last button of the sequence released }
+          ACtl.FSeqOtherOwner := False;
+          ACtl.FHeldButtons := [];
+        end;
+        if Latched then exit;
+      end;
+      GDK4_MOTION_NOTIFY:
+      begin
+        { a chrome sequence with buttons held is still the scrollbar's implicit grab. A motion
+          without buttons is delivered as hover even while latched (GTK may synthesize such a
+          motion before a pending release; clearing the latch here would leak that release).
+          Hover over chrome is not delivered either (qt5/gtk2 do not). }
+        { LCL mouse capture (SetCaptureControl on an ancestor - the designer captures the
+          form, user code may capture a parent from a child's MouseDown): the widgetset
+          records it (Gtk4CapturedWidget) but does not route, so the captured control's
+          controller delivers motion regardless of ownership. }
+        Captured := (Gtk4CapturedWidget <> nil) and (Gtk4CapturedWidget = ACtl.GetContainerWidget);
+        if BtnState <> [] then
+        begin
+          if ACtl.FChromeSeq then exit;
+          if ACtl.FSeqOtherOwner and not Captured then exit;
+        end
+        else if HavePos then
+        begin
+          PickW := gtk4_widget_pick(AWidget, PX, PY, GTK_PICK_DEFAULT);
+          if (not IsDesign) and Gtk4IsChromeTarget(PickW, AWidget) then exit;
+          if (not Captured) and Gtk4TargetOwnedByOther(ACtl, PickW) then exit;
+        end;
+      end;
+    end;
+  end;
+
   case evTypeNative of
     GDK4_BUTTON_PRESS, GDK4_BUTTON_RELEASE:
     begin
@@ -1530,7 +1740,19 @@ begin
         mode the designer intercepts LM_LBUTTONDOWN via IsDesignMsg —
         we must let the event through so components can be selected. }
       if (ACtl.LCLObject is TButtonControl) and
-         not (csDesigning in ACtl.LCLObject.ComponentState) then exit;
+         not (csDesigning in ACtl.LCLObject.ComponentState) then
+      begin
+        { Ancestors no longer see this press (sequence ownership above), so it would
+          not enter the double-click history at all: a client click, this button, and
+          the same client point again within the double-click time would count as a
+          double click. Invalidate the history here instead. }
+        if evTypeNative = GDK4_BUTTON_PRESS then
+        begin
+          Gtk4LastClickTime := 0;
+          Gtk4ClickCount := 0;
+        end;
+        exit;
+      end;
 
       { GTK4 composite input widgets (GtkEntry→GtkText, GtkTextView):
         CAPTURE-phase controllers fire before GTK4's native focus mechanism.
@@ -1859,14 +2081,77 @@ begin
     and (TCustomForm(AWidget.LCLObject).ActiveControl <> nil);
 end;
 
+{ Build the synthetic TGdkEvent the LCL key path (TGtk4Widget.GtkEventKey)
+  consumes, from the GtkEventControllerKey signal arguments. AWithText fills
+  key.string_ with the UTF-8 character of the keyval (press path); the release
+  and design-mode paths pass False and get an empty string. AUTF8Buf must
+  outlive the event (it is referenced by key.string_). }
+procedure Gtk4BuildKeyEvent(keyval: guint; keycode: guint; state: TGdkModifierType;
+  APress, AWithText: Boolean; out AEvent: TGdkEvent; var AUTF8Buf: array of char);
+var
+  UChar: guint32;
+  Len: Integer;
+begin
+  FillChar(AEvent{%H-}, SizeOf(AEvent), 0);
+  if APress then
+    AEvent.type_ := GDK_KEY_PRESS
+  else
+    AEvent.type_ := GDK_KEY_RELEASE;
+  AEvent.key.keyval := keyval;
+  AEvent.key.hardware_keycode := keycode;
+  AEvent.key.state := state;
+  AEvent.key.send_event := 0;
+  AEvent.key.string_ := '';
+  if not AWithText then
+    exit;
+
+  { Convert keyval to string via gdk_keyval_to_unicode }
+  UChar := gdk_keyval_to_unicode(keyval);
+  { gdk_keyval_to_unicode maps Return to #13 but KP_Enter and ISO_Enter to 0
+    (gdk/gdkkeyuni.c has no table entry for them). The LCL treats all three
+    as VK_RETURN and qt5/gtk2 deliver OnKeyPress(#13) for the keypad Enter
+    too, so give them the same character. }
+  if (UChar = 0) and ((keyval = GDK_KEY_KP_Enter) or (keyval = GDK_KEY_ISO_Enter)) then
+    UChar := 13;
+  if (UChar > 0) and (UChar < $110000) then
+  begin
+    FillChar(AUTF8Buf[0], Length(AUTF8Buf), 0);
+    if UChar < $80 then
+    begin
+      AUTF8Buf[0] := Char(UChar);
+      Len := 1;
+    end else
+    if UChar < $800 then
+    begin
+      AUTF8Buf[0] := Char($C0 or (UChar shr 6));
+      AUTF8Buf[1] := Char($80 or (UChar and $3F));
+      Len := 2;
+    end else
+    if UChar < $10000 then
+    begin
+      AUTF8Buf[0] := Char($E0 or (UChar shr 12));
+      AUTF8Buf[1] := Char($80 or ((UChar shr 6) and $3F));
+      AUTF8Buf[2] := Char($80 or (UChar and $3F));
+      Len := 3;
+    end else
+    begin
+      AUTF8Buf[0] := Char($F0 or (UChar shr 18));
+      AUTF8Buf[1] := Char($80 or ((UChar shr 12) and $3F));
+      AUTF8Buf[2] := Char($80 or ((UChar shr 6) and $3F));
+      AUTF8Buf[3] := Char($80 or (UChar and $3F));
+      Len := 4;
+    end;
+    if Len > 0 then ;
+    AEvent.key.string_ := @AUTF8Buf[0];
+  end;
+end;
+
 function Gtk4KeyPressedCB(controller: PGtkEventController; keyval: guint;
   keycode: guint; state: TGdkModifierType; Data: gpointer): gboolean; cdecl;
 var
   Event: TGdkEvent;
   AWidget: PGtkWidget;
-  UChar: guint32;
   UTF8Buf: array[0..6] of char;
-  Len: Integer;
 begin
   Result := False;
   if Data = nil then exit;
@@ -1876,47 +2161,12 @@ begin
     controller because the child did not consume it — delivering again would
     fire Form.OnKeyDown twice. Skip that bubbled-up copy. }
   if Gtk4FormKeyBelongsToChild(TGtk4Widget(Data)) then exit;
-  FillChar(Event{%H-}, SizeOf(Event), 0);
-  Event.type_ := GDK_KEY_PRESS;
-  Event.key.keyval := keyval;
-  Event.key.hardware_keycode := keycode;
-  Event.key.state := state;
-  Event.key.send_event := 0;
-
-  { Convert keyval to string via gdk_keyval_to_unicode }
-  UChar := gdk_keyval_to_unicode(keyval);
-  if (UChar > 0) and (UChar < $110000) then
-  begin
-    FillChar(UTF8Buf{%H-}, SizeOf(UTF8Buf), 0);
-    if UChar < $80 then
-    begin
-      UTF8Buf[0] := Char(UChar);
-      Len := 1;
-    end else
-    if UChar < $800 then
-    begin
-      UTF8Buf[0] := Char($C0 or (UChar shr 6));
-      UTF8Buf[1] := Char($80 or (UChar and $3F));
-      Len := 2;
-    end else
-    if UChar < $10000 then
-    begin
-      UTF8Buf[0] := Char($E0 or (UChar shr 12));
-      UTF8Buf[1] := Char($80 or ((UChar shr 6) and $3F));
-      UTF8Buf[2] := Char($80 or (UChar and $3F));
-      Len := 3;
-    end else
-    begin
-      UTF8Buf[0] := Char($F0 or (UChar shr 18));
-      UTF8Buf[1] := Char($80 or ((UChar shr 12) and $3F));
-      UTF8Buf[2] := Char($80 or ((UChar shr 6) and $3F));
-      UTF8Buf[3] := Char($80 or (UChar and $3F));
-      Len := 4;
-    end;
-    if Len > 0 then ;
-    Event.key.string_ := @UTF8Buf[0];
-  end else
-    Event.key.string_ := '';
+  { Entry: the delegate CAPTURE controller may already have delivered this very
+    event (same GdkEvent object) - skip the bubbled duplicate. }
+  if (TGtk4Widget(Data) is TGtk4Entry) and
+     TGtk4Entry(Data).WasDeliveredAtCapture(gtk4_event_controller_get_current_event(controller)) then
+    exit;
+  Gtk4BuildKeyEvent(keyval, keycode, state, True, True, Event, UTF8Buf);
 
   AWidget := gtk_event_controller_get_widget(controller);
   Result := TGtk4Widget(Data).GtkEventKey(AWidget, @Event, True);
@@ -1927,6 +2177,7 @@ function Gtk4KeyReleasedCB(controller: PGtkEventController; keyval: guint;
 var
   Event: TGdkEvent;
   AWidget: PGtkWidget;
+  UTF8Buf: array[0..6] of char;
 begin
   Result := False;
   if Data = nil then exit;
@@ -1934,14 +2185,11 @@ begin
   { See Gtk4KeyPressedCB: skip the bubbled-up copy when a child control owns the
     key, so Form.OnKeyUp does not fire twice. }
   if Gtk4FormKeyBelongsToChild(TGtk4Widget(Data)) then exit;
+  if (TGtk4Widget(Data) is TGtk4Entry) and
+     TGtk4Entry(Data).WasDeliveredAtCapture(gtk4_event_controller_get_current_event(controller)) then
+    exit;
 
-  FillChar(Event{%H-}, SizeOf(Event), 0);
-  Event.type_ := GDK_KEY_RELEASE;
-  Event.key.keyval := keyval;
-  Event.key.hardware_keycode := keycode;
-  Event.key.state := state;
-  Event.key.send_event := 0;
-  Event.key.string_ := '';
+  Gtk4BuildKeyEvent(keyval, keycode, state, False, False, Event, UTF8Buf);
 
   AWidget := gtk_event_controller_get_widget(controller);
   Result := TGtk4Widget(Data).GtkEventKey(AWidget, @Event, False);
@@ -1963,6 +2211,7 @@ var
   Event: TGdkEvent;
   AWidget: PGtkWidget;
   ACtl: TGtk4Widget;
+  UTF8Buf: array[0..6] of char;
 begin
   Result := False;
   if Data = nil then exit;
@@ -1972,13 +2221,7 @@ begin
      or not (csDesigning in ACtl.LCLObject.ComponentState) then
     exit;
 
-  FillChar(Event{%H-}, SizeOf(Event), 0);
-  Event.type_ := GDK_KEY_PRESS;
-  Event.key.keyval := keyval;
-  Event.key.hardware_keycode := keycode;
-  Event.key.state := state;
-  Event.key.send_event := 0;
-  Event.key.string_ := '';
+  Gtk4BuildKeyEvent(keyval, keycode, state, True, False, Event, UTF8Buf);
 
   AWidget := gtk_event_controller_get_widget(controller);
   { Deliver to the designer; consume unconditionally so the native widget
@@ -2517,6 +2760,7 @@ var
   ex, ey: double;
   AWidget, NativeW: PGtkWidget;
   SurfOffX, SurfOffY, WidgetX, WidgetY: double;
+  MousePos: TPoint;
 begin
   Result := False;
   if Data = nil then exit;
@@ -2553,7 +2797,12 @@ begin
       gdk4_event_get_modifier_state(AEvent));
     if gdk4_event_get_position(AEvent, ex, ey) then
     begin
-      AWidget := ACtl.GetContainerWidget;
+      { Same path as press/motion: FWidget-local, then the client transform
+        (OffsetMousePos). The controller is attached to the container widget,
+        but the GDK position is surface-relative, so the translate target is
+        independent of that. Previously translated to GetContainerWidget, i.e.
+        content coordinates for scrolled containers. }
+      AWidget := ACtl.Widget;
       NativeW := gtk4_widget_get_native(AWidget);
       if NativeW <> nil then
       begin
@@ -2561,21 +2810,15 @@ begin
         if (NativeW <> AWidget) and
            gtk4_widget_translate_coordinates(NativeW, AWidget,
              ex - SurfOffX, ey - SurfOffY, @WidgetX, @WidgetY) then
-        begin
-          Msg.X := SmallInt(Trunc(WidgetX));
-          Msg.Y := SmallInt(Trunc(WidgetY));
-        end
+          MousePos := Point(Round(WidgetX), Round(WidgetY))
         else
-        begin
-          Msg.X := SmallInt(Trunc(ex - SurfOffX));
-          Msg.Y := SmallInt(Trunc(ey - SurfOffY));
-        end;
+          MousePos := Point(Round(ex - SurfOffX), Round(ey - SurfOffY));
       end
       else
-      begin
-        Msg.X := SmallInt(Trunc(ex));
-        Msg.Y := SmallInt(Trunc(ey));
-      end;
+        MousePos := Point(Round(ex), Round(ey));
+      ACtl.OffsetMousePos(@MousePos);
+      Msg.X := SmallInt(MousePos.X);
+      Msg.Y := SmallInt(MousePos.Y);
     end;
   end;
 
@@ -2687,6 +2930,8 @@ type
 
 var
   {%H-}OrigFixedLayoutAllocate: TGtkLayoutManagerAllocateFunc = nil;
+  { >0 while LCLGtkFixedSnapshot runs LCL painting (see Gtk4ScrollFixedRedrawCB) }
+  Gtk4ScrollFixedSnapshotDepth: Integer = 0;
   {%H-}OrigFixedLayoutMeasure: TGtkLayoutManagerMeasureFunc = nil;
 
 { Patched measure: use set_size_request values (when set) instead of intrinsic
@@ -2981,6 +3226,7 @@ var
   bounds: graphene_rect_t;
   w, h: gint;
   ScrollX, ScrollY: gint;
+  VisW, VisH: gint;
   sw: PGtkScrolledWindow;
   adj: PGtkAdjustment;
 begin
@@ -3002,6 +3248,8 @@ begin
         viewport's physical scroll so only LCL's software scroll takes effect. }
       ScrollX := 0;
       ScrollY := 0;
+      VisW := w;
+      VisH := h;
       if g_object_get_data(PGObject(widget), 'lcl-scroll-fixed') <> nil then
       begin
         if LCLWidget is TGtk4ScrollableWin then
@@ -3011,18 +3259,42 @@ begin
           begin
             adj := sw^.get_hadjustment;
             if adj <> nil then
-              ScrollX := Round(adj^.get_value);
+            begin
+              ScrollX := Trunc(adj^.get_value);   { GTK stores -value in an int allocation: truncation toward zero (gtkviewport.c:543) }
+              VisW := Round(adj^.get_page_size);
+            end;
             adj := sw^.get_vadjustment;
             if adj <> nil then
-              ScrollY := Round(adj^.get_value);
+            begin
+              ScrollY := Trunc(adj^.get_value);
+              VisH := Round(adj^.get_page_size);
+            end;
           end;
         end;
       end;
 
-      bounds.origin.x := 0;
-      bounds.origin.y := 0;
-      bounds.size.width := w;
-      bounds.size.height := h;
+      { The cairo node covers only the part of the (content-sized) GtkFixed
+        that the viewport shows: origin = scroll offset, size = viewport page size.
+        The LCL paints its client area at that origin (see the translate below), so
+        nothing visible is lost, and the GL renderer no longer rasterizes/uploads
+        the whole content per frame. Clamped to the allocation; fall back to the
+        full node when the page size is not known yet. }
+      if (VisW <= 0) or (VisH <= 0) or (ScrollX < 0) or (ScrollY < 0)
+         or (ScrollX >= w) or (ScrollY >= h) then
+      begin
+        ScrollX := Max(ScrollX, 0); ScrollY := Max(ScrollY, 0);
+        bounds.origin.x := 0;
+        bounds.origin.y := 0;
+        bounds.size.width := w;
+        bounds.size.height := h;
+      end
+      else
+      begin
+        bounds.origin.x := ScrollX;
+        bounds.origin.y := ScrollY;
+        bounds.size.width := Min(VisW, w - ScrollX);
+        bounds.size.height := Min(VisH, h - ScrollY);
+      end;
       cr := gtk4_snapshot_append_cairo(snapshot, @bounds);
       if cr <> nil then
       begin
@@ -3030,12 +3302,14 @@ begin
           { Undo GtkViewport physical scroll before LCL painting }
           if (ScrollX <> 0) or (ScrollY <> 0) then
             cairo_translate(cr, Double(ScrollX), Double(ScrollY));
+          Inc(Gtk4ScrollFixedSnapshotDepth);
           { Phase 1: Regular paint — IsDesignerDC=False → grid dots painted }
           LCLWidget.GtkEventPaint(widget, cr);
           { Phase 2: Designer paint — IsDesignerDC=True → selection handles painted }
           if csDesigning in LCLWidget.LCLObject.ComponentState then
             LCLWidget.GtkEventDesignerPaint(widget, cr);
         finally
+          Dec(Gtk4ScrollFixedSnapshotDepth);
           cairo_destroy(cr);
         end;
       end;
@@ -3775,7 +4049,8 @@ begin
   end;
 end;
 
-function TGtk4Widget.GtkEventKey(Sender: PGtkWidget; Event: PGdkEvent; AKeyPress: Boolean): Boolean;
+function TGtk4Widget.GtkEventKey(Sender: PGtkWidget; Event: PGdkEvent; AKeyPress: Boolean;
+  AParts: TGtk4KeyParts; AHandled: PBoolean): Boolean;
   cdecl;
 const
   CN_KeyDownMsgs: array[Boolean] of UINT = (CN_KEYDOWN, CN_SYSKEYDOWN);
@@ -3796,8 +4071,14 @@ var
   UTF8Char: TUTF8Char;
   AChar: Char;
   IsArrowKey: Boolean;
+  CNResult: LRESULT;
 begin
   Result := False;
+  { AHandled reports to a pre-dispatching caller whether the LCL handled or
+    zeroed the key in CN_KEYDOWN/LM_KEYDOWN (the entry/memo branches return
+    False there so that GTK keeps editing, which hides that outcome). }
+  if AHandled <> nil then
+    AHandled^ := False;
   AEvent := Event^.key;
   FillChar(Msg{%H-}, SizeOf(Msg), 0);
   AEventString := AEvent.string_;
@@ -3826,11 +4107,16 @@ begin
 
   IsSysKey := LCLModifiers and KF_ALTDOWN <> 0;
 
-  { Auto-repeat detection: same key pressed without intervening release }
-  if AKeyPress and (FLastKeyVal = KeyValue) and FLastKeyPress then
-    LCLModifiers := LCLModifiers or KF_REPEAT;
-  FLastKeyVal := KeyValue;
-  FLastKeyPress := AKeyPress;
+  { Auto-repeat detection: same key pressed without intervening release.
+    The bookkeeping belongs to the key-down part: a char-only call for the
+    same event must not be mistaken for a repeat. }
+  if kpKeyDown in AParts then
+  begin
+    if AKeyPress and (FLastKeyVal = KeyValue) and FLastKeyPress then
+      LCLModifiers := LCLModifiers or KF_REPEAT;
+    FLastKeyVal := KeyValue;
+    FLastKeyPress := AKeyPress;
+  end;
 
   if not AKeyPress then
     LCLModifiers := LCLModifiers or KF_UP;
@@ -3843,6 +4129,17 @@ begin
   if KeyValue > VK_UNDEFINED then
     KeyValue := ACharCode; // VK_UNKNOWN;
 
+  { Char-only call: the character block copies Msg.KeyData into the char
+    message and TCustomEdit.WMChar reads Ctrl/Alt from it, so supply the
+    same KeyData the key-down part would have produced. }
+  if not (kpKeyDown in AParts) and (ACharCode <> VK_UNKNOWN) then
+  begin
+    Msg.CharCode := ACharCode;
+    Msg.KeyData := PtrInt((KeyValue shl 16) or (LCLModifiers shl 16) or $0001);
+  end;
+
+  if kpKeyDown in AParts then
+  begin
   if AKeyPress and (ACharCode = VK_TAB) then
   begin
     if Sender^.is_focus then
@@ -3867,6 +4164,9 @@ begin
       Result := True;
       Exit;
     end;
+    { the handler may have destroyed this wrapper }
+    if not CanSendLCLMessage then
+      Exit;
   end;
 
   {$IFDEF GTK4DEBUGKEYPRESS}
@@ -3893,7 +4193,13 @@ begin
     if not CanSendLCLMessage then
       exit;
 
-    if (DeliverMessage(Msg, True) <> 0) or (Msg.CharCode = VK_UNKNOWN) or (IsArrowKey{EatArrowKeys(ACharCode)}) then
+    CNResult := DeliverMessage(Msg, True);
+    if AHandled <> nil then
+      AHandled^ := (CNResult <> 0) or (Msg.CharCode = VK_UNKNOWN);
+    { the handler may have destroyed this wrapper: check before WidgetType }
+    if not CanSendLCLMessage then
+      exit;
+    if (CNResult <> 0) or (Msg.CharCode = VK_UNKNOWN) or (IsArrowKey{EatArrowKeys(ACharCode)}) then
     begin
       {$IFDEF GTK4DEBUGKEYPRESS}
       DebugLn('CN_KeyDownMsgs handled ... exiting');
@@ -3928,7 +4234,11 @@ begin
       DeliverMessage(Msg, True);
       if not CanSendLCLMessage then exit;
       if Msg.CharCode = 0 then
+      begin
+        if AHandled <> nil then
+          AHandled^ := True;
         exit(True);
+      end;
       { Memo WantReturns=False: consume VK_RETURN so GTK4 doesn't insert newline.
         The LCL already received LM_KEYDOWN and dialog key handling will activate
         the default button if applicable. }
@@ -3940,6 +4250,8 @@ begin
     if (DeliverMessage(Msg, True) <> 0) or (Msg.CharCode = 0) then
     begin
       Result := Msg.CharCode = 0;
+      if (AHandled <> nil) and Result then
+        AHandled^ := True;
       {$IFDEF GTK4DEBUGKEYPRESS}
       DebugLn('LM_KeyDownMsgs handled ... exiting ',dbgs(ACharCode),' Result=',dbgs(Result),' AKeyPress=',dbgs(AKeyPress));
       {$ENDIF}
@@ -3950,8 +4262,9 @@ begin
       exit;
 
   end;
+  end; { kpKeyDown }
 
-  if AKeyPress and (length(AEventString) > 0) and
+  if (kpChar in AParts) and AKeyPress and (length(AEventString) > 0) and
     { Do not send UTF8KeyPress for non-character control keys (F1-F12,
       Insert, Delete, Home, End, etc.) — same as Qt5. Enter/Return/Backspace
       are allowed through since they are meaningful character input. }
@@ -4032,7 +4345,7 @@ begin
       TGtk4Memo(Self).FBubbleReplacePending := True;
     end;
   end;
-  if AKeyPress then
+  if AKeyPress and (kpKeyDown in AParts) then
   begin
     {$IFDEF GTK4DEBUGKEYPRESS}
     if Msg.CharCode in FKeysToEat then
@@ -4068,6 +4381,10 @@ begin
 
   MousePos.x := Round(Event^.button.x);
   MousePos.y := Round(Event^.button.y);
+  { Same client transform as GtkEventMouseMove: without it a press inside a
+    GroupBox (frame title) or a form with a menu bar was reported one inset
+    (24px) below the matching motion/ClientToScreen coordinates. }
+  OffsetMousePos(@MousePos);
 
   Msg.Keys := GdkModifierStateToLCL(Event^.button.state, False);
 
@@ -4894,9 +5211,11 @@ begin
     page list. translate_coordinates gives the true inner-vs-outer offset
     (0 for a plain panel, the border for bordered widgets) unambiguously. }
   Result := Point(0, 0);
-  if (Widget = getContainerWidget) or not IsWidgetOk then
+  if (Widget = GetClientOriginWidget) or not IsWidgetOk then
     exit;
-  if gtk4_widget_translate_coordinates(GetContainerWidget, Widget, 0, 0, @dx, @dy) then
+  { Origin = GetClientOriginWidget: the viewport for scrolled containers, so the
+    offset no longer carries the scroll position (see GetClientOriginWidget). }
+  if gtk4_widget_translate_coordinates(GetClientOriginWidget, Widget, 0, 0, @dx, @dy) then
     Result := Point(Round(dx), Round(dy));
 end;
 
@@ -5177,7 +5496,8 @@ begin
     Alloc.width := AWidth;
     Alloc.height := AHeight;
     if Assigned(FCentralWidget) and (FCentralWidget <> FWidget)
-       and not (LCLObject is TCustomGroupBox) then
+       and not (LCLObject is TCustomGroupBox)
+       and not (wtScrollingWin in FWidgetType) then
     begin
       { Only use size_allocate, not set_size_request, because set_size_request
         would affect gtk4_widget_measure results in preferredSize, preventing
@@ -5187,7 +5507,25 @@ begin
         override the GtkFrame's inset (border+label) and make children cover the
         label / the client rect ignore the caption. The fixed instead fills its
         overlay via set_h/vexpand (SetupPaintArea), so GtkOverlay allocates it to
-        the frame's actual content area as the layout settles. }
+        the frame's actual content area as the layout settles.
+
+        Skipped for scrolling widgets (wtScrollingWin: TCustomControl/TScrollBox
+        with the tagged scroll GtkFixed, and Memo/ListBox/ListView whose central
+        widget is the GtkScrolledWindow's scrollable child): the scrolled window
+        chain owns that allocation. For the scroll GtkFixed the right size is the
+        CONTENT size that SetScrollInfo pushes via set_size_request (GtkViewport
+        allocates the GtkOverlay/GtkFixed at MAX(viewport, request)); for a
+        scrollable child it is the scrolled window's content area minus the
+        visible non-overlay scrollbars. Forcing the outer size here overwrote
+        that: gtk_widget_allocate updates only the child (and its descendants)
+        and clears the child's own dirty flags (gtkwidget.c:4094), the parent is
+        never told, so while its own size is unchanged it skips re-allocating
+        (gtkwidget.c:4062), and a viewport scroll only moves the overlay whose
+        measured size is unchanged. The GtkFixed then stayed at the LCL outer
+        size, so LCLGtkFixedSnapshot's content-sized painting and the overflow
+        clip went blank once scrolled (KMemo/TTreeView/TSynEdit/TScrollBox after
+        any resize). The direct size_allocate(Widget) above already keeps the
+        chain correct; nothing else is needed (PLAN_GTK4_SCROLLFIXED_ALLOCATION.md). }
       gtk4_widget_size_allocate(FCentralWidget, @Alloc, -1);
     end;
     if Assigned(FPaintArea) then
@@ -5248,6 +5586,31 @@ begin
     Result := FCentralWidget
   else
     Result := FWidget;
+end;
+
+function TGtk4Widget.GetClientOriginWidget: PGtkWidget;
+var
+  W: PGtkWidget;
+begin
+  { Normally the container (central) widget. When the central widget sits inside a
+    GtkViewport (the scroll-fixed family: TCustomControl/TScrollBox descendants, the
+    form's FScrollWin), the viewport allocates it at (-hadjustment, -vadjustment)
+    (gtkviewport.c), so translating from it mixes the scroll position into every mouse
+    coordinate (content coordinates - a KMemo then selected from the wrong line after
+    scrolling) and into ClientToScreen (drift = scroll position). The LCL contract is
+    viewport-relative client coordinates (TWinControl.IsControlMouseMsg adds
+    GetClientScrollOffset to message positions; qt5 and gtk2 measured the same), so the
+    origin is the nearest viewport above the central widget. Widgets whose central
+    widget is itself scrollable (GtkTextView, GtkListView, GtkColumnView) have no
+    viewport and are unchanged. See PLAN_GTK4_SCROLLBAR_DRAG_SELECTS.md section 13. }
+  Result := GetContainerWidget;
+  if not Assigned(FCentralWidget) or (FCentralWidget = FWidget) then Exit;
+  W := gtk_widget_get_parent(FCentralWidget);
+  while (W <> nil) and (W <> FWidget) do
+  begin
+    if Gtk4IsViewPort(PGObject(W)) then Exit(W);
+    W := gtk_widget_get_parent(W);
+  end;
 end;
 
 procedure Gtk4ParentScrollOffset(AParent: TGtk4Widget; var DX, DY: Integer); forward;
@@ -6170,16 +6533,57 @@ end;
   not text producers. The IM is untouched: we neither filter nor reorder its
   output — composition and commit order remain exactly native. }
 
-function Gtk4EntryDelegateKeyPressCB({%H-}controller: PGtkEventController;
-  keyval: guint; {%H-}keycode: guint; state: TGdkModifierType;
+{ Which keys the delegate CAPTURE controller delivers to the LCL before the
+  inner GtkText sees them (PLAN_GTK4_KEY_PREDISPATCH.md §15.3):
+  - text keys (printable, no Ctrl/Alt) stay on the IM/insert-text path;
+  - Tab keeps the existing GtkEventKey SelectNext path (calling it from the
+    delegate would make Sender^.is_focus true and move focus twice);
+  - Escape and the modifier keys are not consumed by GtkText and already
+    reach the outer BUBBLE controller today - leave that path untouched;
+  - everything else (Return/KP_Enter, arrows, Home/End, BackSpace, Delete,
+    Insert, Ctrl+letter, F-keys, Menu ...) is delivered here. Keys GtkText
+    does not consume are harmless (the bubbled copy is skipped). }
+function Gtk4EntryWantsPreDispatch(keyval: guint; state: TGdkModifierType;
+  out AVK: Word): Boolean;
+var
+  UChar: guint32;
+begin
+  Result := False;
+  AVK := VK_UNKNOWN;
+  if keyval > $FFFF then exit;               { Unicode keysyms: text }
+  UChar := gdk_keyval_to_unicode(keyval);
+  if (UChar >= 32) and (UChar <> 127) and
+     (state * [GDK_CONTROL_MASK, GDK_MOD1_MASK] = []) then
+    exit;                                    { text key: IM path }
+  { modifier keysyms: Shift/Control/Alt/Meta/Super/Hyper (0xFFE1..0xFFEE),
+    Caps_Lock is in that range, Num_Lock 0xFF7F, Scroll_Lock 0xFF14,
+    Mode_switch 0xFF7E, ISO_Level3_Shift 0xFE03 }
+  if ((keyval >= $FFE1) and (keyval <= $FFEE)) or (keyval = $FF7F) or
+     (keyval = $FF14) or (keyval = $FF7E) or (keyval = $FE03) then
+    exit;
+  AVK := GdkKeyToLCLKey(Word(keyval));
+  if AVK in [VK_UNKNOWN, VK_TAB, VK_ESCAPE] then
+    exit;
+  Result := True;
+end;
+
+function Gtk4EntryDelegateKeyPressCB(controller: PGtkEventController;
+  keyval: guint; keycode: guint; state: TGdkModifierType;
   user_data: gpointer): gboolean; cdecl;
 var
   Entry: TGtk4Entry;
   UChar: guint32;
+  Ev: PGdkEvent;
+  Idx: Integer;
+  VK: Word;
+  Event: TGdkEvent;
+  UTF8Buf: array[0..6] of char;
+  Handled, Consumed: Boolean;
 begin
-  Result := False; { record only — never consume, never disturb the IM }
+  Result := False;
   if not Gtk4IsLiveWidgetPointer(user_data) then exit;
   Entry := TGtk4Entry(user_data);
+  { --- record (gates the insert-text derived OnKeyPress; IM untouched) --- }
   Entry.FDelegateKeyPending := state * [GDK_CONTROL_MASK, GDK_MOD1_MASK] = [];
   Entry.FPendingKeyText := '';
   if Entry.FDelegateKeyPending then
@@ -6190,15 +6594,87 @@ begin
     if (UChar >= 32) and (UChar <> 127) and (UChar < $110000) then
       Entry.FPendingKeyText := UnicodeToUTF8(UChar);
   end;
+
+  { --- pre-dispatch: deliver non-text keys to the LCL BEFORE GtkText --- }
+  if not Entry.KeyPreDispatchEnabled then exit;
+  Ev := gtk4_event_controller_get_current_event(controller);
+  if Ev = nil then exit;
+  { Same GdkEvent object again = an IM (fcitx) re-queued it after asynchronous
+    processing. Do not deliver twice; answer as before. GTK re-applies our
+    return value to its pressed_keys, so mirror it again. }
+  Idx := Entry.FindDelivered(Ev);
+  if Idx >= 0 then
+  begin
+    Result := Entry.FDelivered[Idx].Consumed;
+    if Result then
+      Entry.FinalizeConsumedPress(keyval);
+    exit;
+  end;
+  if Entry.FPreeditText <> '' then exit;    { composing: the IM owns the key }
+  if not Gtk4EntryWantsPreDispatch(keyval, state, VK) then exit;
+
+  Entry.AddDelivered(Ev);                    { registered before delivery }
+  UTF8Buf[0] := #0;
+  Gtk4BuildKeyEvent(keyval, keycode, state, True, True, Event, UTF8Buf);
+  Handled := False;
+  Consumed := Entry.GtkEventKey(gtk_event_controller_get_widget(controller),
+    @Event, True, [kpKeyDown, kpChar], @Handled);
+  { plain Up/Down: GtkText has no binding, and letting them through only lets
+    GtkWindow's move-focus binding steal the focus (qt5/gtk2 keep it) }
+  Consumed := Consumed or Handled or
+    ((VK in [VK_UP, VK_DOWN]) and (state * [GDK_CONTROL_MASK, GDK_MOD1_MASK] = []));
+  Result := Consumed;
+  if not Gtk4IsLiveWidgetPointer(user_data) then exit;  { handler freed us }
+  Idx := Entry.FindDelivered(Ev);
+  if Idx >= 0 then
+  begin
+    Entry.FDelivered[Idx].Consumed := Consumed;
+    Entry.FDelivered[Idx].InProgress := False;
+  end;
+  if Consumed then
+    Entry.FinalizeConsumedPress(keyval);
 end;
 
-procedure Gtk4EntryDelegateKeyReleaseCB({%H-}controller: PGtkEventController;
-  {%H-}keyval: guint; {%H-}keycode: guint; {%H-}state: TGdkModifierType;
+procedure Gtk4EntryDelegateKeyReleaseCB(controller: PGtkEventController;
+  keyval: guint; keycode: guint; state: TGdkModifierType;
   user_data: gpointer); cdecl;
+var
+  Entry: TGtk4Entry;
+  Ev: PGdkEvent;
+  WasInShadow: Boolean;
+  Event: TGdkEvent;
+  UTF8Buf: array[0..6] of char;
+  Idx: Integer;
 begin
   if not Gtk4IsLiveWidgetPointer(user_data) then exit;
-  TGtk4Entry(user_data).FDelegateKeyPending := False;
-  TGtk4Entry(user_data).FPendingKeyText := '';
+  Entry := TGtk4Entry(user_data);
+  Entry.FDelegateKeyPending := False;
+  Entry.FPendingKeyText := '';
+  if not Entry.KeyPreDispatchEnabled then exit;
+  { GTK looks the keyval up in this controller's pressed_keys AFTER our
+    callback: if we consumed the press, the release stops here and the outer
+    BUBBLE controller never sees it - deliver the KeyUp ourselves. The mirror
+    entry is removed at the end (same boundary as GTK). }
+  WasInShadow := Entry.ShadowHas(keyval);
+  try
+    Ev := gtk4_event_controller_get_current_event(controller);
+    if Ev = nil then exit;
+    if Entry.FindDelivered(Ev) >= 0 then exit;   { re-queued release }
+    if not WasInShadow then exit;                { bubble handles it }
+    Idx := Entry.AddDelivered(Ev);
+    if Idx >= 0 then
+      Entry.FDelivered[Idx].InProgress := True;
+    UTF8Buf[0] := #0;
+    Gtk4BuildKeyEvent(keyval, keycode, state, False, False, Event, UTF8Buf);
+    Entry.GtkEventKey(gtk_event_controller_get_widget(controller), @Event, False);
+    if not Gtk4IsLiveWidgetPointer(user_data) then exit;
+    Idx := Entry.FindDelivered(Ev);
+    if Idx >= 0 then
+      Entry.FDelivered[Idx].InProgress := False;
+  finally
+    if Gtk4IsLiveWidgetPointer(user_data) then
+      Entry.ShadowRemove(keyval);
+  end;
 end;
 
 { ---- IM commit-order repair (deferral, never reordering by guesswork) -------
@@ -6546,11 +7022,129 @@ begin
     g_signal_connect_data(AKeyRec, 'key-released',
       TGCallback(@Gtk4EntryDelegateKeyReleaseCB), Self, nil, G_CONNECT_DEFAULT);
     gtk4_widget_add_controller(PGtkWidget(ADelegate), AKeyRec);
+    { Keep an owned reference: if GTK destroys the entry before the wrapper
+      (destroy_event path), the delegate finalizes and unrefs its controllers,
+      and DetachEvents would otherwise disconnect through a freed object. }
+    FDelegateKeyCtl := PGtkEventController(g_object_ref(PGObject(AKeyRec)));
     AFocusRec := gtk4_event_controller_focus_new;
     g_signal_connect_data(AFocusRec, 'leave',
       TGCallback(@Gtk4EntryDelegateFocusLeaveCB), Self, nil, G_CONNECT_DEFAULT);
     gtk4_widget_add_controller(PGtkWidget(ADelegate), AFocusRec);
   end;
+end;
+
+function TGtk4Entry.KeyPreDispatchEnabled: Boolean;
+begin
+  Result := True;
+end;
+
+function TGtk4Entry.WasDeliveredAtCapture(AEv: PGdkEvent): Boolean;
+begin
+  Result := (AEv <> nil) and (FindDelivered(AEv) >= 0);
+end;
+
+function TGtk4Entry.ShadowHas(AKeyval: guint): Boolean;
+var
+  i: Integer;
+begin
+  for i := 0 to High(FGtkPressedShadow) do
+    if FGtkPressedShadow[i] = AKeyval then
+      exit(True);
+  Result := False;
+end;
+
+procedure TGtk4Entry.ShadowAdd(AKeyval: guint);
+begin
+  if ShadowHas(AKeyval) then exit;           { GTK's hash table is a set }
+  SetLength(FGtkPressedShadow, Length(FGtkPressedShadow) + 1);
+  FGtkPressedShadow[High(FGtkPressedShadow)] := AKeyval;
+end;
+
+procedure TGtk4Entry.ShadowRemove(AKeyval: guint);
+var
+  i, j: Integer;
+begin
+  for i := 0 to High(FGtkPressedShadow) do
+    if FGtkPressedShadow[i] = AKeyval then
+    begin
+      for j := i to High(FGtkPressedShadow) - 1 do
+        FGtkPressedShadow[j] := FGtkPressedShadow[j + 1];
+      SetLength(FGtkPressedShadow, Length(FGtkPressedShadow) - 1);
+      exit;
+    end;
+end;
+
+function TGtk4Entry.FindDelivered(AEv: PGdkEvent): Integer;
+var
+  i: Integer;
+begin
+  for i := 0 to High(FDelivered) do
+    if FDelivered[i].Ev = AEv then
+      exit(i);
+  Result := -1;
+end;
+
+{ Registers AEv (owned reference) as delivered-in-progress. Bounded replay
+  cache: at most 16 entries, the oldest COMPLETED entry is evicted first;
+  in-progress entries are never evicted. }
+function TGtk4Entry.AddDelivered(AEv: PGdkEvent): Integer;
+const
+  MaxDelivered = 16;
+var
+  i, j: Integer;
+begin
+  if Length(FDelivered) >= MaxDelivered then
+  begin
+    for i := 0 to High(FDelivered) do
+      if not FDelivered[i].InProgress then
+      begin
+        gdk4_event_unref(FDelivered[i].Ev);
+        for j := i to High(FDelivered) - 1 do
+          FDelivered[j] := FDelivered[j + 1];
+        SetLength(FDelivered, Length(FDelivered) - 1);
+        break;
+      end;
+  end;
+  SetLength(FDelivered, Length(FDelivered) + 1);
+  Result := High(FDelivered);
+  FDelivered[Result].Ev := gdk4_event_ref(AEv);
+  FDelivered[Result].Consumed := False;
+  FDelivered[Result].InProgress := True;
+end;
+
+{ A consumed press never reaches GtkText: mirror GTK's pressed_keys and close
+  the key-origin gate of the insert-text hook (no insertion can come from it). }
+procedure TGtk4Entry.FinalizeConsumedPress(AKeyval: guint);
+begin
+  ShadowAdd(AKeyval);
+  FDelegateKeyPending := False;
+  FPendingKeyText := '';
+end;
+
+procedure TGtk4Entry.DetachEvents;
+var
+  i: Integer;
+begin
+  { The delegate controller's callbacks carry Self: disconnect them before the
+    wrapper goes away, then drop the owned event references. }
+  if FDelegateKeyCtl <> nil then
+  begin
+    g_signal_handlers_disconnect_matched(PGObject(FDelegateKeyCtl),
+      [G_SIGNAL_MATCH_DATA], 0, 0, nil, nil, Self);
+    g_object_unref(PGObject(FDelegateKeyCtl));
+    FDelegateKeyCtl := nil;
+  end;
+  for i := 0 to High(FDelivered) do
+    if FDelivered[i].Ev <> nil then
+      gdk4_event_unref(FDelivered[i].Ev);
+  SetLength(FDelivered, 0);
+  SetLength(FGtkPressedShadow, 0);
+  inherited DetachEvents;
+end;
+
+function TGtk4SpinEdit.KeyPreDispatchEnabled: Boolean;
+begin
+  Result := False;   { Phase 3: Return -> gtk_spin_button_update, arrow policy }
 end;
 
 procedure TGtk4Entry.UpdateWidgetConstraints;
@@ -6682,13 +7276,13 @@ end;
 
 function TGtk4SpinEdit.GetValue: Double;
 begin
+  { Pure getter: the adjustment value. Do NOT call gtk_spin_button_update
+    here - it rewrites the entry text and emits 'changed', which re-enters
+    the LCL (TextChanged -> Value) without bound. The LCL value is read from
+    the entry text by TGtk4WSCustomFloatSpinEdit.GetValue, as on gtk2. }
   Result := 0;
   if IsWidgetOk then
-  begin
-    ApplyPendingSelStart; { update may reformat the text }
-    PGtkSpinButton(Widget)^.update;
     Result := PGtkSpinButton(Widget)^.get_value;
-  end;
 end;
 
 procedure TGtk4SpinEdit.SetNumDigits(AValue: Integer);
@@ -6729,15 +7323,32 @@ end;
 
 function TGtk4SpinEdit.CreateWidget(const Params: TCreateParams): PGtkWidget;
 var
-  ASpin: TCustomSpinEdit;
+  ASpin: TCustomFloatSpinEdit;
+  AMin, AMax, AStep: Double;
 begin
   PrivateCursorPos := -1;
   PrivateSelection := -1;
-  ASpin := TCustomSpinEdit(LCLObject);
+  { Read the double properties (TCustomFloatSpinEdit): the TCustomSpinEdit
+    integer getters round them, so a TFloatSpinEdit with Increment 0.25 gave
+    step 0 and gtk_spin_button_new_with_range returned NULL. GTK requires
+    min <= max and step <> 0; LCL treats Max <= Min as "no limit"
+    (TCustomFloatSpinEdit.GetLimitedValue). UpdateControl re-applies the real
+    range/step right after handle creation. }
+  ASpin := TCustomFloatSpinEdit(LCLObject);
   FWidgetType := FWidgetType + [wtSpinEdit];
-  // Adjustment := TGtkAdjustment.new(ASpin.Value, ASpin.MinValue, ASpin.MaxValue, ASpin.Increment,
-  //  ASpin.Increment, ASpin.Increment);
-  Result := TGtkSpinButton.new_with_range(ASpin.MinValue, ASpin.MaxValue, ASpin.Increment);
+  if ASpin.MaxValue > ASpin.MinValue then
+  begin
+    AMin := ASpin.MinValue;
+    AMax := ASpin.MaxValue;
+  end else
+  begin
+    AMin := -MaxDouble;
+    AMax := MaxDouble;
+  end;
+  AStep := ASpin.Increment;
+  if AStep <= 0 then
+    AStep := 1;
+  Result := TGtkSpinButton.new_with_range(AMin, AMax, AStep);
 end;
 
 function TGtk4SpinEdit.EatArrowKeys(const AKey: Word): Boolean;
@@ -8689,6 +9300,47 @@ begin
   end;
 end;
 
+function Gtk4ScrollFixedRedrawIdleCB(AData: gpointer): gboolean; cdecl;
+begin
+  Result := G_SOURCE_REMOVE_;
+  if (AData = nil) or not Gtk4IsLiveWidgetPointer(AData) then Exit;
+  { still inside the fixed's snapshot (a nested main loop is pumping while LCL
+    paint code runs): a queue_draw now would be discarded, try again later }
+  if Gtk4ScrollFixedSnapshotDepth > 0 then Exit(G_SOURCE_CONTINUE);   { keep the source }
+  TGtk4ScrollableWin(AData).FRedrawIdleId := 0;
+  if TGtk4Widget(AData).GetContainerWidget <> nil then
+    TGtk4Widget(AData).GetContainerWidget^.queue_draw;
+end;
+
+{ Connected to "changed" and "value-changed" of both adjustments of a scrolling
+  container (SetScrollBarsSignalHandlers). The scroll GtkFixed's cairo node
+  covers only the viewport-visible region (LCLGtkFixedSnapshot), so whenever the
+  visible region moves (value) or grows (page_size) the fixed must be
+  re-snapshotted even when the LCL side does not repaint: GTK reuses a widget's
+  cached render node when only its parent moved or grew (gtkwidget.c:11646,
+  :4062). Independent of Gtk4ScrollAdjChangedCB's InUpdate guard on purpose
+  (SetScrollInfo configures the adjustment inside BeginUpdate). If the change
+  happens while the fixed is being snapshotted (LCL paint code changing the
+  scroll state), queue_draw would be swallowed by the draw_needed flag that the
+  snapshot clears afterwards (gtkwidget.c:3545, :11629) - defer it to idle. }
+procedure Gtk4ScrollFixedRedrawCB(AAdj: PGtkAdjustment; AData: TGtk4ScrollableWin); cdecl;
+var
+  CW: PGtkWidget;
+begin
+  if (AAdj = nil) or (AData = nil) then Exit;
+  if not Gtk4IsLiveWidgetPointer(AData) then Exit;
+  if AData.LCLObject = nil then Exit;
+  CW := AData.GetContainerWidget;
+  if (CW = nil) or (g_object_get_data(PGObject(CW), 'lcl-scroll-fixed') = nil) then Exit;
+  if Gtk4ScrollFixedSnapshotDepth > 0 then
+  begin
+    if AData.FRedrawIdleId = 0 then     { coalesce; removed in DetachEvents }
+      AData.FRedrawIdleId := g_idle_add(@Gtk4ScrollFixedRedrawIdleCB, AData);
+  end
+  else
+    CW^.queue_draw;
+end;
+
 procedure Gtk4ScrollAdjChangedCB(AAdj: PGtkAdjustment; AData: TGtk4ScrollableWin); cdecl;
 var
   Msg: TLMVScroll;
@@ -8754,6 +9406,11 @@ var
   sb: PGtkScrollbar;
   AAdj: PGtkAdjustment;
 begin
+  if FRedrawIdleId <> 0 then
+  begin
+    g_source_remove(FRedrawIdleId);
+    FRedrawIdleId := 0;
+  end;
   { Disconnect adjustment value-changed signals (connected to child GObjects,
     not FWidget). These would fire with stale Self during widget destruction. }
   sb := getHorizontalScrollbar;
@@ -8790,6 +9447,12 @@ begin
     if AAdj <> nil then
       g_signal_connect_data(AAdj, 'value-changed',
         TGCallback(@Gtk4ScrollAdjChangedCB), Self, nil, G_CONNECT_DEFAULT);
+      { visible-region cairo node: re-snapshot the scroll GtkFixed on any
+        adjustment change (see Gtk4ScrollFixedRedrawCB) }
+      g_signal_connect_data(AAdj, 'changed',
+        TGCallback(@Gtk4ScrollFixedRedrawCB), Self, nil, G_CONNECT_DEFAULT);
+      g_signal_connect_data(AAdj, 'value-changed',
+        TGCallback(@Gtk4ScrollFixedRedrawCB), Self, nil, G_CONNECT_DEFAULT);
   end;
   sb := getVerticalScrollbar;
   if sb <> nil then
@@ -8798,6 +9461,12 @@ begin
     if AAdj <> nil then
       g_signal_connect_data(AAdj, 'value-changed',
         TGCallback(@Gtk4ScrollAdjChangedCB), Self, nil, G_CONNECT_DEFAULT);
+      { visible-region cairo node: re-snapshot the scroll GtkFixed on any
+        adjustment change (see Gtk4ScrollFixedRedrawCB) }
+      g_signal_connect_data(AAdj, 'changed',
+        TGCallback(@Gtk4ScrollFixedRedrawCB), Self, nil, G_CONNECT_DEFAULT);
+      g_signal_connect_data(AAdj, 'value-changed',
+        TGCallback(@Gtk4ScrollFixedRedrawCB), Self, nil, G_CONNECT_DEFAULT);
   end;
 end;
 

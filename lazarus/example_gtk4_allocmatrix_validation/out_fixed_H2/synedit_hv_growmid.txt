@@ -1,0 +1,10 @@
+EXIT=0
+     0 START control=synedit range=hv mode=growmid
+
+(process:591963): GLib-CRITICAL **: 21:17:03.092: g_regex_match_full: assertion 'string != NULL' failed
+   834 SNAP show     cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 1543x760] req=1543x760 parent=GtkOverlay alloc=[-1,-1 1543x760] hadj=1/1543/585 vadj=1/760/385 lcl=600x400 client=600x400 ptr=000000002D90A920/000000002D902D60 rss=134664 wsclient=0,0 585x385
+  1239 SNAP t-show   cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 1543x760] req=1543x760 parent=GtkOverlay alloc=[-1,-1 1543x760] hadj=1/1543/585 vadj=1/760/385 lcl=600x400 client=600x400 ptr=000000002D90A920/000000002D902D60 rss=134684 wsclient=0,0 585x385
+  1645 SNAP mid      cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 1543x760] req=1543x760 parent=GtkOverlay alloc=[-1,-200 1543x760] hadj=1/1543/585 vadj=200/760/385 lcl=600x400 client=600x400 ptr=000000002D90A920/000000002D902D60 rss=134688 wsclient=0,0 585x385
+  2054 SNAP mid-shr  cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x300] req=600x300 central=GtkFixed alloc=[0,0 1543x766] req=1543x766 parent=GtkOverlay alloc=[-1,-200 1543x766] hadj=1/1543/585 vadj=200/766/285 lcl=600x300 client=600x300 ptr=000000002D90A920/000000002D902D60 rss=134688 wsclient=0,0 585x285
+  2460 SNAP mid-grow cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 1543x660] req=1543x660 parent=GtkOverlay alloc=[-1,-200 1543x660] hadj=1/1543/585 vadj=200/660/385 lcl=600x400 client=600x400 ptr=000000002D90A920/000000002D902D60 rss=134692 wsclient=0,0 585x385
+  3969 DONE

@@ -1,0 +1,9 @@
+     0 START control=scrollbox range=hv mode=perf
+
+(process:538641): GLib-CRITICAL **: 20:34:47.658: g_regex_match_full: assertion 'string != NULL' failed
+   856 SNAP show     cls=TGtk4ScrollingWinControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 1400x12000] req=1400x12000 parent=GtkOverlay alloc=[0,0 1400x12000] hadj=0/1400/585 vadj=0/12000/385 lcl=600x400 client=600x400 ptr=0000000005BF66B0/0000000005B0CDB0 rss=206380 wsclient=0,0 585x385
+  1257 SNAP t-show   cls=TGtk4ScrollingWinControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 1400x12000] req=1400x12000 parent=GtkOverlay alloc=[0,0 1400x12000] hadj=0/1400/585 vadj=0/12000/385 lcl=600x400 client=600x400 ptr=0000000005BF66B0/0000000005B0CDB0 rss=211008 wsclient=0,0 585x385
+  3142 PERF steps=40 wall_ms=1885 cpu_ms=1090 rss=240268
+  3143 SNAP perf     cls=TGtk4ScrollingWinControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 1400x12000] req=1400x12000 parent=GtkOverlay alloc=[0,-9000 1400x12000] hadj=0/1400/585 vadj=9000/12000/385 lcl=600x400 client=600x400 ptr=0000000005BF66B0/0000000005B0CDB0 rss=240268 wsclient=0,0 585x385
+  3143 DONE
+EXIT=0

@@ -1,0 +1,350 @@
+
+===== edit  crash: gtk4=-, qt5=-, gtk2=-
+  final[gtk4]: (missing)
+  final[qt5]: edit="ab a" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[gtk2]: edit="ab a" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=True
+  key       | gtk4                                          | qt5                                           | gtk2
+!!Return    | fKU:13 KU:edit:13 ED:edit                     | fKD:13 KD:edit:13 U8:edit:" KP:edit:#13 fKU:13 KU:edit:13 ED:edit E:defbtn | fKD:13 KD:edit:13 U8:edit:" KP:edit:#13 fKU:13 KU:edit:13 ED:edit E:defbtn
+!!KP_Enter  | fKU:13 KU:edit:13 ED:edit                     | fKD:13 KD:edit:13 U8:edit:" KP:edit:#13 fKU:13 KU:edit:13 ED:edit E:defbtn | fKD:13 KD:edit:13 KP:edit:#13 fKU:13 KU:edit:13 ED:edit E:defbtn
+  Escape    | fKD:27 KD:edit:27 U8:edit:"" KP:edit:#27 fKU:27 KU:edit:27 E:cancelbtn | fKD:27 KD:edit:27 U8:edit:"" KP:edit:#27 fKU:27 KU:edit:27 E:cancelbtn | fKD:27 KD:edit:27 U8:edit:"" KP:edit:#27 fKU:27 KU:edit:27 E:cancelbtn
+  Up        | fKD:38 KD:edit:38 fKU:38 KU:edit:38           | fKD:38 KD:edit:38 fKU:38 KU:edit:38           | fKD:38 KD:edit:38 fKU:38 KU:edit:38
+!!Down      | fKD:40 KD:edit:40 ED:edit fKU:40 KU:spin:40   | fKD:40 KD:edit:40 fKU:40 KU:edit:40           | fKD:40 KD:edit:40 fKU:40 KU:edit:40
+!!Left      | fKU:37 KU:spin:37                             | fKD:37 KD:edit:37 fKU:37 KU:edit:37           | fKD:37 KD:edit:37 fKU:37 KU:edit:37
+!!Right     | fKU:39 KU:spin:39                             | fKD:39 KD:edit:39 fKU:39 KU:edit:39           | fKD:39 KD:edit:39 fKU:39 KU:edit:39
+!!Home      | fKU:36 KU:spin:36                             | fKD:36 KD:edit:36 fKU:36 KU:edit:36           | fKD:36 KD:edit:36 fKU:36 KU:edit:36
+!!End       | fKU:35 KU:spin:35                             | fKD:35 KD:edit:35 fKU:35 KU:edit:35           | fKD:35 KD:edit:35 fKU:35 KU:edit:35
+!!Prior     | fKD:33 KD:spin:33 fKU:33 KU:spin:33           | fKD:33 KD:edit:33 fKU:33 KU:edit:33           | fKD:33 KD:edit:33 fKU:33 KU:edit:33
+!!Next      | fKD:34 KD:spin:34 fKU:34 KU:spin:34           | fKD:34 KD:edit:34 fKU:34 KU:edit:34           | fKD:34 KD:edit:34 fKU:34 KU:edit:34
+!!Delete    | fKU:46 KU:spin:46                             | fKD:46 KD:edit:46 KP:edit:#127 fKU:46 KU:edit:46 | fKD:46 KD:edit:46 fKU:46 KU:edit:46
+!!BackSpace | ·                                             | fKD:8 KD:edit:8 U8:edit:"" KP:edit:#8 E:edit fKU:8 KU:edit:8 | fKD:8 KD:edit:8 U8:edit:"" KP:edit:#8 E:edit fKU:8 KU:edit:8
+!!Insert    | ·                                             | fKD:45 KD:edit:45 fKU:45 KU:edit:45           | fKD:45 KD:edit:45 fKU:45 KU:edit:45
+!!F3        | ·                                             | fKD:114 KD:edit:114 fKU:114 KU:edit:114       | fKD:114 KD:edit:114 fKU:114 KU:edit:114
+!!space     | ·                                             | fKD:32 KD:edit:32 U8:edit:" KP:edit:#32 E:edit fKU:32 KU:edit:32 | fKD:32 KD:edit:32 U8:edit:" KP:edit:#32 E:edit fKU:32 KU:edit:32
+!!a         | ·                                             | fKD:65 KD:edit:65 U8:edit:"a" KP:edit:#97 E:edit fKU:65 KU:edit:65 | fKD:65 KD:edit:65 U8:edit:"a" KP:edit:#97 E:edit fKU:65 KU:edit:65
+!!ctrl+a    | ·                                             | fKD:17 KD:edit:17 fKD:65 KD:edit:65[ssCtrl] U8:edit:"" KP:edit:#1 fKU:17 KU:edit:17 fKU:65 KU:edit:65 | fKD:17 KD:edit:17[ssCtrl] fKD:65 KD:edit:65[ssCtrl] U8:edit:"" KP:edit:#1 fKU:17 KU:edit:17 fKU:65 KU:edit:65
+!!Tab       | ·                                             | fKD:9 KD:edit:9 ED:edit fKU:9 KU:spin:9       | fKD:9 KD:edit:9 ED:edit fKU:9 KU:spin:9
+
+===== spin  crash: gtk4=-, qt5=-, gtk2=-
+  final[gtk4]: (missing)
+  final[qt5]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[gtk2]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=True
+  key       | gtk4                                          | qt5                                           | gtk2
+!!Return    | fKU:13 KU:spin:13 ED:spin                     | fKD:13 KD:spin:13 U8:spin:" KP:spin:#13 fKU:13 KU:spin:13 ED:spin E:defbtn | fKD:13 KD:spin:13 U8:spin:" KP:spin:#13 fKU:13 KU:spin:13 ED:spin E:defbtn
+!!KP_Enter  | fKU:13 KU:spin:13 ED:spin                     | fKD:13 KD:spin:13 U8:spin:" KP:spin:#13 fKU:13 KU:spin:13 ED:spin E:defbtn | fKD:13 KD:spin:13 KP:spin:#13 fKU:13 KU:spin:13 ED:spin E:defbtn
+  Escape    | fKD:27 KD:spin:27 U8:spin:"" KP:spin:#27 fKU:27 KU:spin:27 E:cancelbtn | fKD:27 KD:spin:27 U8:spin:"" KP:spin:#27 fKU:27 KU:spin:27 E:cancelbtn | fKD:27 KD:spin:27 U8:spin:"" KP:spin:#27 fKU:27 KU:spin:27 E:cancelbtn
+!!Up        | fKD:38 KD:spin:38 fKU:38 KU:spin:38           | fKD:38 KD:spin:38 E:spin fKU:38 KU:spin:38    | fKD:38 KD:spin:38 E:spin fKU:38 KU:spin:38
+!!Down      | fKD:40 KD:spin:40 fKU:40 KU:spin:40           | fKD:40 KD:spin:40 E:spin fKU:40 KU:spin:40    | fKD:40 KD:spin:40 E:spin fKU:40 KU:spin:40
+!!Left      | fKU:37 KU:spin:37                             | fKD:37 KD:spin:37 fKU:37 KU:spin:37           | fKD:37 KD:spin:37 fKU:37 KU:spin:37
+!!Right     | fKU:39 KU:spin:39                             | fKD:39 KD:spin:39 fKU:39 KU:spin:39           | fKD:39 KD:spin:39 fKU:39 KU:spin:39
+!!Home      | fKU:36 KU:spin:36                             | fKD:36 KD:spin:36 fKU:36 KU:spin:36           | fKD:36 KD:spin:36 fKU:36 KU:spin:36
+!!End       | fKU:35 KU:spin:35                             | fKD:35 KD:spin:35 fKU:35 KU:spin:35           | fKD:35 KD:spin:35 fKU:35 KU:spin:35
+!!Prior     | fKD:33 KD:spin:33 fKU:33 KU:spin:33           | fKD:33 KD:spin:33 E:spin fKU:33 KU:spin:33    | fKD:33 KD:spin:33 fKU:33 KU:spin:33
+!!Next      | fKD:34 KD:spin:34 fKU:34 KU:spin:34           | fKD:34 KD:spin:34 E:spin fKU:34 KU:spin:34    | fKD:34 KD:spin:34 fKU:34 KU:spin:34
+!!Delete    | fKU:46 KU:spin:46                             | fKD:46 KD:spin:46 KP:spin:#127 fKU:46 KU:spin:46 | fKD:46 KD:spin:46 fKU:46 KU:spin:46
+!!BackSpace | ·                                             | fKD:8 KD:spin:8 U8:spin:"" KP:spin:#8 fKU:8 KU:spin:8 | fKD:8 KD:spin:8 U8:spin:"" KP:spin:#8 E:spin fKU:8 KU:spin:8
+!!Insert    | ·                                             | fKD:45 KD:spin:45 fKU:45 KU:spin:45           | fKD:45 KD:spin:45 fKU:45 KU:spin:45
+!!F3        | ·                                             | fKD:114 KD:spin:114 fKU:114 KU:spin:114       | fKD:114 KD:spin:114 fKU:114 KU:spin:114
+!!space     | ·                                             | fKD:32 KD:spin:32 U8:spin:" KP:spin:#32 fKU:32 KU:spin:32 | fKD:32 KD:spin:32 U8:spin:" KP:spin:#32 fKU:32 KU:spin:32
+!!a         | ·                                             | fKD:65 KD:spin:65 U8:spin:"a" KP:spin:#97 fKU:65 KU:spin:65 | fKD:65 KD:spin:65 U8:spin:"a" KP:spin:#97 fKU:65 KU:spin:65
+!!ctrl+a    | ·                                             | fKD:17 KD:spin:17 fKD:65 KD:spin:65[ssCtrl] U8:spin:"" KP:spin:#1 fKU:17 KU:spin:17 fKU:65 KU:spin:65 | fKD:17 KD:spin:17[ssCtrl] fKD:65 KD:spin:65[ssCtrl] U8:spin:"" KP:spin:#1 fKU:17 KU:spin:17 fKU:65 KU:spin:65
+!!Tab       | ·                                             | fKD:9 KD:spin:9 ED:spin fKU:9 KU:comboedit:9  | fKD:9 KD:spin:9 ED:spin E:spin fKU:9 KU:comboedit:9
+
+===== comboedit  crash: gtk4=-, qt5=-, gtk2=-
+  final[gtk4]: edit="abc" spin=0 comboedit="ab a"/-1 combolist=0 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[qt5]: edit="abc" spin=5 comboedit="tw a"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[gtk2]: edit="abc" spin=5 comboedit=" aee"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=True
+  key       | gtk4                                          | qt5                                           | gtk2
+!!Return    | fKU:13 KU:comboedit:13                        | fKD:13 KD:comboedit:13 U8:comboedit:" KP:comboedit:#13 fKU:13 KU:comboedit:13 ED:comboedit E:defbtn | fKD:13 KD:comboedit:13 U8:comboedit:" KP:comboedit:#13 fKU:13 KU:comboedit:13 ED:comboedit E:defbtn
+!!KP_Enter  | fKU:13 KU:comboedit:13                        | fKD:13 KD:comboedit:13 U8:comboedit:" KP:comboedit:#13 fKU:13 KU:comboedit:13 ED:comboedit E:defbtn | fKD:13 KD:comboedit:13 KP:comboedit:#13 fKU:13 KU:comboedit:13 ED:comboedit E:defbtn
+  Escape    | fKD:27 KD:comboedit:27 U8:comboedit:"" KP:comboedit:#27 fKU:27 KU:comboedit:27 E:cancelbtn | fKD:27 KD:comboedit:27 U8:comboedit:"" KP:comboedit:#27 fKU:27 KU:comboedit:27 E:cancelbtn | fKD:27 KD:comboedit:27 U8:comboedit:"" KP:comboedit:#27 fKU:27 KU:comboedit:27 E:cancelbtn
+~ Up        | fKD:38 KD:comboedit:38 fKU:38 KU:comboedit:38 | fKD:38 KD:comboedit:38 fKU:38 KU:comboedit:38 | fKD:38 KD:comboedit:38 E:comboedit E:comboedit fKU:38 KU:comboedit:38
+!!Down      | fKD:40 KD:comboedit:40 fKU:40 KU:comboedit:40 | fKD:40 KD:comboedit:40 E:comboedit E:comboedit fKU:40 KU:comboedit:40 | fKD:40 KD:comboedit:40 fKU:40 KU:comboedit:40
+!!Left      | fKU:37 KU:comboedit:37                        | fKD:37 KD:comboedit:37 fKU:37 KU:comboedit:37 | fKD:37 KD:comboedit:37 fKU:37 KU:comboedit:37
+!!Right     | fKU:39 KU:comboedit:39                        | fKD:39 KD:comboedit:39 fKU:39 KU:comboedit:39 | fKD:39 KD:comboedit:39 fKU:39 KU:comboedit:39
+!!Home      | fKU:36 KU:comboedit:36                        | fKD:36 KD:comboedit:36 fKU:36 KU:comboedit:36 | fKD:36 KD:comboedit:36 fKU:36 KU:comboedit:36
+!!End       | fKU:35 KU:comboedit:35                        | fKD:35 KD:comboedit:35 fKU:35 KU:comboedit:35 | fKD:35 KD:comboedit:35 fKU:35 KU:comboedit:35
+~ Prior     | fKD:33 KD:comboedit:33 fKU:33 KU:comboedit:33 | fKD:33 KD:comboedit:33 fKU:33 KU:comboedit:33 | fKD:33 KD:comboedit:33 E:comboedit E:comboedit fKU:33 KU:comboedit:33
+!!Next      | fKD:34 KD:comboedit:34 fKU:34 KU:comboedit:34 | fKD:34 KD:comboedit:34 E:comboedit E:comboedit fKU:34 KU:comboedit:34 | fKD:34 KD:comboedit:34 E:comboedit E:comboedit fKU:34 KU:comboedit:34
+!!Delete    | fKU:46 KU:comboedit:46                        | fKD:46 KD:comboedit:46 KP:comboedit:#127 fKU:46 KU:comboedit:46 | fKD:46 KD:comboedit:46 E:comboedit fKU:46 KU:comboedit:46
+!!BackSpace | E:comboedit fKU:8 KU:comboedit:8              | fKD:8 KD:comboedit:8 U8:comboedit:"" KP:comboedit:#8 E:comboedit fKU:8 KU:comboedit:8 | fKD:8 KD:comboedit:8 U8:comboedit:"" KP:comboedit:#8 fKU:8 KU:comboedit:8
+!!Insert    | fKU:45 KU:comboedit:45                        | fKD:45 KD:comboedit:45 fKU:45 KU:comboedit:45 | fKD:45 KD:comboedit:45 fKU:45 KU:comboedit:45
+  F3        | fKD:114 KD:comboedit:114 fKU:114 KU:comboedit:114 | fKD:114 KD:comboedit:114 fKU:114 KU:comboedit:114 | fKD:114 KD:comboedit:114 fKU:114 KU:comboedit:114
+!!space     | E:comboedit fKU:32 KU:comboedit:32            | fKD:32 KD:comboedit:32 U8:comboedit:" KP:comboedit:#32 E:comboedit fKU:32 KU:comboedit:32 | fKD:32 KD:comboedit:32 U8:comboedit:" KP:comboedit:#32 E:comboedit E:comboedit fKU:32 KU:comboedit:32
+!!a         | E:comboedit fKU:65 KU:comboedit:65            | fKD:65 KD:comboedit:65 U8:comboedit:"a" KP:comboedit:#97 E:comboedit fKU:65 KU:comboedit:65 | fKD:65 KD:comboedit:65 U8:comboedit:"a" KP:comboedit:#97 E:comboedit E:comboedit fKU:65 KU:comboedit:65
+!!ctrl+a    | fKD:17 KD:comboedit:17 fKU:17 KU:comboedit:17 fKU:65 KU:comboedit:65 | fKD:17 KD:comboedit:17 fKD:65 KD:comboedit:65[ssCtrl] U8:comboedit:"" KP:comboedit:#1 fKU:17 KU:comboedit:17 fKU:65 KU:comboedit:65 | fKD:17 KD:comboedit:17[ssCtrl] fKD:65 KD:comboedit:65[ssCtrl] U8:comboedit:"" KP:comboedit:#1 fKU:17 KU:comboedit:17 fKU:65 KU:comboedit:65
+!!Tab       | ED:comboedit fKU:9 KU:combolist:9             | fKD:9 KD:comboedit:9 ED:comboedit fKU:9 KU:combolist:9 | fKD:9 KD:comboedit:9 ED:comboedit fKU:9 KU:combolist:9
+
+===== combolist  crash: gtk4=-, qt5=-, gtk2=-
+  final[gtk4]: edit="abc" spin=0 comboedit="abc"/-1 combolist=0 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[qt5]: edit="abc" spin=5 comboedit="abc"/-1 combolist=2 memo=1lines listbox=1 checklist=1/False listview=1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[gtk2]: edit="abc" spin=5 comboedit=" aee"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=True
+  key       | gtk4                                          | qt5                                           | gtk2
+!!Return    | fKU:13 KU:combolist:13                        | fKD:13 KD:combolist:13 U8:combolist:" KP:combolist:#13 fKU:13 KU:combolist:13 ED:combolist E:defbtn | fKD:13 KD:combolist:13 U8:combolist:" KP:combolist:#13 fKU:13 KU:combolist:13 ED:combolist E:defbtn
+!!KP_Enter  | fKU:13 KU:combolist:13                        | fKD:13 KD:combolist:13 U8:combolist:" KP:combolist:#13 fKU:13 KU:combolist:13 ED:combolist E:defbtn | fKD:13 KD:combolist:13 KP:combolist:#13 fKU:13 KU:combolist:13 ED:combolist E:defbtn
+  Escape    | fKD:27 KD:combolist:27 U8:combolist:"" KP:combolist:#27 fKU:27 KU:combolist:27 E:cancelbtn | fKD:27 KD:combolist:27 U8:combolist:"" KP:combolist:#27 fKU:27 KU:combolist:27 E:cancelbtn | fKD:27 KD:combolist:27 U8:combolist:"" KP:combolist:#27 fKU:27 KU:combolist:27 E:cancelbtn
+!!Up        | fKD:38 KD:combolist:38 fKU:38 KU:combolist:38 | fKD:38 KD:combolist:38 E:combolist E:combolist fKU:38 KU:combolist:38 | fKD:38 KD:combolist:38 E:combolist E:combolist fKU:38 KU:combolist:38
+!!Down      | fKD:40 KD:combolist:40 fKU:40 KU:combolist:40 | fKD:40 KD:combolist:40 E:combolist E:combolist fKU:40 KU:combolist:40 | fKD:40 KD:combolist:40 E:combolist E:combolist fKU:40 KU:combolist:40
+~ Left      | fKD:37 KD:combolist:37 fKU:37 KU:combolist:37 | fKD:37 KD:combolist:37 fKU:37 KU:combolist:37 | fKD:37 KD:combolist:37 fKU:37 KU:comboedit:37
+~ Right     | fKD:39 KD:combolist:39 fKU:39 KU:combolist:39 | fKD:39 KD:combolist:39 fKU:39 KU:combolist:39 | fKD:39 KD:comboedit:39 fKU:39 KU:comboedit:39
+!!Home      | fKD:36 KD:combolist:36 fKU:36 KU:combolist:36 | fKD:36 KD:combolist:36 E:combolist E:combolist fKU:36 KU:combolist:36 | fKD:36 KD:comboedit:36 fKU:36 KU:comboedit:36
+!!End       | fKD:35 KD:combolist:35 fKU:35 KU:combolist:35 | fKD:35 KD:combolist:35 E:combolist E:combolist fKU:35 KU:combolist:35 | fKD:35 KD:comboedit:35 fKU:35 KU:comboedit:35
+!!Prior     | fKD:33 KD:combolist:33 fKU:33 KU:combolist:33 | fKD:33 KD:combolist:33 E:combolist E:combolist fKU:33 KU:combolist:33 | fKD:33 KD:comboedit:33 E:comboedit E:comboedit fKU:33 KU:comboedit:33
+!!Next      | fKD:34 KD:combolist:34 fKU:34 KU:combolist:34 | fKD:34 KD:combolist:34 E:combolist E:combolist fKU:34 KU:combolist:34 | fKD:34 KD:comboedit:34 E:comboedit E:comboedit fKU:34 KU:comboedit:34
+!!Delete    | fKD:46 KD:combolist:46 fKU:46 KU:combolist:46 | fKD:46 KD:combolist:46 KP:combolist:#127 fKU:46 KU:combolist:46 | fKD:46 KD:comboedit:46 E:comboedit fKU:46 KU:comboedit:46
+~ BackSpace | fKD:8 KD:combolist:8 U8:combolist:"" KP:combolist:#8 fKU:8 KU:combolist:8 | fKD:8 KD:combolist:8 U8:combolist:"" KP:combolist:#8 fKU:8 KU:combolist:8 | fKD:8 KD:comboedit:8 U8:comboedit:"" KP:comboedit:#8 fKU:8 KU:comboedit:8
+~ Insert    | fKD:45 KD:combolist:45 fKU:45 KU:combolist:45 | fKD:45 KD:combolist:45 fKU:45 KU:combolist:45 | fKD:45 KD:comboedit:45 fKU:45 KU:comboedit:45
+~ F3        | fKD:114 KD:combolist:114 fKU:114 KU:combolist:114 | fKD:114 KD:combolist:114 fKU:114 KU:combolist:114 | fKD:114 KD:comboedit:114 fKU:114 KU:comboedit:114
+!!space     | fKU:32 KU:combolist:32                        | ED:combolist ED:combolist fKU:32 KU:combolist:32 | fKD:32 KD:comboedit:32 U8:comboedit:" KP:comboedit:#32 E:comboedit E:comboedit fKU:32 KU:comboedit:32
+!!a         | ·                                             | fKD:65 KD:combolist:65 U8:combolist:"a" KP:combolist:#97 fKU:65 KU:combolist:65 | fKD:65 KD:comboedit:65 U8:comboedit:"a" KP:comboedit:#97 E:comboedit E:comboedit fKU:65 KU:comboedit:65
+!!ctrl+a    | ·                                             | fKD:17 KD:combolist:17 fKD:65 KD:combolist:65[ssCtrl] U8:combolist:"" KP:combolist:#1 fKU:17 KU:combolist:17 fKU:65 KU:combolist:65 | fKD:17 KD:comboedit:17[ssCtrl] fKD:65 KD:comboedit:65[ssCtrl] U8:comboedit:"" KP:comboedit:#1 fKU:17 KU:comboedit:17 fKU:65 KU:comboedit:65
+!!Tab       | ·                                             | fKD:9 ED:combolist KD:combolist:9 ED:combolist fKU:9 KU:memo:9 | fKD:9 KD:comboedit:9 ED:comboedit fKU:9 KU:combolist:9
+
+===== memo  crash: gtk4=-, qt5=-, gtk2=-
+  final[gtk4]: edit="abc" spin=0 comboedit="abc"/-1 combolist=0 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[qt5]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=3lines listbox=1 checklist=1/False listview=1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[gtk2]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=3lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=True
+  key       | gtk4                                          | qt5                                           | gtk2
+!!Return    | fKD:13 KD:memo:13 U8:memo:" KP:memo:#13 fKU:13 KU:memo:13 | fKD:13 KD:memo:13 U8:memo:" KP:memo:#13 E:memo fKU:13 KU:memo:13 | fKD:13 KD:memo:13 U8:memo:" KP:memo:#13 E:memo fKU:13 KU:memo:13
+!!KP_Enter  | fKD:13 KD:memo:13 fKU:13 KU:memo:13           | fKD:13 KD:memo:13 U8:memo:" KP:memo:#13 E:memo fKU:13 KU:memo:13 | fKD:13 KD:memo:13 KP:memo:#13 E:memo fKU:13 KU:memo:13
+  Escape    | fKD:27 KD:memo:27 U8:memo:"" KP:memo:#27 fKU:27 KU:memo:27 E:cancelbtn | fKD:27 KD:memo:27 U8:memo:"" KP:memo:#27 fKU:27 KU:memo:27 E:cancelbtn | fKD:27 KD:memo:27 U8:memo:"" KP:memo:#27 fKU:27 KU:memo:27 E:cancelbtn
+  Up        | fKD:38 KD:memo:38 fKU:38 KU:memo:38           | fKD:38 KD:memo:38 fKU:38 KU:memo:38           | fKD:38 KD:memo:38 fKU:38 KU:memo:38
+  Down      | fKD:40 KD:memo:40 fKU:40 KU:memo:40           | fKD:40 KD:memo:40 fKU:40 KU:memo:40           | fKD:40 KD:memo:40 fKU:40 KU:memo:40
+  Left      | fKD:37 KD:memo:37 fKU:37 KU:memo:37           | fKD:37 KD:memo:37 fKU:37 KU:memo:37           | fKD:37 KD:memo:37 fKU:37 KU:memo:37
+  Right     | fKD:39 KD:memo:39 fKU:39 KU:memo:39           | fKD:39 KD:memo:39 fKU:39 KU:memo:39           | fKD:39 KD:memo:39 fKU:39 KU:memo:39
+  Home      | fKD:36 KD:memo:36 fKU:36 KU:memo:36           | fKD:36 KD:memo:36 fKU:36 KU:memo:36           | fKD:36 KD:memo:36 fKU:36 KU:memo:36
+  End       | fKD:35 KD:memo:35 fKU:35 KU:memo:35           | fKD:35 KD:memo:35 fKU:35 KU:memo:35           | fKD:35 KD:memo:35 fKU:35 KU:memo:35
+  Prior     | fKD:33 KD:memo:33 fKU:33 KU:memo:33           | fKD:33 KD:memo:33 fKU:33 KU:memo:33           | fKD:33 KD:memo:33 fKU:33 KU:memo:33
+  Next      | fKD:34 KD:memo:34 fKU:34 KU:memo:34           | fKD:34 KD:memo:34 fKU:34 KU:memo:34           | fKD:34 KD:memo:34 fKU:34 KU:memo:34
+!!Delete    | fKD:46 KD:memo:46 fKU:46 KU:memo:46           | fKD:46 KD:memo:46 KP:memo:#127 fKU:46 KU:memo:46 | fKD:46 KD:memo:46 fKU:46 KU:memo:46
+!!BackSpace | fKD:8 KD:memo:8 U8:memo:"" KP:memo:#8 fKU:8 KU:memo:8 | fKD:8 KD:memo:8 U8:memo:"" KP:memo:#8 E:memo fKU:8 KU:memo:8 | fKD:8 KD:memo:8 U8:memo:"" KP:memo:#8 E:memo fKU:8 KU:memo:8
+  Insert    | fKD:45 KD:memo:45 fKU:45 KU:memo:45           | fKD:45 KD:memo:45 fKU:45 KU:memo:45           | fKD:45 KD:memo:45 fKU:45 KU:memo:45
+  F3        | fKD:114 KD:memo:114 fKU:114 KU:memo:114       | fKD:114 KD:memo:114 fKU:114 KU:memo:114       | fKD:114 KD:memo:114 fKU:114 KU:memo:114
+!!space     | fKD:32 KD:memo:32 U8:memo:" KP:memo:#32 fKU:32 KU:memo:32 | fKD:32 KD:memo:32 U8:memo:" KP:memo:#32 E:memo fKU:32 KU:memo:32 | fKD:32 KD:memo:32 U8:memo:" KP:memo:#32 E:memo fKU:32 KU:memo:32
+!!a         | fKD:65 KD:memo:65 U8:memo:"a" KP:memo:#97 fKU:65 KU:memo:65 | fKD:65 KD:memo:65 U8:memo:"a" KP:memo:#97 E:memo fKU:65 KU:memo:65 | fKD:65 KD:memo:65 U8:memo:"a" KP:memo:#97 E:memo fKU:65 KU:memo:65
+!!ctrl+a    | fKD:17 KD:memo:17 fKD:65 KD:memo:65[ssCtrl] U8:memo:"a" KP:memo:#97 fKU:17 KU:memo:17 fKU:65 KU:memo:65 | fKD:17 KD:memo:17 fKD:65 KD:memo:65[ssCtrl] U8:memo:"" KP:memo:#1 fKU:17 KU:memo:17 fKU:65 KU:memo:65 | fKD:17 KD:memo:17[ssCtrl] fKD:65 KD:memo:65[ssCtrl] U8:memo:"" KP:memo:#1 fKU:17 KU:memo:17 fKU:65 KU:memo:65
+!!Tab       | fKU:9 KU:memo:9                               | fKD:9 KD:memo:9 fKU:9 KU:listbox:9            | fKD:9 KD:memo:9 fKU:9 KU:listbox:9
+
+===== listbox  crash: gtk4=-, qt5=-, gtk2=-
+  final[gtk4]: edit="abc" spin=0 comboedit="abc"/-1 combolist=0 memo=1lines listbox=4 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[qt5]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=4 checklist=1/False listview=1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[gtk2]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=3 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=True
+  key       | gtk4                                          | qt5                                           | gtk2
+  Return    | fKD:13 KD:listbox:13 U8:listbox:" KP:listbox:#13 fKU:13 KU:listbox:13 E:defbtn | fKD:13 KD:listbox:13 U8:listbox:" KP:listbox:#13 fKU:13 KU:listbox:13 E:defbtn | fKD:13 KD:listbox:13 U8:listbox:" KP:listbox:#13 fKU:13 KU:listbox:13 E:defbtn
+!!KP_Enter  | fKD:13 KD:listbox:13 fKU:13 KU:listbox:13 E:defbtn | fKD:13 KD:listbox:13 U8:listbox:" KP:listbox:#13 fKU:13 KU:listbox:13 E:defbtn | fKD:13 KD:listbox:13 KP:listbox:#13 fKU:13 KU:listbox:13 E:defbtn
+  Escape    | fKD:27 KD:listbox:27 U8:listbox:"" KP:listbox:#27 fKU:27 KU:listbox:27 E:cancelbtn | fKD:27 KD:listbox:27 U8:listbox:"" KP:listbox:#27 fKU:27 KU:listbox:27 E:cancelbtn | fKD:27 KD:listbox:27 U8:listbox:"" KP:listbox:#27 fKU:27 KU:listbox:27 E:cancelbtn
+!!Up        | fKD:38 KD:listbox:38 fKU:38 KU:listbox:38     | fKD:38 KD:listbox:38 E:listbox fKU:38 KU:listbox:38 | fKD:38 KD:listbox:38 E:listbox fKU:38 KU:listbox:38
+!!Down      | fKD:40 KD:listbox:40 fKU:40 KU:listbox:40     | fKD:40 KD:listbox:40 E:listbox fKU:40 KU:listbox:40 | fKD:40 KD:listbox:40 E:listbox fKU:40 KU:listbox:40
+  Left      | fKD:37 KD:listbox:37 fKU:37 KU:listbox:37     | fKD:37 KD:listbox:37 fKU:37 KU:listbox:37     | fKD:37 KD:listbox:37 fKU:37 KU:listbox:37
+  Right     | fKD:39 KD:listbox:39 fKU:39 KU:listbox:39     | fKD:39 KD:listbox:39 fKU:39 KU:listbox:39     | fKD:39 KD:listbox:39 fKU:39 KU:listbox:39
+  Home      | fKD:36 KD:listbox:36 E:listbox fKU:36 KU:listbox:36 | fKD:36 KD:listbox:36 E:listbox fKU:36 KU:listbox:36 | fKD:36 KD:listbox:36 E:listbox fKU:36 KU:listbox:36
+  End       | fKD:35 KD:listbox:35 E:listbox fKU:35 KU:listbox:35 | fKD:35 KD:listbox:35 E:listbox fKU:35 KU:listbox:35 | fKD:35 KD:listbox:35 E:listbox fKU:35 KU:listbox:35
+  Prior     | fKD:33 KD:listbox:33 E:listbox fKU:33 KU:listbox:33 | fKD:33 KD:listbox:33 E:listbox fKU:33 KU:listbox:33 | fKD:33 KD:listbox:33 E:listbox fKU:33 KU:listbox:33
+  Next      | fKD:34 KD:listbox:34 E:listbox fKU:34 KU:listbox:34 | fKD:34 KD:listbox:34 E:listbox fKU:34 KU:listbox:34 | fKD:34 KD:listbox:34 E:listbox fKU:34 KU:listbox:34
+!!Delete    | fKD:46 KD:listbox:46 fKU:46 KU:listbox:46     | fKD:46 KD:listbox:46 KP:listbox:#127 fKU:46 KU:listbox:46 | fKD:46 KD:listbox:46 fKU:46 KU:listbox:46
+  BackSpace | fKD:8 KD:listbox:8 U8:listbox:"" KP:listbox:#8 fKU:8 KU:listbox:8 | fKD:8 KD:listbox:8 U8:listbox:"" KP:listbox:#8 fKU:8 KU:listbox:8 | fKD:8 KD:listbox:8 U8:listbox:"" KP:listbox:#8 fKU:8 KU:listbox:8
+  Insert    | fKD:45 KD:listbox:45 fKU:45 KU:listbox:45     | fKD:45 KD:listbox:45 fKU:45 KU:listbox:45     | fKD:45 KD:listbox:45 fKU:45 KU:listbox:45
+  F3        | fKD:114 KD:listbox:114 fKU:114 KU:listbox:114 | fKD:114 KD:listbox:114 fKU:114 KU:listbox:114 | fKD:114 KD:listbox:114 fKU:114 KU:listbox:114
+!!space     | fKU:32 KU:listbox:32                          | fKD:32 KD:listbox:32 U8:listbox:" KP:listbox:#32 fKU:32 KU:listbox:32 | fKD:32 KD:listbox:32 U8:listbox:" KP:listbox:#32 fKU:32 KU:listbox:32
+!!a         | U8:listbox:"a" fKU:65 KU:listbox:65           | fKD:65 KD:listbox:65 U8:listbox:"a" KP:listbox:#97 fKU:65 KU:listbox:65 | fKD:65 KD:listbox:65 U8:listbox:"a" KP:listbox:#97 E:listbox
+!!ctrl+a    | fKD:17 KD:listbox:17 fKD:65 KD:listbox:65[ssCtrl] U8:listbox:"a" KP:listbox:#97 fKU:17 KU:listbox:17 fKU:65 KU:listbox:65 | fKD:17 KD:listbox:17 fKD:65 KD:listbox:65[ssCtrl] U8:listbox:"" KP:listbox:#1 fKU:17 KU:listbox:17 fKU:65 KU:listbox:65 | ·
+!!Tab       | fKU:9 KU:checklist:9                          | fKD:9 KD:listbox:9 fKU:9 KU:checklist:9       | fKU:9 KU:listbox:9
+
+===== checklist  crash: gtk4=-, qt5=-, gtk2=-
+  final[gtk4]: edit="abc" spin=0 comboedit="abc"/-1 combolist=0 memo=1lines listbox=1 checklist=3/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[qt5]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=3/False listview=1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[gtk2]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=2/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=True
+  key       | gtk4                                          | qt5                                           | gtk2
+  Return    | fKD:13 KD:checklist:13 U8:checklist:" KP:checklist:#13 fKU:13 KU:checklist:13 E:defbtn | fKD:13 KD:checklist:13 U8:checklist:" KP:checklist:#13 fKU:13 KU:checklist:13 E:defbtn | fKD:13 KD:checklist:13 U8:checklist:" KP:checklist:#13 fKU:13 KU:checklist:13 E:defbtn
+!!KP_Enter  | fKD:13 KD:checklist:13 fKU:13 KU:checklist:13 E:defbtn | fKD:13 KD:checklist:13 U8:checklist:" KP:checklist:#13 fKU:13 KU:checklist:13 E:defbtn | fKD:13 KD:checklist:13 KP:checklist:#13 fKU:13 KU:checklist:13 E:defbtn
+  Escape    | fKD:27 KD:checklist:27 U8:checklist:"" KP:checklist:#27 fKU:27 KU:checklist:27 E:cancelbtn | fKD:27 KD:checklist:27 U8:checklist:"" KP:checklist:#27 fKU:27 KU:checklist:27 E:cancelbtn | fKD:27 KD:checklist:27 U8:checklist:"" KP:checklist:#27 fKU:27 KU:checklist:27 E:cancelbtn
+~ Up        | fKD:38 KD:checklist:38 fKU:38 KU:checklist:38 | fKD:38 KD:checklist:38 fKU:38 KU:checklist:38 | fKD:38 KD:checklist:38 E:checklist fKU:38 KU:checklist:38
+!!Down      | fKD:40 KD:checklist:40 fKU:40 KU:checklist:40 | fKD:40 KD:checklist:40 E:checklist fKU:40 KU:checklist:40 | fKD:40 KD:checklist:40 E:checklist fKU:40 KU:checklist:40
+  Left      | fKD:37 KD:checklist:37 fKU:37 KU:checklist:37 | fKD:37 KD:checklist:37 fKU:37 KU:checklist:37 | fKD:37 KD:checklist:37 fKU:37 KU:checklist:37
+  Right     | fKD:39 KD:checklist:39 fKU:39 KU:checklist:39 | fKD:39 KD:checklist:39 fKU:39 KU:checklist:39 | fKD:39 KD:checklist:39 fKU:39 KU:checklist:39
+!!Home      | fKD:36 KD:checklist:36 E:checklist fKU:36 KU:checklist:36 | fKD:36 KD:checklist:36 fKU:36 KU:checklist:36 | fKD:36 KD:checklist:36 E:checklist fKU:36 KU:checklist:36
+!!End       | fKD:35 KD:checklist:35 E:checklist fKU:35 KU:checklist:35 | fKD:35 KD:checklist:35 fKU:35 KU:checklist:35 | fKD:35 KD:checklist:35 E:checklist fKU:35 KU:checklist:35
+!!Prior     | fKD:33 KD:checklist:33 E:checklist fKU:33 KU:checklist:33 | fKD:33 KD:checklist:33 fKU:33 KU:checklist:33 | fKD:33 KD:checklist:33 E:checklist fKU:33 KU:checklist:33
+!!Next      | fKD:34 KD:checklist:34 E:checklist fKU:34 KU:checklist:34 | fKD:34 KD:checklist:34 fKU:34 KU:checklist:34 | fKD:34 KD:checklist:34 E:checklist fKU:34 KU:checklist:34
+!!Delete    | fKD:46 KD:checklist:46 fKU:46 KU:checklist:46 | fKD:46 KD:checklist:46 KP:checklist:#127 fKU:46 KU:checklist:46 | fKD:46 KD:checklist:46 fKU:46 KU:checklist:46
+  BackSpace | fKD:8 KD:checklist:8 U8:checklist:"" KP:checklist:#8 fKU:8 KU:checklist:8 | fKD:8 KD:checklist:8 U8:checklist:"" KP:checklist:#8 fKU:8 KU:checklist:8 | fKD:8 KD:checklist:8 U8:checklist:"" KP:checklist:#8 fKU:8 KU:checklist:8
+  Insert    | fKD:45 KD:checklist:45 fKU:45 KU:checklist:45 | fKD:45 KD:checklist:45 fKU:45 KU:checklist:45 | fKD:45 KD:checklist:45 fKU:45 KU:checklist:45
+  F3        | fKD:114 KD:checklist:114 fKU:114 KU:checklist:114 | fKD:114 KD:checklist:114 fKU:114 KU:checklist:114 | fKD:114 KD:checklist:114 fKU:114 KU:checklist:114
+!!space     | fKU:32 KU:checklist:32                        | fKD:32 KD:checklist:32 U8:checklist:" KP:checklist:#32 fKU:32 KU:checklist:32 | fKD:32 KD:checklist:32 U8:checklist:" KP:checklist:#32 fKU:32 KU:checklist:32
+!!a         | U8:checklist:"a" fKU:65 KU:checklist:65       | fKD:65 KD:checklist:65 U8:checklist:"a" KP:checklist:#97 fKU:65 KU:checklist:65 | fKD:65 KD:checklist:65 U8:checklist:"a" KP:checklist:#97 E:checklist
+!!ctrl+a    | fKD:17 KD:checklist:17 fKD:65 KD:checklist:65[ssCtrl] U8:checklist:"a" KP:checklist:#97 fKU:17 KU:checklist:17 fKU:65 KU:checklist:65 | fKD:17 KD:checklist:17 fKD:65 KD:checklist:65[ssCtrl] U8:checklist:"" KP:checklist:#1 fKU:17 KU:checklist:17 fKU:65 KU:checklist:65 | ·
+!!Tab       | fKU:9 KU:checklist:9                          | fKD:9 KD:checklist:9 fKU:9 KU:listview:9      | fKU:9 KU:checklist:9
+
+===== listview  crash: gtk4=-, qt5=-, gtk2=-
+  final[gtk4]: edit="abc" spin=0 comboedit="abc"/-1 combolist=0 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[qt5]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=3 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[gtk2]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=3 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=True
+  key       | gtk4                                          | qt5                                           | gtk2
+  Return    | fKD:13 KD:listview:13 U8:listview:" KP:listview:#13 fKU:13 KU:listview:13 E:defbtn | fKD:13 KD:listview:13 U8:listview:" KP:listview:#13 fKU:13 KU:listview:13 E:defbtn | fKD:13 KD:listview:13 U8:listview:" KP:listview:#13 fKU:13 KU:listview:13 E:defbtn
+!!KP_Enter  | fKD:13 KD:listview:13 fKU:13 KU:listview:13 E:defbtn | fKD:13 KD:listview:13 U8:listview:" KP:listview:#13 fKU:13 KU:listview:13 E:defbtn | fKD:13 KD:listview:13 KP:listview:#13 fKU:13 KU:listview:13 E:defbtn
+  Escape    | fKD:27 KD:listview:27 U8:listview:"" KP:listview:#27 fKU:27 KU:listview:27 E:cancelbtn | fKD:27 KD:listview:27 U8:listview:"" KP:listview:#27 fKU:27 KU:listview:27 E:cancelbtn | fKD:27 KD:listview:27 U8:listview:"" KP:listview:#27 fKU:27 KU:listview:27 E:cancelbtn
+  Up        | fKD:38 KD:listview:38 fKU:38 KU:listview:38   | fKD:38 KD:listview:38 fKU:38 KU:listview:38   | fKD:38 KD:listview:38 fKU:38 KU:listview:38
+  Down      | fKD:40 KD:listview:40 fKU:40 KU:listview:40   | fKD:40 KD:listview:40 fKU:40 KU:listview:40   | fKD:40 KD:listview:40 fKU:40 KU:listview:40
+  Left      | fKD:37 KD:listview:37 fKU:37 KU:listview:37   | fKD:37 KD:listview:37 fKU:37 KU:listview:37   | fKD:37 KD:listview:37 fKU:37 KU:listview:37
+  Right     | fKD:39 KD:listview:39 fKU:39 KU:listview:39   | fKD:39 KD:listview:39 fKU:39 KU:listview:39   | fKD:39 KD:listview:39 fKU:39 KU:listview:39
+  Home      | fKD:36 KD:listview:36 fKU:36 KU:listview:36   | fKD:36 KD:listview:36 fKU:36 KU:listview:36   | fKD:36 KD:listview:36 fKU:36 KU:listview:36
+  End       | fKD:35 KD:listview:35 fKU:35 KU:listview:35   | fKD:35 KD:listview:35 fKU:35 KU:listview:35   | fKD:35 KD:listview:35 fKU:35 KU:listview:35
+  Prior     | fKD:33 KD:listview:33 fKU:33 KU:listview:33   | fKD:33 KD:listview:33 fKU:33 KU:listview:33   | fKD:33 KD:listview:33 fKU:33 KU:listview:33
+  Next      | fKD:34 KD:listview:34 fKU:34 KU:listview:34   | fKD:34 KD:listview:34 fKU:34 KU:listview:34   | fKD:34 KD:listview:34 fKU:34 KU:listview:34
+!!Delete    | fKD:46 KD:listview:46 fKU:46 KU:listview:46   | fKD:46 KD:listview:46 KP:listview:#127 fKU:46 KU:listview:46 | fKD:46 KD:listview:46 fKU:46 KU:listview:46
+  BackSpace | fKD:8 KD:listview:8 U8:listview:"" KP:listview:#8 fKU:8 KU:listview:8 | fKD:8 KD:listview:8 U8:listview:"" KP:listview:#8 fKU:8 KU:listview:8 | fKD:8 KD:listview:8 U8:listview:"" KP:listview:#8 fKU:8 KU:listview:8
+  Insert    | fKD:45 KD:listview:45 fKU:45 KU:listview:45   | fKD:45 KD:listview:45 fKU:45 KU:listview:45   | fKD:45 KD:listview:45 fKU:45 KU:listview:45
+  F3        | fKD:114 KD:listview:114 fKU:114 KU:listview:114 | fKD:114 KD:listview:114 fKU:114 KU:listview:114 | fKD:114 KD:listview:114 fKU:114 KU:listview:114
+!!space     | U8:listview:" fKU:32 KU:listview:32           | fKD:32 KD:listview:32 U8:listview:" KP:listview:#32 fKU:32 KU:listview:32 | fKD:32 KD:listview:32 U8:listview:" KP:listview:#32 fKU:32 KU:listview:32
+!!a         | U8:listview:"a" fKU:65 KU:listview:65         | fKD:65 KD:listview:65 U8:listview:"a" KP:listview:#97 fKU:65 KU:listview:65 | fKD:65 KD:listview:65 U8:listview:"a" KP:listview:#97 fKU:65 KU:listview:65
+!!ctrl+a    | fKD:17 KD:listview:17 fKD:65 KD:listview:65[ssCtrl] U8:listview:"a" KP:listview:#97 fKU:17 KU:listview:17 fKU:65 KU:listview:65 | fKD:17 KD:listview:17 fKD:65 KD:listview:65[ssCtrl] U8:listview:"" KP:listview:#1 fKU:17 KU:listview:17 fKU:65 KU:listview:65 | fKD:17 KD:listview:17[ssCtrl] fKD:65 KD:listview:65[ssCtrl] U8:listview:"" KP:listview:#1 fKU:17 KU:listview:17 fKU:65 KU:listview:65
+!!Tab       | fKU:9 KU:listview:9                           | fKD:9 KD:listview:9 fKU:9 KU:treeview:9       | fKD:9 KD:listview:9 fKU:9 KU:treeview:9
+
+===== treeview  crash: gtk4=-, qt5=-, gtk2=-
+  final[gtk4]: edit="abc" spin=0 comboedit="abc"/-1 combolist=0 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[qt5]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[gtk2]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=True
+  key       | gtk4                                          | qt5                                           | gtk2
+  Return    | fKD:13 KD:treeview:13 U8:treeview:" KP:treeview:#13 fKU:13 KU:treeview:13 E:defbtn | fKD:13 KD:treeview:13 U8:treeview:" KP:treeview:#13 fKU:13 KU:treeview:13 E:defbtn | fKD:13 KD:treeview:13 U8:treeview:" KP:treeview:#13 fKU:13 KU:treeview:13 E:defbtn
+!!KP_Enter  | fKD:13 KD:treeview:13 fKU:13 KU:treeview:13 E:defbtn | fKD:13 KD:treeview:13 U8:treeview:" KP:treeview:#13 fKU:13 KU:treeview:13 E:defbtn | fKD:13 KD:treeview:13 KP:treeview:#13 fKU:13 KU:treeview:13 E:defbtn
+  Escape    | fKD:27 KD:treeview:27 U8:treeview:"" KP:treeview:#27 fKU:27 KU:treeview:27 E:cancelbtn | fKD:27 KD:treeview:27 U8:treeview:"" KP:treeview:#27 fKU:27 KU:treeview:27 E:cancelbtn | fKD:27 KD:treeview:27 U8:treeview:"" KP:treeview:#27 fKU:27 KU:treeview:27 E:cancelbtn
+  Up        | fKD:38 KD:treeview:38 fKU:38 KU:treeview:38   | fKD:38 KD:treeview:38 fKU:38 KU:treeview:38   | fKD:38 KD:treeview:38 fKU:38 KU:treeview:38
+  Down      | fKD:40 KD:treeview:40 fKU:40 KU:treeview:40   | fKD:40 KD:treeview:40 fKU:40 KU:treeview:40   | fKD:40 KD:treeview:40 fKU:40 KU:treeview:40
+  Left      | fKD:37 KD:treeview:37 fKU:37 KU:treeview:37   | fKD:37 KD:treeview:37 fKU:37 KU:treeview:37   | fKD:37 KD:treeview:37 fKU:37 KU:treeview:37
+  Right     | fKD:39 KD:treeview:39 fKU:39 KU:treeview:39   | fKD:39 KD:treeview:39 fKU:39 KU:treeview:39   | fKD:39 KD:treeview:39 fKU:39 KU:treeview:39
+  Home      | fKD:36 KD:treeview:36 fKU:36 KU:treeview:36   | fKD:36 KD:treeview:36 fKU:36 KU:treeview:36   | fKD:36 KD:treeview:36 fKU:36 KU:treeview:36
+  End       | fKD:35 KD:treeview:35 fKU:35 KU:treeview:35   | fKD:35 KD:treeview:35 fKU:35 KU:treeview:35   | fKD:35 KD:treeview:35 fKU:35 KU:treeview:35
+  Prior     | fKD:33 KD:treeview:33 fKU:33 KU:treeview:33   | fKD:33 KD:treeview:33 fKU:33 KU:treeview:33   | fKD:33 KD:treeview:33 fKU:33 KU:treeview:33
+  Next      | fKD:34 KD:treeview:34 fKU:34 KU:treeview:34   | fKD:34 KD:treeview:34 fKU:34 KU:treeview:34   | fKD:34 KD:treeview:34 fKU:34 KU:treeview:34
+!!Delete    | fKD:46 KD:treeview:46 fKU:46 KU:treeview:46   | fKD:46 KD:treeview:46 KP:treeview:#127 fKU:46 KU:treeview:46 | fKD:46 KD:treeview:46 fKU:46 KU:treeview:46
+  BackSpace | fKD:8 KD:treeview:8 U8:treeview:"" KP:treeview:#8 fKU:8 KU:treeview:8 | fKD:8 KD:treeview:8 U8:treeview:"" KP:treeview:#8 fKU:8 KU:treeview:8 | fKD:8 KD:treeview:8 U8:treeview:"" KP:treeview:#8 fKU:8 KU:treeview:8
+  Insert    | fKD:45 KD:treeview:45 fKU:45 KU:treeview:45   | fKD:45 KD:treeview:45 fKU:45 KU:treeview:45   | fKD:45 KD:treeview:45 fKU:45 KU:treeview:45
+  F3        | fKD:114 KD:treeview:114 fKU:114 KU:treeview:114 | fKD:114 KD:treeview:114 fKU:114 KU:treeview:114 | fKD:114 KD:treeview:114 fKU:114 KU:treeview:114
+!!space     | U8:treeview:" fKU:32 KU:treeview:32           | fKD:32 KD:treeview:32 U8:treeview:" KP:treeview:#32 fKU:32 KU:treeview:32 | fKD:32 KD:treeview:32 U8:treeview:" KP:treeview:#32 fKU:32 KU:treeview:32
+!!a         | U8:treeview:"a" fKU:65 KU:treeview:65         | fKD:65 KD:treeview:65 U8:treeview:"a" KP:treeview:#97 fKU:65 KU:treeview:65 | fKD:65 KD:treeview:65 U8:treeview:"a" KP:treeview:#97 fKU:65 KU:treeview:65
+!!ctrl+a    | fKD:17 KD:treeview:17 fKD:65 KD:treeview:65[ssCtrl] U8:treeview:"a" KP:treeview:#97 fKU:17 KU:treeview:17 fKU:65 KU:treeview:65 | fKD:17 KD:treeview:17 fKD:65 KD:treeview:65[ssCtrl] U8:treeview:"" KP:treeview:#1 fKU:17 KU:treeview:17 fKU:65 KU:treeview:65 | fKD:17 KD:treeview:17[ssCtrl] fKD:65 KD:treeview:65[ssCtrl] U8:treeview:"" KP:treeview:#1 fKU:17 KU:treeview:17 fKU:65 KU:treeview:65
+!!Tab       | fKU:9 KU:button:9                             | fKD:9 KD:treeview:9 fKU:9 KU:button:9         | fKD:9 KD:treeview:9 fKU:9 KU:button:9
+
+===== button  crash: gtk4=-, qt5=-, gtk2=-
+  final[gtk4]: edit="abc" spin=0 comboedit="abc"/-1 combolist=0 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[qt5]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[gtk2]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=True
+  key       | gtk4                                          | qt5                                           | gtk2
+  Return    | fKD:13 KD:button:13 U8:button:" KP:button:#13 fKU:13 KU:button:13 E:button | fKD:13 KD:button:13 U8:button:" KP:button:#13 fKU:13 KU:button:13 E:button | fKD:13 KD:button:13 U8:button:" KP:button:#13 fKU:13 KU:button:13 E:button
+!!KP_Enter  | fKD:13 KD:button:13 fKU:13 KU:button:13 E:button | fKD:13 KD:button:13 U8:button:" KP:button:#13 fKU:13 KU:button:13 E:button | fKD:13 KD:button:13 KP:button:#13 fKU:13 KU:button:13 E:button
+  Escape    | fKD:27 KD:button:27 U8:button:"" KP:button:#27 fKU:27 KU:button:27 E:cancelbtn | fKD:27 KD:button:27 U8:button:"" KP:button:#27 fKU:27 KU:button:27 E:cancelbtn | fKD:27 KD:button:27 U8:button:"" KP:button:#27 fKU:27 KU:button:27 E:cancelbtn
+!!Up        | fKD:38 KD:button:38 fKU:38 KU:button:38       | fKD:38 KD:button:38 fKU:38 KU:treeview:38     | fKD:38 KD:button:38 fKU:38 KU:treeview:38
+!!Down      | fKD:40 KD:button:40 fKU:40 KU:button:40       | fKD:40 KD:treeview:40 fKU:40 KU:treeview:40   | fKD:40 KD:treeview:40 fKU:40 KU:treeview:40
+!!Left      | fKD:37 KD:button:37 fKU:37 KU:button:37       | fKD:37 KD:treeview:37 fKU:37 KU:treeview:37   | fKD:37 KD:treeview:37 fKU:37 KU:treeview:37
+!!Right     | fKD:39 KD:button:39 fKU:39 KU:button:39       | fKD:39 KD:treeview:39 fKU:39 KU:treeview:39   | fKD:39 KD:treeview:39 fKU:39 KU:treeview:39
+!!Home      | fKD:36 KD:button:36 fKU:36 KU:button:36       | fKD:36 KD:treeview:36 fKU:36 KU:treeview:36   | fKD:36 KD:treeview:36 fKU:36 KU:treeview:36
+!!End       | fKD:35 KD:button:35 fKU:35 KU:button:35       | fKD:35 KD:treeview:35 fKU:35 KU:treeview:35   | fKD:35 KD:treeview:35 fKU:35 KU:treeview:35
+!!Prior     | fKD:33 KD:button:33 fKU:33 KU:button:33       | fKD:33 KD:treeview:33 fKU:33 KU:treeview:33   | fKD:33 KD:treeview:33 fKU:33 KU:treeview:33
+!!Next      | fKD:34 KD:button:34 fKU:34 KU:button:34       | fKD:34 KD:treeview:34 fKU:34 KU:treeview:34   | fKD:34 KD:treeview:34 fKU:34 KU:treeview:34
+!!Delete    | fKD:46 KD:button:46 fKU:46 KU:button:46       | fKD:46 KD:treeview:46 KP:treeview:#127 fKU:46 KU:treeview:46 | fKD:46 KD:treeview:46 fKU:46 KU:treeview:46
+!!BackSpace | fKD:8 KD:button:8 U8:button:"" KP:button:#8 fKU:8 KU:button:8 | fKD:8 KD:treeview:8 U8:treeview:"" KP:treeview:#8 fKU:8 KU:treeview:8 | fKD:8 KD:treeview:8 U8:treeview:"" KP:treeview:#8 fKU:8 KU:treeview:8
+!!Insert    | fKD:45 KD:button:45 fKU:45 KU:button:45       | fKD:45 KD:treeview:45 fKU:45 KU:treeview:45   | fKD:45 KD:treeview:45 fKU:45 KU:treeview:45
+!!F3        | fKD:114 KD:button:114 fKU:114 KU:button:114   | fKD:114 KD:treeview:114 fKU:114 KU:treeview:114 | fKD:114 KD:treeview:114 fKU:114 KU:treeview:114
+!!space     | U8:button:" fKU:32 KU:button:32               | fKD:32 KD:treeview:32 U8:treeview:" KP:treeview:#32 fKU:32 KU:treeview:32 | fKD:32 KD:treeview:32 U8:treeview:" KP:treeview:#32 fKU:32 KU:treeview:32
+!!a         | U8:button:"a" fKU:65 KU:button:65             | fKD:65 KD:treeview:65 U8:treeview:"a" KP:treeview:#97 fKU:65 KU:treeview:65 | fKD:65 KD:treeview:65 U8:treeview:"a" KP:treeview:#97 fKU:65 KU:treeview:65
+!!ctrl+a    | fKD:17 KD:button:17 fKD:65 KD:button:65[ssCtrl] U8:button:"a" KP:button:#97 fKU:17 KU:button:17 fKU:65 KU:button:65 | fKD:17 KD:treeview:17 fKD:65 KD:treeview:65[ssCtrl] U8:treeview:"" KP:treeview:#1 fKU:17 KU:treeview:17 fKU:65 KU:treeview:65 | fKD:17 KD:treeview:17[ssCtrl] fKD:65 KD:treeview:65[ssCtrl] U8:treeview:"" KP:treeview:#1 fKU:17 KU:treeview:17 fKU:65 KU:treeview:65
+!!Tab       | fKU:9 KU:checkbox:9                           | fKD:9 KD:treeview:9 fKU:9 KU:button:9         | fKD:9 KD:treeview:9 fKU:9 KU:button:9
+
+===== checkbox  crash: gtk4=-, qt5=-, gtk2=-
+  final[gtk4]: edit="abc" spin=0 comboedit="abc"/-1 combolist=0 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[qt5]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=1 treeview=True button=- checkbox=True trackbar=5 grid=1,1 radio=False
+  final[gtk2]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=True trackbar=5 grid=1,1 radio=True
+  key       | gtk4                                          | qt5                                           | gtk2
+  Return    | fKD:13 KD:checkbox:13 U8:checkbox:" KP:checkbox:#13 fKU:13 KU:checkbox:13 E:defbtn | fKD:13 KD:checkbox:13 U8:checkbox:" KP:checkbox:#13 fKU:13 KU:checkbox:13 E:defbtn | fKD:13 KD:checkbox:13 U8:checkbox:" KP:checkbox:#13 fKU:13 KU:checkbox:13 E:defbtn
+!!KP_Enter  | fKD:13 KD:checkbox:13 fKU:13 KU:checkbox:13 E:defbtn | fKD:13 KD:checkbox:13 U8:checkbox:" KP:checkbox:#13 fKU:13 KU:checkbox:13 E:defbtn | E:checkbox fKD:13 KD:checkbox:13 KP:checkbox:#13 fKU:13 KU:checkbox:13 E:defbtn
+~ Escape    | fKD:27 KD:checkbox:27 U8:checkbox:"" KP:checkbox:#27 fKU:27 KU:checkbox:27 E:cancelbtn | fKD:27 KD:checkbox:27 U8:checkbox:"" KP:checkbox:#27 fKU:27 KU:checkbox:27 E:cancelbtn | E:checkbox fKD:27 KD:checkbox:27 U8:checkbox:"" KP:checkbox:#27 fKU:27 KU:checkbox:27 E:cancelbtn
+!!Up        | fKD:38 KD:checkbox:38 fKU:38 KU:checkbox:38   | fKD:38 KD:checkbox:38 fKU:38 KU:button:38     | fKD:38 KD:checkbox:38 fKU:38 KU:button:38
+!!Down      | fKD:40 KD:checkbox:40 fKU:40 KU:checkbox:40   | fKD:40 KD:button:40 fKU:40 KU:checkbox:40     | fKD:40 KD:button:40 fKU:40 KU:checkbox:40
+!!Left      | fKD:37 KD:checkbox:37 fKU:37 KU:checkbox:37   | fKD:37 KD:checkbox:37 fKU:37 KU:button:37     | fKD:37 KD:checkbox:37 fKU:37 KU:button:37
+!!Right     | fKD:39 KD:checkbox:39 fKU:39 KU:checkbox:39   | fKD:39 KD:button:39 fKU:39 KU:checkbox:39     | fKD:39 KD:button:39 fKU:39 KU:checkbox:39
+  Home      | fKD:36 KD:checkbox:36 fKU:36 KU:checkbox:36   | fKD:36 KD:checkbox:36 fKU:36 KU:checkbox:36   | fKD:36 KD:checkbox:36 fKU:36 KU:checkbox:36
+  End       | fKD:35 KD:checkbox:35 fKU:35 KU:checkbox:35   | fKD:35 KD:checkbox:35 fKU:35 KU:checkbox:35   | fKD:35 KD:checkbox:35 fKU:35 KU:checkbox:35
+  Prior     | fKD:33 KD:checkbox:33 fKU:33 KU:checkbox:33   | fKD:33 KD:checkbox:33 fKU:33 KU:checkbox:33   | fKD:33 KD:checkbox:33 fKU:33 KU:checkbox:33
+  Next      | fKD:34 KD:checkbox:34 fKU:34 KU:checkbox:34   | fKD:34 KD:checkbox:34 fKU:34 KU:checkbox:34   | fKD:34 KD:checkbox:34 fKU:34 KU:checkbox:34
+!!Delete    | fKD:46 KD:checkbox:46 fKU:46 KU:checkbox:46   | fKD:46 KD:checkbox:46 KP:checkbox:#127 fKU:46 KU:checkbox:46 | fKD:46 KD:checkbox:46 fKU:46 KU:checkbox:46
+  BackSpace | fKD:8 KD:checkbox:8 U8:checkbox:"" KP:checkbox:#8 fKU:8 KU:checkbox:8 | fKD:8 KD:checkbox:8 U8:checkbox:"" KP:checkbox:#8 fKU:8 KU:checkbox:8 | fKD:8 KD:checkbox:8 U8:checkbox:"" KP:checkbox:#8 fKU:8 KU:checkbox:8
+  Insert    | fKD:45 KD:checkbox:45 fKU:45 KU:checkbox:45   | fKD:45 KD:checkbox:45 fKU:45 KU:checkbox:45   | fKD:45 KD:checkbox:45 fKU:45 KU:checkbox:45
+  F3        | fKD:114 KD:checkbox:114 fKU:114 KU:checkbox:114 | fKD:114 KD:checkbox:114 fKU:114 KU:checkbox:114 | fKD:114 KD:checkbox:114 fKU:114 KU:checkbox:114
+!!space     | U8:checkbox:" fKU:32 KU:checkbox:32           | fKD:32 KD:checkbox:32 U8:checkbox:" KP:checkbox:#32 fKU:32 KU:checkbox:32 E:checkbox | fKD:32 KD:checkbox:32 U8:checkbox:" KP:checkbox:#32 fKU:32 KU:checkbox:32 E:checkbox
+!!a         | U8:checkbox:"a" fKU:65 KU:checkbox:65         | fKD:65 KD:checkbox:65 U8:checkbox:"a" KP:checkbox:#97 fKU:65 KU:checkbox:65 | fKD:65 KD:checkbox:65 U8:checkbox:"a" KP:checkbox:#97 fKU:65 KU:checkbox:65
+!!ctrl+a    | fKD:17 KD:checkbox:17 fKD:65 KD:checkbox:65[ssCtrl] U8:checkbox:"a" KP:checkbox:#97 fKU:17 KU:checkbox:17 fKU:65 KU:checkbox:65 | fKD:17 KD:checkbox:17 fKD:65 KD:checkbox:65[ssCtrl] U8:checkbox:"" KP:checkbox:#1 fKU:17 KU:checkbox:17 fKU:65 KU:checkbox:65 | fKD:17 KD:checkbox:17[ssCtrl] fKD:65 KD:checkbox:65[ssCtrl] U8:checkbox:"" KP:checkbox:#1 fKU:17 KU:checkbox:17 fKU:65 KU:checkbox:65
+!!Tab       | fKU:9 KU:radio:9                              | fKD:9 KD:checkbox:9 fKU:9 KU:trackbar:9       | fKD:9 KD:checkbox:9 fKU:9 KU:trackbar:9
+
+===== radio  crash: gtk4=-, qt5=-, gtk2=-
+  final[gtk4]: edit="abc" spin=0 comboedit="abc"/-1 combolist=0 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=False
+  final[qt5]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=True
+  final[gtk2]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=1,1 radio=True
+  key       | gtk4                                          | qt5                                           | gtk2
+  Return    | fKD:13 KD:radio:13 U8:radio:" KP:radio:#13 fKU:13 KU:radio:13 E:defbtn | fKD:13 KD:radio:13 U8:radio:" KP:radio:#13 fKU:13 KU:radio:13 E:defbtn | fKD:13 KD:radio:13 U8:radio:" KP:radio:#13 fKU:13 KU:radio:13 E:defbtn
+!!KP_Enter  | fKD:13 KD:radio:13 fKU:13 KU:radio:13 E:defbtn | fKD:13 KD:radio:13 U8:radio:" KP:radio:#13 fKU:13 KU:radio:13 E:defbtn | fKD:13 KD:radio:13 KP:radio:#13 fKU:13 KU:radio:13 E:defbtn
+  Escape    | fKD:27 KD:radio:27 U8:radio:"" KP:radio:#27 fKU:27 KU:radio:27 E:cancelbtn | fKD:27 KD:radio:27 U8:radio:"" KP:radio:#27 fKU:27 KU:radio:27 E:cancelbtn | fKD:27 KD:radio:27 U8:radio:"" KP:radio:#27 fKU:27 KU:radio:27 E:cancelbtn
+!!Up        | fKD:38 KD:radio:38 fKU:38 KU:radio:38         | fKD:38 KD:radio:38 fKU:38 KU:checkbox:38      | fKD:38 KD:radio:38 fKU:38 KU:checkbox:38
+!!Down      | fKD:40 KD:radio:40 fKU:40 KU:radio:40         | fKD:40 KD:checkbox:40 fKU:40 KU:radio:40      | fKD:40 KD:checkbox:40 fKU:40 KU:radio:40
+!!Left      | fKD:37 KD:radio:37 fKU:37 KU:radio:37         | fKD:37 KD:radio:37 fKU:37 KU:checkbox:37      | fKD:37 KD:radio:37 fKU:37 KU:checkbox:37
+!!Right     | fKD:39 KD:radio:39 fKU:39 KU:radio:39         | fKD:39 KD:checkbox:39 fKU:39 KU:radio:39      | fKD:39 KD:checkbox:39 fKU:39 KU:radio:39
+  Home      | fKD:36 KD:radio:36 fKU:36 KU:radio:36         | fKD:36 KD:radio:36 fKU:36 KU:radio:36         | fKD:36 KD:radio:36 fKU:36 KU:radio:36
+  End       | fKD:35 KD:radio:35 fKU:35 KU:radio:35         | fKD:35 KD:radio:35 fKU:35 KU:radio:35         | fKD:35 KD:radio:35 fKU:35 KU:radio:35
+  Prior     | fKD:33 KD:radio:33 fKU:33 KU:radio:33         | fKD:33 KD:radio:33 fKU:33 KU:radio:33         | fKD:33 KD:radio:33 fKU:33 KU:radio:33
+  Next      | fKD:34 KD:radio:34 fKU:34 KU:radio:34         | fKD:34 KD:radio:34 fKU:34 KU:radio:34         | fKD:34 KD:radio:34 fKU:34 KU:radio:34
+!!Delete    | fKD:46 KD:radio:46 fKU:46 KU:radio:46         | fKD:46 KD:radio:46 KP:radio:#127 fKU:46 KU:radio:46 | fKD:46 KD:radio:46 fKU:46 KU:radio:46
+  BackSpace | fKD:8 KD:radio:8 U8:radio:"" KP:radio:#8 fKU:8 KU:radio:8 | fKD:8 KD:radio:8 U8:radio:"" KP:radio:#8 fKU:8 KU:radio:8 | fKD:8 KD:radio:8 U8:radio:"" KP:radio:#8 fKU:8 KU:radio:8
+  Insert    | fKD:45 KD:radio:45 fKU:45 KU:radio:45         | fKD:45 KD:radio:45 fKU:45 KU:radio:45         | fKD:45 KD:radio:45 fKU:45 KU:radio:45
+  F3        | fKD:114 KD:radio:114 fKU:114 KU:radio:114     | fKD:114 KD:radio:114 fKU:114 KU:radio:114     | fKD:114 KD:radio:114 fKU:114 KU:radio:114
+!!space     | U8:radio:" fKU:32 KU:radio:32                 | fKD:32 KD:radio:32 U8:radio:" KP:radio:#32 fKU:32 KU:radio:32 E:radio | fKD:32 KD:radio:32 U8:radio:" KP:radio:#32 fKU:32 KU:radio:32
+!!a         | U8:radio:"a" fKU:65 KU:radio:65               | fKD:65 KD:radio:65 U8:radio:"a" KP:radio:#97 fKU:65 KU:radio:65 | fKD:65 KD:radio:65 U8:radio:"a" KP:radio:#97 fKU:65 KU:radio:65
+!!ctrl+a    | fKD:17 KD:radio:17 fKD:65 KD:radio:65[ssCtrl] U8:radio:"a" KP:radio:#97 fKU:17 KU:radio:17 fKU:65 KU:radio:65 | fKD:17 KD:radio:17 fKD:65 KD:radio:65[ssCtrl] U8:radio:"" KP:radio:#1 fKU:17 KU:radio:17 fKU:65 KU:radio:65 | fKD:17 KD:radio:17[ssCtrl] fKD:65 KD:radio:65[ssCtrl] U8:radio:"" KP:radio:#1 fKU:17 KU:radio:17 fKU:65 KU:radio:65
+!!Tab       | fKU:9 KU:trackbar:9                           | fKD:9 KD:radio:9 fKU:9 KU:edit:9              | fKD:9 KD:radio:9 fKU:9 KU:trackbar:9
+
+===== trackbar  crash: gtk4=-, qt5=-, gtk2=-
+  final[gtk4]: edit="abc" spin=0 comboedit="abc"/-1 combolist=0 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=9 grid=1,1 radio=False
+  final[qt5]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=1 treeview=True button=- checkbox=False trackbar=8 grid=1,1 radio=False
+  final[gtk2]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=10 grid=1,1 radio=True
+  key       | gtk4                                          | qt5                                           | gtk2
+  Return    | fKD:13 KD:trackbar:13 U8:trackbar:" KP:trackbar:#13 fKU:13 KU:trackbar:13 E:defbtn | fKD:13 KD:trackbar:13 U8:trackbar:" KP:trackbar:#13 fKU:13 KU:trackbar:13 E:defbtn | fKD:13 KD:trackbar:13 U8:trackbar:" KP:trackbar:#13 fKU:13 KU:trackbar:13 E:defbtn
+!!KP_Enter  | fKD:13 KD:trackbar:13 fKU:13 KU:trackbar:13 E:defbtn | fKD:13 KD:trackbar:13 U8:trackbar:" KP:trackbar:#13 fKU:13 KU:trackbar:13 E:defbtn | fKD:13 KD:trackbar:13 KP:trackbar:#13 fKU:13 KU:trackbar:13 E:defbtn
+  Escape    | fKD:27 KD:trackbar:27 U8:trackbar:"" KP:trackbar:#27 fKU:27 KU:trackbar:27 E:cancelbtn | fKD:27 KD:trackbar:27 U8:trackbar:"" KP:trackbar:#27 fKU:27 KU:trackbar:27 E:cancelbtn | fKD:27 KD:trackbar:27 U8:trackbar:"" KP:trackbar:#27 fKU:27 KU:trackbar:27 E:cancelbtn
+!!Up        | fKD:38 KD:trackbar:38 fKU:38 KU:trackbar:38   | fKD:38 KD:trackbar:38 E:trackbar fKU:38 KU:trackbar:38 | fKD:38 KD:trackbar:38 E:trackbar fKU:38 KU:trackbar:38
+!!Down      | fKD:40 KD:trackbar:40 fKU:40 KU:trackbar:40   | fKD:40 KD:trackbar:40 E:trackbar fKU:40 KU:trackbar:40 | fKD:40 KD:trackbar:40 E:trackbar fKU:40 KU:trackbar:40
+!!Left      | fKD:37 KD:trackbar:37 fKU:37 KU:trackbar:37   | fKD:37 KD:trackbar:37 E:trackbar fKU:37 KU:trackbar:37 | fKD:37 KD:trackbar:37 E:trackbar fKU:37 KU:trackbar:37
+!!Right     | fKD:39 KD:trackbar:39 fKU:39 KU:trackbar:39   | fKD:39 KD:trackbar:39 E:trackbar fKU:39 KU:trackbar:39 | fKD:39 KD:trackbar:39 E:trackbar fKU:39 KU:trackbar:39
+  Home      | fKD:36 KD:trackbar:36 E:trackbar fKU:36 KU:trackbar:36 | fKD:36 KD:trackbar:36 E:trackbar fKU:36 KU:trackbar:36 | fKD:36 KD:trackbar:36 E:trackbar fKU:36 KU:trackbar:36
+  End       | fKD:35 KD:trackbar:35 E:trackbar fKU:35 KU:trackbar:35 | fKD:35 KD:trackbar:35 E:trackbar fKU:35 KU:trackbar:35 | fKD:35 KD:trackbar:35 E:trackbar fKU:35 KU:trackbar:35
+~ Prior     | fKD:33 KD:trackbar:33 fKU:33 KU:trackbar:33   | fKD:33 KD:trackbar:33 fKU:33 KU:trackbar:33   | fKD:33 KD:trackbar:33 E:trackbar fKU:33 KU:trackbar:33
+  Next      | fKD:34 KD:trackbar:34 E:trackbar fKU:34 KU:trackbar:34 | fKD:34 KD:trackbar:34 E:trackbar fKU:34 KU:trackbar:34 | fKD:34 KD:trackbar:34 E:trackbar fKU:34 KU:trackbar:34
+!!Delete    | fKD:46 KD:trackbar:46 fKU:46 KU:trackbar:46   | fKD:46 KD:trackbar:46 KP:trackbar:#127 fKU:46 KU:trackbar:46 | fKD:46 KD:trackbar:46 fKU:46 KU:trackbar:46
+  BackSpace | fKD:8 KD:trackbar:8 U8:trackbar:"" KP:trackbar:#8 fKU:8 KU:trackbar:8 | fKD:8 KD:trackbar:8 U8:trackbar:"" KP:trackbar:#8 fKU:8 KU:trackbar:8 | fKD:8 KD:trackbar:8 U8:trackbar:"" KP:trackbar:#8 fKU:8 KU:trackbar:8
+  Insert    | fKD:45 KD:trackbar:45 fKU:45 KU:trackbar:45   | fKD:45 KD:trackbar:45 fKU:45 KU:trackbar:45   | fKD:45 KD:trackbar:45 fKU:45 KU:trackbar:45
+  F3        | fKD:114 KD:trackbar:114 fKU:114 KU:trackbar:114 | fKD:114 KD:trackbar:114 fKU:114 KU:trackbar:114 | fKD:114 KD:trackbar:114 fKU:114 KU:trackbar:114
+!!space     | U8:trackbar:" fKU:32 KU:trackbar:32           | fKD:32 KD:trackbar:32 U8:trackbar:" KP:trackbar:#32 fKU:32 KU:trackbar:32 | fKD:32 KD:trackbar:32 U8:trackbar:" KP:trackbar:#32 fKU:32 KU:trackbar:32
+!!a         | U8:trackbar:"a" fKU:65 KU:trackbar:65         | fKD:65 KD:trackbar:65 U8:trackbar:"a" KP:trackbar:#97 fKU:65 KU:trackbar:65 | fKD:65 KD:trackbar:65 U8:trackbar:"a" KP:trackbar:#97 fKU:65 KU:trackbar:65
+!!ctrl+a    | fKD:17 KD:trackbar:17 fKD:65 KD:trackbar:65[ssCtrl] U8:trackbar:"a" KP:trackbar:#97 fKU:17 KU:trackbar:17 fKU:65 KU:trackbar:65 | fKD:17 KD:trackbar:17 fKD:65 KD:trackbar:65[ssCtrl] U8:trackbar:"" KP:trackbar:#1 fKU:17 KU:trackbar:17 fKU:65 KU:trackbar:65 | fKD:17 KD:trackbar:17[ssCtrl] fKD:65 KD:trackbar:65[ssCtrl] U8:trackbar:"" KP:trackbar:#1 fKU:17 KU:trackbar:17 fKU:65 KU:trackbar:65
+!!Tab       | fKU:9 KU:grid:9                               | fKD:9 KD:trackbar:9 fKU:9 KU:grid:9           | fKD:9 KD:trackbar:9 fKU:9 KU:grid:9
+
+===== grid  crash: gtk4=-, qt5=-, gtk2=-
+  final[gtk4]: edit="abc" spin=0 comboedit="abc"/-1 combolist=0 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=2,2 radio=False
+  final[qt5]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=1 treeview=True button=- checkbox=False trackbar=5 grid=2,2 radio=False
+  final[gtk2]: edit="abc" spin=5 comboedit="abc"/-1 combolist=1 memo=1lines listbox=1 checklist=1/False listview=-1 treeview=True button=- checkbox=False trackbar=5 grid=2,2 radio=True
+  key       | gtk4                                          | qt5                                           | gtk2
+  Return    | fKD:13 KD:grid:13 U8:grid:" KP:grid:#13 fKU:13 KU:grid:13 E:defbtn | fKD:13 KD:grid:13 U8:grid:" KP:grid:#13 fKU:13 KU:grid:13 E:defbtn | fKD:13 KD:grid:13 U8:grid:" KP:grid:#13 fKU:13 KU:grid:13 E:defbtn
+!!KP_Enter  | fKD:13 KD:grid:13 fKU:13 KU:grid:13 E:defbtn  | fKD:13 KD:grid:13 U8:grid:" KP:grid:#13 fKU:13 KU:grid:13 E:defbtn | fKD:13 KD:grid:13 KP:grid:#13 fKU:13 KU:grid:13 E:defbtn
+  Escape    | fKD:27 KD:grid:27 U8:grid:"" KP:grid:#27 fKU:27 KU:grid:27 E:cancelbtn | fKD:27 KD:grid:27 U8:grid:"" KP:grid:#27 fKU:27 KU:grid:27 E:cancelbtn | fKD:27 KD:grid:27 U8:grid:"" KP:grid:#27 fKU:27 KU:grid:27 E:cancelbtn
+  Up        | fKD:38 KD:grid:38 fKU:38 KU:grid:38           | fKD:38 KD:grid:38 fKU:38 KU:grid:38           | fKD:38 KD:grid:38 fKU:38 KU:grid:38
+  Down      | fKD:40 KD:grid:40 E:grid fKU:40 KU:grid:40    | fKD:40 KD:grid:40 E:grid fKU:40 KU:grid:40    | fKD:40 KD:grid:40 E:grid fKU:40 KU:grid:40
+  Left      | fKD:37 KD:grid:37 fKU:37 KU:grid:37           | fKD:37 KD:grid:37 fKU:37 KU:grid:37           | fKD:37 KD:grid:37 fKU:37 KU:grid:37
+  Right     | fKD:39 KD:grid:39 E:grid fKU:39 KU:grid:39    | fKD:39 KD:grid:39 E:grid fKU:39 KU:grid:39    | fKD:39 KD:grid:39 E:grid fKU:39 KU:grid:39
+  Home      | fKD:36 KD:grid:36 E:grid fKU:36 KU:grid:36    | fKD:36 KD:grid:36 E:grid fKU:36 KU:grid:36    | fKD:36 KD:grid:36 E:grid fKU:36 KU:grid:36
+  End       | fKD:35 KD:grid:35 E:grid fKU:35 KU:grid:35    | fKD:35 KD:grid:35 E:grid fKU:35 KU:grid:35    | fKD:35 KD:grid:35 E:grid fKU:35 KU:grid:35
+  Prior     | fKD:33 KD:grid:33 fKU:33 KU:grid:33           | fKD:33 KD:grid:33 fKU:33 KU:grid:33           | fKD:33 KD:grid:33 fKU:33 KU:grid:33
+  Next      | fKD:34 KD:grid:34 fKU:34 KU:grid:34           | fKD:34 KD:grid:34 fKU:34 KU:grid:34           | fKD:34 KD:grid:34 fKU:34 KU:grid:34
+!!Delete    | fKD:46 KD:grid:46 fKU:46 KU:grid:46           | fKD:46 KD:grid:46 KP:grid:#127 fKU:46 KU:grid:46 | fKD:46 KD:grid:46 fKU:46 KU:grid:46
+  BackSpace | fKD:8 KD:grid:8 U8:grid:"" KP:grid:#8 fKU:8 KU:grid:8 | fKD:8 KD:grid:8 U8:grid:"" KP:grid:#8 fKU:8 KU:grid:8 | fKD:8 KD:grid:8 U8:grid:"" KP:grid:#8 fKU:8 KU:grid:8
+  Insert    | fKD:45 KD:grid:45 fKU:45 KU:grid:45           | fKD:45 KD:grid:45 fKU:45 KU:grid:45           | fKD:45 KD:grid:45 fKU:45 KU:grid:45
+  F3        | fKD:114 KD:grid:114 fKU:114 KU:grid:114       | fKD:114 KD:grid:114 fKU:114 KU:grid:114       | fKD:114 KD:grid:114 fKU:114 KU:grid:114
+!!space     | U8:grid:" fKU:32 KU:grid:32                   | fKD:32 KD:grid:32 U8:grid:" KP:grid:#32 fKU:32 KU:grid:32 | fKD:32 KD:grid:32 U8:grid:" KP:grid:#32 fKU:32 KU:grid:32
+!!a         | U8:grid:"a" fKU:65 KU:grid:65                 | fKD:65 KD:grid:65 U8:grid:"a" KP:grid:#97 fKU:65 KU:grid:65 | fKD:65 KD:grid:65 U8:grid:"a" KP:grid:#97 fKU:65 KU:grid:65
+!!ctrl+a    | fKD:17 KD:grid:17 fKD:65 KD:grid:65[ssCtrl] U8:grid:"a" KP:grid:#97 fKU:17 KU:grid:17 fKU:65 KU:grid:65 | fKD:17 KD:grid:17 fKD:65 KD:grid:65[ssCtrl] U8:grid:"" KP:grid:#1 fKU:17 KU:grid:17 fKU:65 KU:grid:65 | fKD:17 KD:grid:17[ssCtrl] fKD:65 KD:grid:65[ssCtrl] U8:grid:"" KP:grid:#1 fKU:17 KU:grid:17 fKU:65 KU:grid:65
+!!Tab       | fKU:9 KU:defbtn:9                             | fKD:9 KD:grid:9 fKU:9 KU:defbtn:9             | fKD:9 KD:grid:9 fKU:9 KU:defbtn:9

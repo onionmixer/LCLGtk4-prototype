@@ -1,0 +1,10 @@
+     0 START control=custom range=hv mode=perf
+
+(process:575090): GLib-CRITICAL **: 21:08:33.179: g_regex_match_full: assertion 'string != NULL' failed
+   850 SNAP show     cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 1400x12000] req=1400x12000 parent=GtkOverlay alloc=[0,0 1400x12000] hadj=0/1400/585 vadj=0/12000/385 lcl=600x400 client=600x400 ptr=0000000020EBA680/0000000020EB9DD0 rss=199660 wsclient=0,0 585x385
+  1256 SNAP t-show   cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 1400x12000] req=1400x12000 parent=GtkOverlay alloc=[0,0 1400x12000] hadj=0/1400/585 vadj=0/12000/385 lcl=600x400 client=600x400 ptr=0000000020EBA680/0000000020EB9DD0 rss=204176 wsclient=0,0 585x385
+  1920 PAINTCLIP 0,0 585x385 (Canvas.ClipRect in the last Paint; client 600x400)
+  1920 PERF steps=40 wall_ms=664 cpu_ms=690 rss=212696
+  1920 SNAP perf     cls=TGtk4CustomControl widget=GtkScrolledWindow alloc=[20,20 600x400] req=600x400 central=GtkFixed alloc=[0,0 1400x12000] req=1400x12000 parent=GtkOverlay alloc=[0,-8700 1400x12000] hadj=0/1400/585 vadj=8700/12000/385 lcl=600x400 client=600x400 ptr=0000000020EBA680/0000000020EB9DD0 rss=212696 wsclient=0,0 585x385
+  1920 DONE
+EXIT=0
